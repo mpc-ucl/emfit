@@ -1,6 +1,6 @@
 function [E,V,alpha,stats,bf,fitparams] = emfit(llfunc,D,Np,varargin); 
 %  
-% [E,V,alpha,stats,bf,fitparams] = EMFIT(llfunc,D,Np,[reg],[Nsample],[docheckgrad],[nograd],[maxit],[savestr]); 
+% [E,V,alpha,stats,bf,fitparams] = EMFIT(llfunc,D,Np,[reg],[Nsample],[docheckgrad],[nograd],[maxit],[dofull],[savestr],[loadstr]); 
 %  
 % Perform a random-effects fit using expectation-maximimization. 
 % 
@@ -84,7 +84,7 @@ function [E,V,alpha,stats,bf,fitparams] = emfit(llfunc,D,Np,varargin);
 % setting up 
 
 dx= 0.001; 													% step for finite differences
-fitparams.version='1.150929';							% version of this script 
+fitparams.version='1.151011';							% version of this script 
 
 nargin = length(varargin); 
 t=varargin; 
@@ -94,7 +94,8 @@ if nargin>2 & ~isempty(t{3}); docheckgrad = t{3}; else docheckgrad = 0 ; end;
 if nargin>3 & ~isempty(t{4}); nograd      = t{4}; else nograd = 0 ;      end; 
 if nargin>4 & ~isempty(t{5}); maxit       = t{5}; else maxit = 500;      end; 
 if nargin>5 & ~isempty(t{6}); dofull      = t{6}; else dofull = 1;       end; 
-if nargin>6 & ~isempty(t{7}); savestr     = t{6}; else savestr = '';     end; 
+if nargin>6 & ~isempty(t{7}); savestr     = t{7}; else savestr = '';     end; 
+if nargin>7 & ~isempty(t{8}); loadstr     = t{8}; else loadstr = '';     end; 
 
 % Deal with gradients being provided or not 
 if nograd; 													% assume gradients are supplied 
@@ -128,6 +129,7 @@ end
 Npall= Np+Nreg; 
 coeff_vec = Inf*ones(Npall,1);
 
+
 %=====================================================================================
 fprintf('\nStarting EM estimation');
 	
@@ -138,6 +140,12 @@ end
 nui = 0.01*eye(Np); nu = inv(nui);					% prior variance over all params 
 E = zeros(Np,Nsj);										% individual subject parameter estimates
 emit=0;nextbreak=0;stats.ex=-1;PLold= -Inf; 
+
+% continue previous fit 
+if ~isempty(loadstr);
+	eval(['load ' loadstr ' E V alpha stats emit musj nui']);
+end
+
 while 1;emit=emit+1;
 	% E step...........................................................................
 	t0=tic;
@@ -204,7 +212,7 @@ while 1;emit=emit+1;
 	if emit>1;if abs(sum(PL)-PLold)<1e-3;nextbreak=1;stats.ex=1; fprintf('...converged');end;end
 	if emit==maxit; nextbreak=1;stats.ex=0;fprintf('...maximum number of EM iterations reached');end
 	PLold=sum(PL);
-	if length(savestr)>0; eval(['save ' savestr ' E V alpha stats ']);end
+	if length(savestr)>0; eval(['save ' savestr ' E V alpha stats emit musj nui']);end
 end
 stats.PL = PL; 
 stats.subjectmeans= musj; 
