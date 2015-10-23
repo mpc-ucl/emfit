@@ -3,6 +3,8 @@ function [E,V,alpha,stats,bf,fitparams] = emfit(llfunc,D,Np,varargin);
 % [E,V,alpha,stats,bf,fitparams] = EMFIT(llfunc,D,Np,[reg],[Nsample],[docheckgrad],[nograd],[maxit],[dofull],[savestr],[loadstr]); 
 %  
 % Perform a random-effects fit using expectation-maximimization. 
+%
+% NOTE: This is in development. NO GUARANTEES for correctness... 
 % 
 % LLFUNC	- this is a string that points to a likelihood function of choices (a
 % model). The function must have the form: 
