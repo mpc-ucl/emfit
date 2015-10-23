@@ -41,7 +41,7 @@ end
 %--------------------------------------------------------------
 
 regressors = cell(NumParams,1); 			% set up regressor cell structure 
-regressors{1} = reg;							% put our psychometric regressor into cell structure
+regressors{2} = reg;							% put our psychometric regressor into cell structure
 
 % now run the actual inference 
 [E,V,alpha,stats,bf,fitparams] = emfit('llrw2',Data,NumParams,regressors); 
