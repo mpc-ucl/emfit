@@ -88,7 +88,7 @@ function [E,V,alpha,stats,bf,fitparams] = emfit(llfunc,D,Np,varargin);
 % setting up 
 
 dx= 0.001; 													% step for finite differences
-fitparams.version='1.151011';							% version of this script 
+fitparams.version='0.151110';							% version of this script 
 
 nargin = length(varargin); 
 t=varargin; 
