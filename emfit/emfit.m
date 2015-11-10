@@ -1,4 +1,6 @@
 function [E,V,alpha,stats,bf,fitparams] = emfit(llfunc,D,Np,varargin); 
+%
+% PRELIMINARY VERSION - MIGHT BE BUGGY! 
 %  
 % [E,V,alpha,stats,bf,fitparams] = EMFIT(llfunc,D,Np,[reg],[Nsample],[docheckgrad],[nograd],[maxit],[dofull],[savestr],[loadstr]); 
 %  
@@ -294,7 +296,7 @@ for sk=sjind;
 		end
 	end
 	if any(any(bf.EffNsampleHess(:,:,sk)<50)) 
-		warning('Warning: Less than 50 effective samples - try increasing Nsample');
+		warning('Warning: Less than 50 effective samples - dimensionality prob.  too high!');
 	end
 end
 fprintf('...done ')
@@ -303,7 +305,7 @@ stats.individualhessians = Hess;
 stats.groupmeancovariance = - pinv(sum(Hess,3))*Nsj/(Nsj-1);
 saddlepoint=0;
 if any(diag(stats.groupmeancovariance)<0); 
-	warning('Saddle-point - negative Hessian, i.e. no maximum at group level - try running again, increase MAXIT if limit reached')
+	warning('Negative Hessian, i.e. not at maximum - try running again, increase MAXIT if limit reached')
 	stats.ex=-2; 
 	saddlepoint=1;
 end
