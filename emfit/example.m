@@ -18,7 +18,6 @@ try
 	pool = parpool(4) ; 						% try opening matlabpool to speed things up 
 end
 
-
 %--------------------------------------------------------------
 % generate some surrogate data 
 %--------------------------------------------------------------
@@ -35,6 +34,14 @@ for sk=1:NumSubj
 	Data(sk).Nch = T; 
 	AA(sk,:) = a; 
 end
+
+% do ML fit 
+for sj=1:NumSubj
+	mlest(:,sj) = fminunc(@(x)llrw2(x,Data(sj),zeros(NumParams,1),zeros(NumParams),0),randn(2,1));
+end
+clf; 
+	subplot(121); plot(Etrue(1,:),mlest(1,:),'o'); xlabel('True'); ylabel('ML estimate'); 
+	subplot(122); plot(Etrue(2,:),mlest(2,:),'o'); xlabel('True'); ylabel('ML estimate'); 
 
 %--------------------------------------------------------------
 % inference 
