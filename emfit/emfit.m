@@ -1,7 +1,5 @@
 function [E,V,alpha,stats,bf,fitparams] = emfit(llfunc,D,Np,varargin); 
 %
-% PRELIMINARY VERSION - MIGHT BE BUGGY! 
-%  
 % [E,V,alpha,stats,bf,fitparams] = EMFIT(llfunc,D,Np,[reg],[Nsample],[docheckgrad],[nograd],[maxit],[dofull],[savestr],[loadstr]); 
 %  
 % Perform a random-effects fit using expectation-maximimization. 
@@ -87,11 +85,11 @@ function [E,V,alpha,stats,bf,fitparams] = emfit(llfunc,D,Np,varargin);
 
 %=====================================================================================
 % setting up 
-fprintf('****************************************************************\n');
-fprintf('***************    ATTENTION                      **************\n');
-fprintf('***************    This is a pre-release.         **************\n');
-fprintf('***************    It probably contains bugs.     **************\n');
-fprintf('****************************************************************\n');
+
+fprintf('---------------------------------------------------------------------------\n')
+fprintf('NOTE: emfit.m is in development. The error bars around the group mean are only\n')
+fprintf('correct for small models with few parameters, not for larger ones. \n')
+fprintf('---------------------------------------------------------------------------\n')
 
 dx= 0.001; 													% step for finite differences
 fitparams.version='0.160103';							% version of this script 
