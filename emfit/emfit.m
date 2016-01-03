@@ -1,4 +1,6 @@
 function [E,V,alpha,stats,bf,fitparams] = emfit(llfunc,D,Np,varargin); 
+%
+% PRELIMINARY VERSION - MIGHT BE BUGGY! 
 %  
 % [E,V,alpha,stats,bf,fitparams] = EMFIT(llfunc,D,Np,[reg],[Nsample],[docheckgrad],[nograd],[maxit],[dofull],[savestr],[loadstr]); 
 %  
@@ -85,9 +87,18 @@ function [E,V,alpha,stats,bf,fitparams] = emfit(llfunc,D,Np,varargin);
 
 %=====================================================================================
 % setting up 
+fprintf('****************************************************************\n');
+fprintf('***************    ATTENTION                      **************\n');
+fprintf('***************    This is a pre-release.         **************\n');
+fprintf('***************    It probably contains bugs.     **************\n');
+fprintf('****************************************************************\n');
 
 dx= 0.001; 													% step for finite differences
-fitparams.version='1.151011';							% version of this script 
+<<<<<<< HEAD
+fitparams.version='0.151213';							% version of this script 
+=======
+fitparams.version='0.151110';							% version of this script 
+>>>>>>> fce713057b9ee62a212c992e565aad9be0137a05
 
 nargin = length(varargin); 
 t=varargin; 
@@ -169,8 +180,8 @@ while 1;emit=emit+1;
 		tt(sk) 		= toc(tt0); 
 	end
 	fprintf('\nEmit=%i PL=%.2f full loop=%.2gs one subj=%.2gs parfor speedup=%.2g',emit,sum(PL),toc(t0),mean(tt),mean(tt)*Nsj/toc(t0))
-	if emit==1; stats.EML = E; end
-	if emit==2; stats.EMAP0 = E; end
+	if emit==1; stats.EML = E;   stats.VML = V; end
+	if emit==2; stats.EMAP0 = E; stats.VMAP0 = V; end
 	if nextbreak==1; break;end
 
 	% M step...........................................................................
@@ -295,7 +306,7 @@ for sk=sjind;
 		end
 	end
 	if any(any(bf.EffNsampleHess(:,:,sk)<50)) 
-		warning('Warning: Less than 50 effective samples - try increasing Nsample');
+		warning('Warning: Less than 50 effective samples - dimensionality prob.  too high!');
 	end
 end
 fprintf('...done ')
@@ -304,7 +315,7 @@ stats.individualhessians = Hess;
 stats.groupmeancovariance = - pinv(sum(Hess,3))*Nsj/(Nsj-1);
 saddlepoint=0;
 if any(diag(stats.groupmeancovariance)<0); 
-	warning('Saddle-point - negative Hessian, i.e. no maximum at group level - try running again, increase MAXIT if limit reached')
+	warning('Negative Hessian, i.e. not at maximum - try running again, increase MAXIT if limit reached')
 	stats.ex=-2; 
 	saddlepoint=1;
 end

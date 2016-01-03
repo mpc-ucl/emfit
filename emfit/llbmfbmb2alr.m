@@ -1,7 +1,13 @@
 function [l,dl] = llbmfbmb2alr(x,D,mu,nui,doprior);
 %
 % Fit joint tree search and SARSA(lambda) model with separate learning rates and
-% betas to two-step task, as in Daw et al. 2011
+% betas to two-step task, modified parametrisation of model in Daw et al. 2011
+%
+% Quentin Huys, 2015 
+% www.quentinhuys.com/code.html 
+% www.quentinhuys.com/pub.html
+% qhuys@cantab.net
+
 np = size(x,1);
 if nargout==2; dodiff=1; else; dodiff=0;end
 

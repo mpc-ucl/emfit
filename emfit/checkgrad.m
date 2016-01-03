@@ -17,6 +17,8 @@ function [d] = check(f, X, e, varargin);
 % where fX is the function value and dfX is a vector of partial derivatives.
 %
 % Carl Edward Rasmussen, 2001-08-01.
+% 
+% Adapted by Quention Huys 2015
 
 
 argstr = [f, '(X'];                            % assemble function call strings
