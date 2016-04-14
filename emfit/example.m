@@ -3,7 +3,7 @@
 % The script generates some data from a simple Rescorla-Wagner model, and then
 % fits the data. 
 % 
-% Copyright Quentin Huys, 2015 
+% Quentin Huys, 2015 
 % qhuys@cantab.net
 % 
 %==============================================================

@@ -93,11 +93,6 @@ fprintf('***************    It probably contains bugs.     **************\n');
 fprintf('****************************************************************\n');
 
 dx= 0.001; 													% step for finite differences
-<<<<<<< HEAD
-fitparams.version='0.151213';							% version of this script 
-=======
-fitparams.version='0.151110';							% version of this script 
->>>>>>> fce713057b9ee62a212c992e565aad9be0137a05
 
 nargin = length(varargin); 
 t=varargin; 
