@@ -1,7 +1,9 @@
 function [a,r,s,trans] = genm2b2alr(x,rewprob);
 %
-% Fit joint tree search and SARSA(lambda) model with separate learning rates and
-% betas to two-step task, as in Daw et al. 2011
+% Generate data from joint tree search and SARSA(lambda) model (fitted with
+% llm2b2alr.m) with separate learning rates and betas to two-step task, as in Daw
+% et al. 2011
+
 np = size(x,1);
 if nargout==2; dodiff=1; else; dodiff=0;end
 T = length(rewprob); 

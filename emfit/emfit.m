@@ -111,6 +111,7 @@ else
 	fminopt=optimset('display','off','GradObj','on');
 	if docheckgrad; 											% if they are, then can check them. 
 		fminopt=optimset('display','off','GradObj','on','DerivativeCheck','on');
+		addpath('lib');
 	end
 end
 warning('off','MATLAB:mir_warning_maybe_uninitialized_temporary');

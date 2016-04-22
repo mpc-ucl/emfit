@@ -1,7 +1,10 @@
 function [l,dl] = llbmfbmb2alr(x,D,mu,nui,doprior);
 %
 % Fit joint tree search and SARSA(lambda) model with separate learning rates and
-% betas to two-step task, modified parametrisation of model in Daw et al. 2011
+% betas to two-step task. This version is reparametrised such that there are two
+% separate weights for model-based and model-free components, rather than a
+% weight explicitly trading off the two components as in Daw et al. 2011. Note
+% here the model-free weights at level one and two are allowed to differ. 
 %
 % Quentin Huys, 2015 
 % www.quentinhuys.com/code.html 

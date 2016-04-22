@@ -10,12 +10,19 @@
 
 clear all; 
 
+addpath('../emfit.m');
+
 NumParams = 2; 								% number of parmeters 
 NumSubj = 20; 									% number of subjects
 T = 60; 											% number of choices per subject 
 
 try 
-	pool = parpool(4) ; 						% try opening matlabpool to speed things up 
+	ver = version; 
+	if str2num(ver(1:3)>8.3);
+		pool = parpool(4) ; 						% try opening matlabpool to speed things up 
+	else
+		pool = matlabpool(4);
+	end
 end
 
 %--------------------------------------------------------------
