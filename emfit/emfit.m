@@ -87,8 +87,9 @@ function [E,V,alpha,stats,bf,fitparams] = emfit(llfunc,D,Np,varargin);
 % setting up 
 
 fprintf('---------------------------------------------------------------------------\n')
-fprintf('NOTE: emfit.m is in development. The error bars around the group mean are only\n')
-fprintf('correct for small models with few parameters, not for larger ones. \n')
+fprintf('NOTE: emfit.m is in development. Statistics on MAP and EM-MAP\n');
+fprintf('parameters are stable. The error bars around the group mean \n');
+fprintf('are only correct for small models. \n')
 fprintf('---------------------------------------------------------------------------\n')
 
 addpath('lib');											% add library 
