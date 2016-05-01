@@ -91,6 +91,7 @@ fprintf('NOTE: emfit.m is in development. The error bars around the group mean a
 fprintf('correct for small models with few parameters, not for larger ones. \n')
 fprintf('---------------------------------------------------------------------------\n')
 
+addpath('lib');											% add library 
 dx= 0.001; 													% step for finite differences
 
 nargin = length(varargin); 
@@ -111,7 +112,6 @@ else
 	fminopt=optimset('display','off','GradObj','on');
 	if docheckgrad; 											% if they are, then can check them. 
 		fminopt=optimset('display','off','GradObj','on','DerivativeCheck','on');
-		addpath('lib');
 	end
 end
 warning('off','MATLAB:mir_warning_maybe_uninitialized_temporary');
