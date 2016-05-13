@@ -232,7 +232,7 @@ fprintf('\nComputing individual subject BIC values');
 for sk=sjind
 	stats.LL(sk)  = fstr(E(:,sk),D(sk),musj(:,sk),nui,0);
 	try 
-		bf.bic(sk) =  -2*stats.LL(sk)   + Np*log(D(sk).Nch);
+		bf.bic(sk) =  2*stats.LL(sk)   + Np*log(D(sk).Nch);
 	catch 
 		bf.bic(sk) =  NaN; 
 	end
