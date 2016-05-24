@@ -221,6 +221,9 @@ while 1;emit=emit+1;
 	if emit>1;if abs(sum(PL)-PLold)<1e-3;nextbreak=1;stats.ex=1; fprintf('...converged');end;end
 	if emit==maxit; nextbreak=1;stats.ex=0;fprintf('...maximum number of EM iterations reached');end
 	PLold=sum(PL);
+	stats.diagnostics.sumPL(emit) = sum(PL); 
+	stats.diagnostics.mu(:,emit) = mean(musj,2); 
+	stats.diagnostics.nu(:,:,emit) = nu; 
 	if length(savestr)>0; eval(['save ' savestr ' E V alpha stats emit musj nui']);end
 end
 stats.PL = PL; 
