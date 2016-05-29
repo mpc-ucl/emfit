@@ -92,8 +92,10 @@ fprintf('parameters are stable. The error bars around the group mean \n');
 fprintf('are only correct for small models. \n')
 fprintf('---------------------------------------------------------------------------\n')
 
-addpath('lib');											% add library 
 dx= 0.001; 													% step for finite differences
+addpath('lib');											% add library files 
+fstr=str2func(llfunc);									% prepare function string 
+Nsj = length(D); sjind=1:Nsj;							% number of subjects 
 
 nargin = length(varargin); 
 t=varargin; 
@@ -106,7 +108,9 @@ if nargin>5 & ~isempty(t{6}); dofull      = t{6}; else dofull = 1;       end;
 if nargin>6 & ~isempty(t{7}); savestr     = t{7}; else savestr = '';     end; 
 if nargin>7 & ~isempty(t{8}); loadstr     = t{8}; else loadstr = '';     end; 
 
-% Deal with gradients being provided or not 
+% checĸ strings for saving and loading 
+
+% deal with gradients being provided or not 
 if nograd; 													% assume gradients are supplied 
 	fminopt=optimset('display','off');
 else 
@@ -124,8 +128,7 @@ elseif ~iscell(reg);
 	error('REG must be a cell strucure of length Np.');
 end
 
-fstr=str2func(llfunc);									% prepare function string 
-Nsj = length(D); sjind=1:Nsj;							% number of subjects 
+% make regression matrices 
 Xreg = repmat(eye(Np),[1 1 Nsj]);
 Nreg=0; 
 for j=1:Np
@@ -138,23 +141,25 @@ end
 Npall= Np+Nreg; 
 coeff_vec = Inf*ones(Npall,1);
 
+% load & continue previous fit or set up things for a new fit 
+try 																% Try continuing previous fit 
+	eval(['load ' loadstr ' E V alpha stats emit musj nui']);
+	fprintf('Loaded %s, continuing fit will save as %s\n',loadstr,savestr); 
+catch 															% else set things up for new fit 
+	alpha = zeros(Npall,1); 								% group regression coefficients 
+	for sj=1:Nsj
+		musj(:,sj) = Xreg(:,:,sj)*alpha; 				% individual subject means
+	end
+	nui = 0.01*eye(Np); nu = inv(nui);					% prior variance over all params 
+	E = zeros(Np,Nsj);										% individual subject parameter estimates
+	emit=0;stats.ex=-1;
+	fprintf('Starting new fit, will save as %s',savestr); 
+end
 
 %=====================================================================================
 fprintf('\nStarting EM estimation');
 	
-alpha = zeros(Npall,1); 								% individual subject means
-for sj=1:Nsj
-	musj(:,sj) = Xreg(:,:,sj)*alpha; 
-end
-nui = 0.01*eye(Np); nu = inv(nui);					% prior variance over all params 
-E = zeros(Np,Nsj);										% individual subject parameter estimates
-emit=0;nextbreak=0;stats.ex=-1;PLold= -Inf; 
-
-% continue previous fit 
-if ~isempty(loadstr);
-	eval(['load ' loadstr ' E V alpha stats emit musj nui']);
-end
-
+PLold= -Inf; nextbreak=0;
 while 1;emit=emit+1;
 	% E step...........................................................................
 	t0=tic;
@@ -219,7 +224,7 @@ while 1;emit=emit+1;
 	% check for convergence of EM procedure or stop if only want ML / MAP0..............
 	if maxit==1 | (maxit==2 & emit==2); break; end		% stop if only want ML or ML& MAP0
 	if emit>1;if abs(sum(PL)-PLold)<1e-3;nextbreak=1;stats.ex=1; fprintf('...converged');end;end
-	if emit==maxit; nextbreak=1;stats.ex=0;fprintf('...maximum number of EM iterations reached');end
+	if emit>=maxit; nextbreak=1;stats.ex=0;fprintf('...maximum number of EM iterations reached');end
 	PLold=sum(PL);
 	stats.diagnostics.sumPL(emit) = sum(PL); 
 	stats.diagnostics.mu(:,emit) = mean(musj,2); 
@@ -232,13 +237,15 @@ stats.groupvar= nu;
 
 %=====================================================================================
 fprintf('\nComputing individual subject BIC values');
+
+% Check if observation count has been provided
+if ~isfield(D,'Nch');
+	error('D.Nch needs to contain the number of observations for each subject');
+end
+
 for sk=sjind
 	stats.LL(sk)  = fstr(E(:,sk),D(sk),musj(:,sk),nui,0);
-	try 
-		bf.bic(sk) =  2*stats.LL(sk)   + Np*log(D(sk).Nch);
-	catch 
-		bf.bic(sk) =  NaN; 
-	end
+	bf.bic(sk) =  -2*stats.LL(sk)   + Np*log(D(sk).Nch);
 end
 	
 if maxit<=2; return; end								% end here if only want ML or ML & MAP0
@@ -338,7 +345,6 @@ bf.ilap =  -2*(sum(bf.iL) - 1/2*   Np      *log(Nch)  + 1/2*log(det(stats.groupm
 
 if nargout>=6 
 	%=====================================================================================
-	fprintf('\nSaving fit parameters ')
 	fitparams.likelihoodfunction=llfunc; 
 	fitparams.reg=reg; 
 	fitparams.Nsample=Nsample; 
@@ -349,7 +355,12 @@ if nargout>=6
 	fitparams.D=D; 
 	fitparams.Np=Np; 
 end
-fprintf('\nDone\n ')
 
+if length(savestr)>0; 
+	fprintf('\nSaving data to %s ',savestr)
+	eval(['save ' savestr ' E V alpha stats emit musj nui bf fitparams']);
+end
+	
+fprintf('\nDone ')
 return 
 

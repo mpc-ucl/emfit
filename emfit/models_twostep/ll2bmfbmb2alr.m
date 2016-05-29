@@ -1,11 +1,10 @@
-function [l,dl] = llbmfbmbalr(x,D,mu,nui,doprior);
+function [l,dl] = ll2bmfbmb2alr(x,D,mu,nui,doprior);
 %
 % Fit joint tree search and SARSA(lambda) model with separate learning rates and
 % betas to two-step task. This version is reparametrised such that there are two
 % separate weights for model-based and model-free components, rather than a
 % weight explicitly trading off the two components as in Daw et al. 2011. Note
-% here the model-free weights at level one and two are assumed to be equal, and
-% there is only one learning rate. 
+% here the model-free weights at level one and two are allowed to differ. 
 %
 % Quentin Huys, 2015 
 % www.quentinhuys.com/code.html 
@@ -18,17 +17,21 @@ if nargout==2; dodiff=1; else; dodiff=0;end
 
 bmb  = exp(x(1));
 bmf  = exp(x(2));
-al = 1./(1+exp(-x(3)));
-la = 1./(1+exp(-x(4)));
-rep = x(5)*eye(2);
+b2   = exp(x(3));
+al = 1./(1+exp(-x(4:5)));
+la = 1./(1+exp(-x(6)));
+rep = x(7)*eye(2);
 
 Q1 = zeros(2,1);
 Q2 = zeros(2,2);
-dQ1da= zeros(2,1);
-dQ2da= zeros(2,2);
-dQeda= zeros(2,1);
+dQ1da1= zeros(2,1);
+dQ1da2= zeros(2,1);
+dQeda1= zeros(2,1);
+dQeda2= zeros(2,1);
+dQ2da2= zeros(2,2);
 dQ1dl = zeros(2,1);
 dQedl = zeros(2,1);
+dQedw = zeros(2,1);
 drep = eye(2);
 
 if doprior;
@@ -60,18 +63,20 @@ for t=1:length(D.A);
 		pqm = pqm-ones(2,1)*max(pqm);
 		pqm = exp(pqm);
 		pqm = pqm*diag(1./sum(pqm));
-		Qd = Tr*sum(Q2.*pqm)';
+		Qd = (sum(Q2.*pqm)*Tr)';
 
-		Qeff= bmb*Qd + bmf*Q1;
-		if t>1 & exist('a1old'); Qeff= Qeff + rep(:,a1old); end
-
+		if t>1 & exist('a1old');
+			Qeff= bmb*Qd + bmf*Q1 + rep(:,a1old);
+		else
+			Qeff= bmb*Qd + bmf*Q1;
+		end
 		lpa = Qeff;
 		lpa = lpa - max(lpa);
 		lpa = lpa - log(sum(exp(lpa)));
 		l = l + lpa(a);
 		pa = exp(lpa);
 
-		lpap = bmf*Q2(:,sp);
+		lpap = b2*Q2(:,sp);
 		lpap = lpap - max(lpap);
 		lpap = lpap - log(sum(exp(lpap)));
 		l = l + lpap(ap);
@@ -81,34 +86,37 @@ for t=1:length(D.A);
 		de2 = r - Q2(ap,sp);
 
 		if dodiff
-			dl(1) = dl(1) + bmb*(Qd(a)-pa'*Qd);
-			dl(2) = dl(2) + bmf*(Q1(a)-pa'*Q1 + Q2(ap,sp)-pap'*Q2(:,sp));
-
-			dl(3) = dl(3) + bmf*(dQ1da(a) - pa'*dQ1da + dQ2da(ap,sp) - pap'*dQ2da(:,sp));
-
-			dl(4) = dl(4) + dQedl(a)  - pa'*dQedl;
+			dl(1) = dl(1) + bmb*(Qd(a) - pa'*Qd);
+			dl(2) = dl(2) + bmf*(Q1(a) - pa'*Q1);
+			dl(3) = dl(3) + b2*(Q2(ap,sp) - pap'*Q2(:,sp));
+			dl(4) = dl(4) + dQeda1(a) - pa'*dQeda1;
+			dl(5) = dl(5) + b2*(dQ2da2(ap,sp)- pap'*dQ2da2(:,sp)) + bmf*(dQ1da2(a) - pa'*dQ1da2);
+			dl(6) = dl(6) + (dQedl(a)  - pa'*dQedl);
 
 			% grad wrt al(1)
-			dpqmda = bb*pqm.*(dQ2da - ones(2,1)*sum(pqm.*dQ2da)); 
-			dQdda  = Tr*sum(dQ2da.*pqm + Q2.*dpqmda)'; 
-			dQ1da(a) = dQ1da(a) + al*(1-al)*(de1+la*de2) + al*(dQ2da(ap,sp)-dQ1da(a) + la*-dQ2da(ap,sp)); 
-			dQ2da(ap,sp) = dQ2da(ap,sp) + al*(1-al)*de2 + al*-dQ2da(ap,sp);
+			dQ1da1(a) = dQ1da1(a) + al(1)*(1-al(1))*(de1+la*de2) + al(1)*-dQ1da1(a);
+			dQeda1 = bmf*dQ1da1;
+
+			% grad wrt al(2)
+			dQ1da2(a) = dQ1da2(a) + al(1)*(dQ2da2(ap,sp)-dQ1da2(a) + la*-dQ2da2(ap,sp));
+			dQdda2 = ( sum(pqm.* (dQ2da2 + bb*Q2.*(dQ2da2 - ones(2,1)*sum(pqm.*dQ2da2)))) * Tr )';
+			dQ2da2(ap,sp) = dQ2da2(ap,sp) + al(2)*(1-al(2))*de2 + al(2)*-dQ2da2(ap,sp);
 
 			% grad wrt la
-			dQ1dl(a) = dQ1dl(a) + al*(-dQ1dl(a) + la*(1-la)*de2);
+			dQ1dl(a) = dQ1dl(a) + al(1)*la*(1-la)*de2+ al(1)*-dQ1dl(a);
 			dQedl = bmf*dQ1dl;
 
-			dl(3) = dl(3) + bmb*(dQdda(a) - pa'*dQdda); 
+			dl(5) = dl(5) + bmb*(dQdda2(a)- pa'*dQdda2);
 
 			% grad wrt rep 
 			if t>1 & exist('a1old');
-				dl(5) = dl(5) + ((a==a1old) - pa'*drep(:,a1old));
+				dl(7) = dl(7) + ((a==a1old) - pa'*drep(:,a1old));
 			end
 
 		end
 
-		Q1(a)     = Q1(a)     + al*(de1 + la*de2);
-		Q2(ap,sp) = Q2(ap,sp) + al*de2;
+		Q1(a)     = Q1(a)     + al(1)*(de1 + la*de2);
+		Q2(ap,sp) = Q2(ap,sp) + al(2)*de2;
 
 		n(sp,a) = n(sp,a)+1;
 		a1old = a; 

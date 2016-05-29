@@ -1,6 +1,11 @@
 function [l,dl] = llbmbar(x,D,mu,nui,doprior);
 %
 % Fit only the model-based component of the two-step task by Daw et al. 2011
+%
+% Quentin Huys, 2015 
+% www.quentinhuys.com/code.html 
+% www.quentinhuys.com/pub.html
+% qhuys@cantab.net
 
 np = size(x,1);
 if nargout==2; dodiff=1; else; dodiff=0;end

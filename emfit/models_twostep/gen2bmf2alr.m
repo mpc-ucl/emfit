@@ -1,13 +1,10 @@
-function [a,r,s,trans] = genbmfbmb2alr(x,Tr,trans,rewprob);
+function [a,r,s,trans] = genbmf2alr(x,Tr,trans,rewprob);
 %
-% Generate data from joint tree search and SARSA(lambda) model with separate
-% learning rates and betas fitted to two-step task using llbmfbmb2alr.m. This
-% version is reparametrised such that there are two separate weights for
-% model-based and model-free components, rather than a weight explicitly trading
-% off the two components as in Daw et al. 2011. Note here the model-free weights
-% at level one and two are allowed to differ. 
-% 
-% Quentin Huys, 2015 
+% Generate data from tree search and SARSA(lambda) model with separate learning rates and
+% betas to two-step task. Note here both the learning rates and the model-free
+% weights at level one and two are allowed to differ. 
+%  
+% Quentin Huys, 2016 
 % www.quentinhuys.com/code.html 
 % www.quentinhuys.com/pub.html
 % qhuys@cantab.net
@@ -16,12 +13,11 @@ np = size(x,1);
 if nargout==2; dodiff=1; else; dodiff=0;end
 T = length(rewprob); 
 
-bmb  = exp(x(1));
-bmf  = exp(x(2));
-b2   = exp(x(3));
-al = 1./(1+exp(-x(4:5)));
-la = 1./(1+exp(-x(6)));
-rep = x(7)*eye(2);
+bmf  = exp(x(1));
+b2   = exp(x(2));
+al = 1./(1+exp(-x(3:4)));
+la = 1./(1+exp(-x(5)));
+rep = x(6)*eye(2);
 
 Q1 = zeros(2,1);
 Q2 = zeros(2,2);
@@ -31,13 +27,7 @@ bb=20;
 s(1,1:T) = 1;
 for t=1:T
 	
-	pqm = bb*Q2;
-	pqm = pqm-ones(2,1)*max(pqm);
-	pqm = exp(pqm);
-	pqm = pqm*diag(1./sum(pqm));
-	Qd = (sum(Q2.*pqm)*Tr)';
-
-	Qeff= bmb*Qd + bmf*Q1;
+	Qeff= bmf*Q1;
 	if t>1; Qeff = Qeff + rep(:,a(1,t-1)); end
 
 	lpa = Qeff;
@@ -60,7 +50,6 @@ for t=1:T
 
 	de1 = Q2(a(2,t),s(2,t))-Q1(a(1,t));
 	de2 = r(t) - Q2(a(2,t),s(2,t));
-
 
 	Q1(a(1,t)) = Q1(a(1,t)) + al(1)*(de1 + la*de2);
 	Q2(a(2,t),s(2,t))  = Q2(a(2,t),s(2,t))  + al(2)*de2;
