@@ -31,8 +31,6 @@ s = D.s;
 I0 = D.I0;
 I = D.I;
 
-if nargout==3; doqout=1; Q=zeros(2,length(a));else doqout=0;Q=[];end
-
 I0 = sum(I0,2)/2;
 
 dqade=zeros(2,1);
@@ -40,7 +38,6 @@ qa  = q0*I0;
 n=0;
 
 for t=1:length(a);
-	if doqout; Q(:,t) = qa; end
 	if ~isnan(a(t))
 
 	qe = g*I(:,s(t)) + c*qa;
