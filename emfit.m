@@ -95,7 +95,7 @@ fprintf('-----------------------------------------------------------------------
 fitparams.dx= 0.001; 									% step for finite differences
 fitparams.tol = 1e-8; 									% fminunc tolerance 
 fitparams.robust = 4; 									% restarts of each individual fit (at least 1)
-fprintf('performing %i restarts for every internal fminunc call',fitparams.robust);
+fprintf('performing %i restarts for every internal fminunc call\n',fitparams.robust);
 
 fstr=str2func(llfunc);									% prepare function string 
 Nsj = length(D); sjind=1:Nsj;							% number of subjects 
