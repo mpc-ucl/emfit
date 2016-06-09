@@ -1,4 +1,4 @@
-function [a,r,s,trans] = genm2b2alr(x,rewprob);
+function [a,r,s,trans] = genm3b2alr(x,Tr,trans,rewprob);
 %
 % Generate data from joint tree search and SARSA(lambda) model (fitted with
 % llm2b2alr.m) with separate learning rates and betas to two-step task, as in Daw

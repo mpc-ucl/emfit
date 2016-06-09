@@ -92,8 +92,11 @@ fprintf('parameters are stable. The error bars around the group mean \n');
 fprintf('are only correct for small models. \n')
 fprintf('---------------------------------------------------------------------------\n')
 
-dx= 0.001; 													% step for finite differences
-addpath('lib');											% add library files 
+fitparams.dx= 0.001; 									% step for finite differences
+fitparams.tol = 1e-8; 									% fminunc tolerance 
+fitparams.robust = 4; 									% restarts of each individual fit (at least 1)
+fprintf('performing %i restarts for every internal fminunc call',fitparams.robust);
+
 fstr=str2func(llfunc);									% prepare function string 
 Nsj = length(D); sjind=1:Nsj;							% number of subjects 
 
@@ -108,24 +111,26 @@ if nargin>5 & ~isempty(t{6}); dofull      = t{6}; else dofull = 1;       end;
 if nargin>6 & ~isempty(t{7}); savestr     = t{7}; else savestr = '';     end; 
 if nargin>7 & ~isempty(t{8}); loadstr     = t{8}; else loadstr = '';     end; 
 
-% checĸ strings for saving and loading 
-
 % deal with gradients being provided or not 
 if nograd; 													% assume gradients are supplied 
-	fminopt=optimset('display','off');
+	fminopt=optimset('display','off','TolFun',fitparams.tol);
+	%fminopt = optimoptions(@fminunc,'Display','off','TolFun',fitparams.tol);
 else 
-	fminopt=optimset('display','off','GradObj','on');
+	fminopt=optimset('display','off','GradObj','on','TolFun',fitparams.tol);
+	%fminopt = optimoptions(@fminunc,'Display','off','GradObj','on','TolFun',fitparams.tol);
 	if docheckgrad; 											% if they are, then can check them. 
-		fminopt=optimset('display','off','GradObj','on','DerivativeCheck','on');
+		fminopt=optimset('display','off','GradObj','on','DerivativeCheck','on','TolFun',fitparams.tol);
+		%fminopt = optimoptions(@fminunc,'Display','off','GradObj','on','DerivativeCheck','on','TolFun',fitparams.tol);
 	end
 end
 warning('off','MATLAB:mir_warning_maybe_uninitialized_temporary');
+%warning('off','optim:fminunc:WillRunDiffAlg');
 
 % check if regressors have been provided correctly 
 if Np~=length(reg); 
 	error('You must provide a regressor cell entry for each parameter.');
 elseif ~iscell(reg);
-	error('REG must be a cell strucure of length Np.');
+	error('REG must be a cell structure of length Np.');
 end
 
 % make regression matrices 
@@ -143,51 +148,81 @@ coeff_vec = Inf*ones(Npall,1);
 
 % load & continue previous fit or set up things for a new fit 
 try 																% Try continuing previous fit 
-	eval(['load ' loadstr ' E V alpha stats emit musj nui']);
+	eval(['load ' loadstr ' E V alpha emit fitparams musj nui stats ']);
+	nu = inv(nui);
 	fprintf('Loaded %s, continuing fit will save as %s\n',loadstr,savestr); 
 catch 															% else set things up for new fit 
 	alpha = zeros(Npall,1); 								% group regression coefficients 
 	for sj=1:Nsj
 		musj(:,sj) = Xreg(:,:,sj)*alpha; 				% individual subject means
 	end
-	nui = 0.01*eye(Np); nu = inv(nui);					% prior variance over all params 
-	E = zeros(Np,Nsj);										% individual subject parameter estimates
+	nui = 0.1*eye(Np); nu = inv(nui);					% prior variance over all params 
+	E = zeros(Np,Nsj) + sqrtm(nu)*randn(Np,Nsj);		% random initial individual subject parameter estimates
 	emit=0;stats.ex=-1;
-	fprintf('Starting new fit, will save as %s',savestr); 
+	fprintf('No old fit loaded, starting new fit, will save as %s',savestr); 
 end
+
+% check gradients - always with prior 
+if docheckgrad; checkgrad(func2str(fstr),randn(Np,1),.001,D(1),musj(:,1),nui,1), end
+
+% prepare for multiple restarts 
+sjind_rs = repmat(sjind,[fitparams.robust,1]) + repmat((0:fitparams.robust-1)'*Nsj,[1,Nsj]);
+sjind_rs = sjind_rs'; sjind_rs = sjind_rs(:)';
 
 %=====================================================================================
 fprintf('\nStarting EM estimation');
 	
 PLold= -Inf; nextbreak=0;
-while 1;emit=emit+1;
+while 1;emit=emit+1; t0=tic;
+
 	% E step...........................................................................
-	t0=tic;
-	if emit==1; doprior=0; else doprior=1; end	% start with ML estimates 
-	if docheckgrad; checkgrad(func2str(fstr),randn(Np,1),.001,D(1),musj(:,1),nui,doprior), end
-	parfor sk=sjind;
-		tt0=tic; ex=-1;tmp=0;
-		est=[]; hess=[]; fval=[];
-		while ex<doprior;
-			init=.1*randn(Np,1); 
-			[est,fval,ex,foo,foo,hess] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior),init,fminopt);
-			if ex<0 ; tmp=tmp+1; fprintf('didn''t converge %i times exit status %i\r',tmp,ex); end
+
+	% start with ML estimates & set things up for multiple restarts 
+	if emit==1; doprior=0; sjind_pf = sjind; else doprior=1; sjind_pf = sjind_rs; end	
+	% main loop over subjects 
+	parfor sj=sjind_pf; tt0=tic; 
+		sk = mod(sj-1,Nsj)+1; 							% current subject
+		rs = ceil(sj/Nsj);								% current restart for that subject 
+		est=[]; fval=[]; ex=-1; hess=[]; nfc=1; 
+		while 1 												% have to deal with poor convergence 
+			init = E(:,sk);
+			if rs>1 | nfc>1; init = init+E(:,sk) + nfc*.1*real(sqrtm(nu))*randn(Np,1); end % add noise for next attempt
+			[est(:,nfc),fval(nfc),ex(nfc),foo,foo,hess(:,:,nfc)] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior),init,fminopt);
+			if  any(ex(nfc)==[1:3]) | emit==1 | nfc==3; break;end
+			if ~any(ex(nfc)==[1:3]) ; fprintf('sj %i, rep %i convergence failure %i exit status %i\n',sk,rs,nfc,ex); end
+			nfc=nfc+1; 
 		end
-		E(:,sk) 		= est;								% Subjets' parameter estimate 
-		W(:,:,sk) 	= pinv(full(hess));				% covariance matrix around parameter estimate
-		V(:,sk) 		= diag(W(:,:,sk));				% diagonal undertainty around parameter estimate
-		PL(sk)  		= fval;								% posterior likelihood 
-		tt(sk) 		= toc(tt0); 
+		[foo,best] = min(fval);							% take fit that led to best function value among those that didn't converge
+		tE(:,sj)		= est(:,best);						% parameter estimates 
+		tW(:,:,sj) 	= pinv(full(hess(:,:,best)));	% covariance matrix around parameter estimate
+		tV(:,sj)		= diag(tW(:,:,sj));				% diagonal undertainty around parameter estimate
+		tPL(sj) 		= fval(best);						% posterior likelihood 
+		ttt(sj) 		= toc(tt0); 						% time info 
+		tEx(sj) 		= ex(best); 						% exit codes - for debugging
 	end
-	fprintf('\nEmit=%i PL=%.2f full loop=%.2gs one subj=%.2gs parfor speedup=%.2g',emit,sum(PL),toc(t0),mean(tt),mean(tt)*Nsj/toc(t0))
+	% choose best of restarts 
+	if emit==1; best = ones(1,Nsj); 					% for first (ML) iteration 
+	else;       [PL,best] = min(reshape(tPL',[Nsj fitparams.robust])');	% unwrap multiple restarts
+	end
+	for sj=1:Nsj; 
+		sk = sj+(best(sj)-1)*Nsj;						% take fit that led to best function value over the restarts
+		Ex(sj) 	= tEx(   sk);                    % parameter estimates 
+		E(:,sj)	= tE(:,  sk);                    % covariance matrix around parameter estimate
+		W(:,:,sj)= tW(:,:,sk);                    % diagonal undertainty around parameter estimate
+		V(:,sj)	= tV(:,  sk);                    % posterior likelihood 
+		PL(sj) 	= tPL(   sk);                    % time info 
+		tt(sj) 	= ttt(   sk);                    % exit codes - for debugging
+	end
+ 
+	fprintf('\nEMit=%i/%i PL=%.2f loop=%.2gs mean/subj=%.2gs longest=%.2gs parfor speedup=%.2g',emit,maxit,sum(PL),toc(t0),mean(tt),max(tt),mean(tt)*Nsj*fitparams.robust/toc(t0))
 	if emit==1; stats.EML = E;   stats.VML = V; end
 	if emit==2; stats.EMAP0 = E; stats.VMAP0 = V; end
 	if nextbreak==1; break;end
 
 	% M step...........................................................................
+
 	if emit> 1; 							% only update priors after first MAP iteration
 		while 1								% iterate over prior mean and covariance updates until convergence
-
 			% prior mean update - note prior mean is different for each subject if
 			% GLM is included 
 			alpha_old = alpha; 
@@ -197,7 +232,8 @@ while 1;emit=emit+1;
 				ah = ah + Xreg(:,:,sj)'*nui*E(:,sj); 
 				vh = vh + Xreg(:,:,sj)'*nui*Xreg(:,:,sj);
 			end
-			alpha = pinv(vh)*ah; 
+			%alpha = pinv(vh)*ah; 
+			alpha = vh\ah; 
 			for sj=1:Nsj
 				musj(:,sj) = Xreg(:,:,sj)*alpha; 
 			end
@@ -216,8 +252,7 @@ while 1;emit=emit+1;
 			else           ; nu = nunew;
 			end
 			nui = pinv(nu); 
-
-			if norm(alpha-alpha_old)<1e6; break;end 
+			if norm(alpha-alpha_old)<1e7; break;end 
 		end
 	end
 
@@ -229,11 +264,20 @@ while 1;emit=emit+1;
 	stats.diagnostics.sumPL(emit) = sum(PL); 
 	stats.diagnostics.mu(:,emit) = mean(musj,2); 
 	stats.diagnostics.nu(:,:,emit) = nu; 
-	if length(savestr)>0; eval(['save ' savestr ' E V alpha stats emit musj nui']);end
+	stats.diagnostics.exitcodes(:,emit) = Ex;
+	stats.diagnostics.E(:,:,emit) = E; 
+	stats.diagnostics.V(:,:,emit) = V; 
+	stats.diagnostics.W(:,:,emit) = W; 
+	if length(savestr)>0; eval(['save ' savestr ' E V alpha stats emit musj nui fitparams']);end
 end
 stats.PL = PL; 
 stats.subjectmeans= musj; 
 stats.groupvar= nu; 
+stats.alpha = alpha; 
+if emit>=3
+	stats.E_EMMAP = E; 
+	stats.V_EMMAP = V; 
+end
 
 %=====================================================================================
 fprintf('\nComputing individual subject BIC values');
@@ -253,6 +297,7 @@ if maxit<=2; return; end								% end here if only want ML or ML & MAP0
 %=====================================================================================
 fprintf('\n');
 
+dx = fitparams.dx;
 oo = ones(1,Nsample);
 LLi=zeros(Nsample,1);
 Hess = zeros(Npall,Npall,Nsj);
