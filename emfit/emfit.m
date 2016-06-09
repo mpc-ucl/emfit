@@ -265,7 +265,7 @@ while 1;emit=emit+1; t0=tic;
 	stats.diagnostics.mu(:,emit) = mean(musj,2); 
 	stats.diagnostics.nu(:,:,emit) = nu; 
 	stats.diagnostics.exitcodes(:,emit) = Ex;
-	stats.diagnostics.E(:,:,emit) = E; 
+	stats.diagnostics.E(:,emit) = E; 
 	stats.diagnostics.V(:,:,emit) = V; 
 	stats.diagnostics.W(:,:,emit) = W; 
 	if length(savestr)>0; eval(['save ' savestr ' E V alpha stats emit musj nui fitparams']);end
