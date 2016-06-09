@@ -159,7 +159,7 @@ catch 															% else set things up for new fit
 	nui = 0.1*eye(Np); nu = inv(nui);					% prior variance over all params 
 	E = zeros(Np,Nsj) + sqrtm(nu)*randn(Np,Nsj);		% random initial individual subject parameter estimates
 	emit=0;stats.ex=-1;
-	fprintf('No old fit loaded, starting new fit, will save as %s',savestr); 
+	fprintf('No old fit loaded, starting new fit, will save as %s\n',savestr); 
 end
 
 % check gradients - always with prior 
@@ -265,9 +265,9 @@ while 1;emit=emit+1; t0=tic;
 	stats.diagnostics.mu(:,emit) = mean(musj,2); 
 	stats.diagnostics.nu(:,:,emit) = nu; 
 	stats.diagnostics.exitcodes(:,emit) = Ex;
-	stats.diagnostics.E(:,emit) = E; 
+	stats.diagnostics.E(:,:,emit) = E; 
 	stats.diagnostics.V(:,:,emit) = V; 
-	stats.diagnostics.W(:,:,emit) = W; 
+	stats.diagnostics.W(:,:,:,emit) = W; 
 	if length(savestr)>0; eval(['save ' savestr ' E V alpha stats emit musj nui fitparams']);end
 end
 stats.PL = PL; 
