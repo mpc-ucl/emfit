@@ -94,7 +94,7 @@ fprintf('-----------------------------------------------------------------------
 
 fitparams.dx= 0.001; 									% step for finite differences
 fitparams.tol = 1e-8; 									% fminunc tolerance 
-fitparams.robust = 4; 									% restarts of each individual fit (at least 1)
+fitparams.robust = 3; 									% restarts of each individual fit (at least 1)
 fprintf('performing %i restarts for every internal fminunc call\n',fitparams.robust);
 
 fstr=str2func(llfunc);									% prepare function string 
@@ -159,7 +159,7 @@ catch 															% else set things up for new fit
 	nui = 0.1*eye(Np); nu = inv(nui);					% prior variance over all params 
 	E = zeros(Np,Nsj) + sqrtm(nu)*randn(Np,Nsj);		% random initial individual subject parameter estimates
 	emit=0;stats.ex=-1;
-	fprintf('No old fit loaded, starting new fit, will save as %s\n',savestr); 
+	fprintf('No old fit loaded, starting new fit');if ~isempty(savestr); fprintf(', will save as %s\n',savestr); end
 end
 
 % check gradients - always with prior 
