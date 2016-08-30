@@ -37,11 +37,14 @@ else;
 	dl=zeros(np,1);
 end
 
+% if second-level states are coded as '2' and '3' change to '1' and '2' 
+if any(D.S(2,:)==3); D.S(2,:) = D.S(2,:)-1; end
+
 bb=20;
 n=zeros(2);
 for t=1:length(D.A);
 	
-	s=D.S(1,t); sp=D.S(2,t)-1;
+	s=D.S(1,t); sp=D.S(2,t);
 	a=D.A(1,t); ap=D.A(2,t);
 	r=D.R(1,t);
 
