@@ -10,7 +10,7 @@
 
 clear all; 
 
-addpath('../emfit.m');
+addpath(genpath('../.'));
 
 NumParams = 2; 								% number of parmeters 
 NumSubj = 20; 									% number of subjects
@@ -47,8 +47,8 @@ for sj=1:NumSubj
 	mlest(:,sj) = fminunc(@(x)llrw2(x,Data(sj),zeros(NumParams,1),zeros(NumParams),0),randn(2,1));
 end
 clf; 
-	subplot(121); plot(Etrue(1,:),mlest(1,:),'o'); xlabel('True'); ylabel('ML estimate'); 
-	subplot(122); plot(Etrue(2,:),mlest(2,:),'o'); xlabel('True'); ylabel('ML estimate'); 
+	subplot(121); plot(Etrue(1,:),mlest(1,:),'o'); xlabel('True'); ylabel('ML estimate'); title('Parameter 1'); 
+	subplot(122); plot(Etrue(2,:),mlest(2,:),'o'); xlabel('True'); ylabel('ML estimate'); title('Parameter 2');
 
 %--------------------------------------------------------------
 % inference 
@@ -58,7 +58,7 @@ regressors = cell(NumParams,1); 			% set up regressor cell structure
 regressors{2} = reg;							% put our psychometric regressor into cell structure
 
 % now run the actual inference 
-[E,V,alpha,stats,bf,fitparams] = emfit('llrw2',Data,NumParams,regressors); 
+[E,V,alpha,stats,bf,fitparams] = emfit('llrw',Data,NumParams,regressors); 
 
 
 %--------------------------------------------------------------
