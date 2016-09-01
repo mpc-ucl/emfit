@@ -44,7 +44,7 @@ end
 
 % do ML fit 
 for sj=1:NumSubj
-	mlest(:,sj) = fminunc(@(x)llrw2(x,Data(sj),zeros(NumParams,1),zeros(NumParams),0),randn(2,1));
+	mlest(:,sj) = fminunc(@(x)llrw(x,Data(sj),zeros(NumParams,1),zeros(NumParams),0),randn(2,1));
 end
 clf; 
 	subplot(121); plot(Etrue(1,:),mlest(1,:),'o'); xlabel('True'); ylabel('ML estimate'); title('Parameter 1'); 
