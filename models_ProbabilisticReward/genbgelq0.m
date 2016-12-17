@@ -25,25 +25,29 @@ a = zeros(length(s),1);
 
 for t=1:length(s);
 
-	qe = b*(bl*q(:,s(t))+(1-bl)*q(:,3-s(t))) + g*Z.I(:,s(t));
-	pa = exp(qe);
-	sp = sum(pa);
-	if ~isinf(sp);
-		pa = pa/sp;
-	else
-		[foo,i]=max(qe);pa(i)=1;pa(3-i)=0;
+	if ~isnan(a(t)) & ~isnan(s(t))
+
+		qe = b*(bl*q(:,s(t))+(1-bl)*q(:,3-s(t))) + g*Z.I(:,s(t));
+		pa = exp(qe);
+		sp = sum(pa);
+		if ~isinf(sp);
+			pa = pa/sp;
+		else
+			[foo,i]=max(qe);pa(i)=1;pa(3-i)=0;
+		end
+
+		a(t) = sum(rand>cumsum([0 pa']));
+
+		if Z.I(a(t),s(t))
+			r(t) = rand<Z.prc(a(t));
+		else
+			r(t) = 0;
+		end
+
+
+		q(a(t),s(t))    = q(a(t),s(t)) + eps*( r(t)-q(a(t),s(t)) );
+	
 	end
-
-	a(t) = sum(rand>cumsum([0 pa']));
-
-	if Z.I(s(t),a(t))
-		r(t) = rand<Z.prc(a(t));
-	else
-		r(t) = 0;
-	end
-
-
-	q(a(t),s(t))    = q(a(t),s(t)) + eps*( r(t)-q(a(t),s(t)) );
 
 end
 

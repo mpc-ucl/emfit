@@ -1,4 +1,4 @@
-function [a,r] = genbgeq0(x,s,Z);
+function [a,r] = gen2bgeq0(x,s,Z);
 % 
 % Generate data from probabilistic reinforcement task (Pizzagalli et al. 2005
 % Biological Psychiatry) for model fitted by likelihood llbgeq0.m 
@@ -22,27 +22,31 @@ r = zeros(length(s),1);
 a = zeros(length(s),1);
 
 for t=1:length(a);
+	
+	if ~isnan(a(t)) & ~isnan(s(t))
 
-	er = b(2-r(t)) * (2*r(t)-1);
+		qe = q(:,s(t)) + g*Z.I(:,s(t));
+		pa = exp(qe);
+		sp = sum(pa);
+		if ~isinf(sp);
+			pa = pa/sp;
+		else
+			[foo,i]=max(qe);pa(i)=1;pa(3-i)=0;
+		end
 
-	qe = q(:,s(t)) + g*Z.I(:,s(t));
-	pa = exp(qe);
-	sp = sum(pa);
-	if ~isinf(sp);
-		pa = pa/sp;
-	else
-		[foo,i]=max(qe);pa(i)=1;pa(3-i)=0;
+		a(t) = sum(rand>cumsum([0 pa']));
+
+		if Z.I(a(t),s(t))
+			r(t) = rand<Z.prc(a(t));
+		else
+			r(t) = 0;
+		end
+
+		er = b(2-r(t)) * (2*r(t)-1);
+
+		q(a(t),s(t))    = q(a(t),s(t)) + eps*( er - q(a(t),s(t)) );
+	
 	end
-
-	a(t) = sum(rand>cumsum([0 pa']));
-
-	if Z.I(s(t),a(t))
-		r(t) = rand<Z.prc(a(t));
-	else
-		r(t) = 0;
-	end
-
-	q(a(t),s(t))    = q(a(t),s(t)) + eps*( er - q(a(t),s(t)) );
 
 end
 
