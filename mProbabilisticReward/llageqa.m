@@ -1,4 +1,4 @@
-function [l,dl] = llageqa(x,D,mu,nui,doprior);
+function [l,dl,dsurr] = llageqa(x,D,mu,nui,doprior,options);
 % 
 % Fit model to data from probabilistic reinforcement task (Pizzagalli et al. 2005
 % Biological Psychiatry). 
@@ -28,10 +28,14 @@ q0 = x(4);                 % initial bias
 a = D.a;
 r = D.r;
 s = D.s;
-I0 = D.I0;
 I = D.I;
+I0 = [1;0];
 
-I0 = sum(I0,2)/2;
+if options.generatesurrogatedata==1
+	a = zeros(size(a));
+	r = zeros(size(a));
+	dodiff=0;
+end
 
 dqade=zeros(2,1);
 qa  = q0*I0;
@@ -44,7 +48,12 @@ for t=1:length(a);
 	q0 = max(qe);
 	lpa = qe-q0 - log(sum(exp(qe-q0)));
 	pa = exp(lpa);
-	l = l + lpa(a(t));
+
+	if options.generatesurrogatedata==1
+		[a(t),r(t)] = generatera(pa',s(t),Z);
+	else
+		l = l + lpa(a(t));
+	end
 
 	if dodiff
 		dl(1) = dl(1) + c*(qa(a(t))        - pa'*qa);
@@ -57,10 +66,15 @@ for t=1:length(a);
 	end
 
 	qa(a(t))    = qa(a(t))             + epc*( r(t) - qa(a(t)) );
-	end
 
+	end
 end
 
 l = -l;
 dl = -dl;
+
+if options.generatesurrogatedata==1
+	dsurr.a = a; 
+	dsurr.r = r; 
+end
 

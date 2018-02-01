@@ -1,0 +1,18 @@
+Affective Go/Nogo task 
+
+The data for subject sj should be contained in D(sj) in the following format:
+this needs to contain the following fields:
+
+ Data(sj).a 		vector of choices
+ Data(sj).r 		vector of rewards (1) / non-rewards (0)
+ Data(sj).s 		vector of stimuli presented (1 or 2) 
+ Data(sj).bias		which stimulus generates more rewards 
+ Data(sj).prc		probability of reward when correctly identified for each of the two stimuli
+ Data(sj).I			instruction matrix: either eye(2) if action 1 is correct for
+						stimulus 1, or 1-eye(2) if action 2 is correct for stimulus 1
+ Data(sj).Nch 	= length(Data(sj).a);
+ Data(sj).id 		subject ID 
+
+An example file is contained in data/exampleProbabilisticReward.mat
+
+Quentin Huys, 2018 qhuys@cantab.net

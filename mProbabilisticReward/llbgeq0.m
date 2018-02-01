@@ -1,4 +1,4 @@
-function [l,dl] = llbgeq0(x,D,mu,nui,doprior);
+function [l,dl] = llbgeq0(x,D,mu,nui,doprior,options);
 % 
 % Fit model to data from probabilistic reinforcement task (Pizzagalli et al. 2005
 % Biological Psychiatry). 
@@ -21,16 +21,20 @@ eps = 1/(1+exp(-x(3)));    % learning rate
 q0 = x(4);                 % initial bias 
 
 % add Gaussian prior with mean mu and variance nui^-1 if doprior = 1 
-[lp,dlp] = logGaussianPrior(x,mu,nui,doprior);
+[l,dl] = logGaussianPrior(x,mu,nui,doprior);
 
 a = D.a;
 r = D.r;
 s = D.s;
-I0 = D.I0;
+I0 = [1 1; 0 0];
 I = D.I;
 
-l = 0;
-dl  =zeros(np,1);
+if options.generatesurrogatedata==1
+	a = zeros(size(a));
+	r = zeros(size(a));
+	dodiff=0;
+end
+
 dqde=zeros(2);
 q   = q0*I0; 
 n=zeros(1,2);
@@ -42,7 +46,12 @@ for t=1:length(a);
 	q0 = max(qe);
 	lpa = qe-q0 - log(sum(exp(qe-q0)));
 	pa = exp(lpa);
-	l = l + lpa(a(t));
+
+	if options.generatesurrogatedata==1
+		[a(t),r(t)] = generatera(pa',s(t),Z);
+	else
+		l = l + lpa(a(t));
+	end
 
 	if dodiff
 		dl(1) = dl(1) + b*(q(a(t),s(t)) - pa'*q(:,s(t)));
@@ -59,6 +68,11 @@ for t=1:length(a);
 	end
 end
 
-l = -l - sum(lp);
-dl = -dl-dlp;
+l = -l; 
+dl = -dl; 
+
+if options.generatesurrogatedata==1
+	dsurr.a = a; 
+	dsurr.r = r; 
+end
 

@@ -12,7 +12,8 @@ clear all;
 % see the dataformat.txt files in the model folders for instructions on how the
 % data contained Data should be formatted for fitting. 
 
-load data/exampleAffectiveGoNogoData; 
+%load data/exampleAffectiveGoNogoData; 
+load data/exampleProbabilisticReward;
 
 %--------------------------------------------------------------
 % 
@@ -23,8 +24,9 @@ load data/exampleAffectiveGoNogoData;
 % 	mProbabilisticReward
 % 	mTwostep
  
-modelClass = 'mAffectiveGoNogo';
-modelClass = 'mBasicRescorlaWagner';
+%modelClass = 'mAffectiveGoNogo';
+%modelClass = 'mBasicRescorlaWagner';
+modelClass = 'mProbabilisticReward';
 
 %--------------------------------------------------------------
 % add folder to path and load the models 
@@ -40,8 +42,9 @@ models=modelList;
 % models = models(whichinf);
 
 %--------------------------------------------------------------
-% batchModelFit(Data,modelClass,whichinf,checkgradients)
-batchModelFit(Data,models); 
+% batchModelFit(Data,modelClass,whichinf,options)
+options.checkgradients=0;
+batchModelFit(Data,models,options); 
 
 %--------------------------------------------------------------
 % perform model comparison 
