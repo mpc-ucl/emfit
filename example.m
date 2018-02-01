@@ -8,9 +8,11 @@
 %==============================================================
 
 clear all; 
-addpath(genpath('.'));
+addpath('lib'); 
 
-modelListBasicRescorlaWagner;				% load list of models. There is one such
+modelClass = 'mBasicRescorlaWagner';
+addpath(genpath(modelClass));
+models=modelList; 							% load list of models. There is one such
 													% list in each folder for each set of models
 try 
 	pool = parpool(4) ; 						% try opening matlabpool to speed things up 
@@ -21,24 +23,27 @@ end
 %--------------------------------------------------------------
 
 NumSubj = 20; 									% number of subjects
-T = 60; 											% number of choices per subject 
+T = 120; 											% number of choices per subject 
 
 reg = randn(1,NumSubj); 							% random psychometric regressor 
 Etrue(1,:) = randn(1,NumSubj) + 1;			% parameter 1: mean 1, var 1 
 Etrue(2,:) = randn(1,NumSubj) - 1 + reg;	% parameter 2: mean -1, correlated with regressor
 
 % generate actual data 
+options.generatesurrogatedata=1; 
 for sk=1:NumSubj
-	[a,r] = llrw(Etrue(:,sk),T);
-	Data(sk).A = a; 
-	Data(sk).R = r;
+	D(sk).a = zeros(T,1); % just to set the length of the data simulations 
+	[foo,foo,dsurr] = llrw(Etrue(:,sk),D(sk),0,0,0,options);
+	Data(sk).a = dsurr.a; 
+	Data(sk).r = dsurr.r;
 	Data(sk).Nch = T; 
-	AA(sk,:) = a; 
+	AA(sk,:) = dsurr.a; 
 end
 
 % do standard basic ML fit 
+options.generatesurrogatedata=0; 
 for sj=1:NumSubj
-	mlest(:,sj) = fminunc(@(x)llrw(x,Data(sj),zeros(NumParams,1),zeros(NumParams),0),randn(2,1));
+	mlest(:,sj) = fminunc(@(x)llrw(x,Data(sj),zeros(2,1),zeros(2),0,options),randn(2,1));
 end
 
 clf; 
@@ -49,11 +54,11 @@ clf;
 % EM inference 
 %--------------------------------------------------------------
 
-regressors = cell(NumParams,1); 			% set up regressor cell structure 
+regressors = cell(2,1); 			% set up regressor cell structure 
 regressors{2} = reg;							% put our psychometric regressor into cell structure
 
 % now run the actual inference 
-[E,V,alpha,stats,bf,fitparams] = emfit('llrw',Data,NumParams,regressors); 
+[E,V,alpha,stats,bf,fitparams] = emfit('llrw',Data,2,regressors); 
 
 
 %--------------------------------------------------------------

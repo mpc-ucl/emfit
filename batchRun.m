@@ -24,6 +24,7 @@ load data/exampleAffectiveGoNogoData;
 % 	mTwostep
  
 modelClass = 'mAffectiveGoNogo';
+modelClass = 'mBasicRescorlaWagner';
 
 %--------------------------------------------------------------
 % add folder to path and load the models 
@@ -35,8 +36,8 @@ models=modelList;
 
 %--------------------------------------------------------------
 % select models to actually fit and run 
-whichinf = [1 4 7]; %
-models = models(whichinf);
+% whichinf = [1 4 7]; %
+% models = models(whichinf);
 
 %--------------------------------------------------------------
 % batchModelFit(Data,modelClass,whichinf,checkgradients)

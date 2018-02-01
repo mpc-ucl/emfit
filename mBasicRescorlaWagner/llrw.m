@@ -1,6 +1,6 @@
-function [l,dl,dsurr] = llrw(x,D,musj,nui,doprior,options);
+function [l,dl,dsurr] = llrw(x,D,mu,nui,doprior,options);
 % 
-% function [l,dl,a,r] = llrw(x,D,musj,nui,doprior,options);
+% function [l,dl,a,r] = llrw(x,D,mu,nui,doprior,options);
 % 
 % Likelihood function for simple Rescorla-Wagner Q learning model. It computes
 % the probabilities of actions 
@@ -24,6 +24,8 @@ np = length(x);
 beta 		= exp(x(1));				% sensitivity to reward          
 alfa 		= 1./(1+exp(-x(2)));		% learning rate
 
+if ~exist('options'); options.generatesurrogatedata=0;end
+
 % add Gaussian prior with mean mu and variance nui^-1 if doprior = 1 
 [l,dl] = logGaussianPrior(x,mu,nui,doprior);
 
@@ -35,8 +37,8 @@ dQde = zeros(2,1);
 
 if options.generatesurrogatedata==1
 	dodiff=0;	% don't compute gradients 
-	a = zeros(size(a));
-	r = zeros(size(a));
+	a = zeros(size(D.a));
+	r = zeros(size(D.a));
 else 	% extract data needed here from D 
 	a = D.a; 
 	r = D.r; 
@@ -51,7 +53,7 @@ for t=1:length(a)
 	pa = exp(la);
 
 	if options.generatesurrogatedata==1
-		[a(t),r(t)] = generatera(pa',s(t));	 	% generate an action 
+		[a(t),r(t)] = generatera(pa',t);	 	% generate an action and reward 
 	else
 		l = l + la(a(t));								% accumulate likelihood 
 	end
@@ -63,12 +65,12 @@ for t=1:length(a)
 		dl(1) = dl(1) + dQdb(a(t)) - pa'*dQdb;
 		dl(2) = dl(2) + dQde(a(t)) - pa'*dQde;
 
-		dQdb(a(t)) = (1-eps)*dQdb(a(t)) + eps*er;
-		dQde(a(t)) = (1-eps)*dQde(a(t)) + eps*(1-eps)*(er-Q(a(t)));
+		dQdb(a(t)) = (1-alfa)*dQdb(a(t)) + alfa*er;
+		dQde(a(t)) = (1-alfa)*dQde(a(t)) + alfa*(1-alfa)*(er-Q(a(t)));
 	end
 
 	% update Q values 
-	Q(a(t)) = Q(a(t)) + eps * (er - Q(a(t)));  
+	Q(a(t)) = Q(a(t)) + alfa * (er - Q(a(t)));  
 
 end
 
