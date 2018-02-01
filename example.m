@@ -1,33 +1,27 @@
 % Example script to perform EM inference 
 % 
-% The script generates some data from a simple Rescorla-Wagner model, and then
-% fits the data. 
+% This is a very basic example script that generates some data from a simple
+% Rescorla-Wagner model, and then fits the data. 
 % 
-% Quentin Huys, 2015 
-% qhuys@cantab.net
+% Quentin Huys, 2018 qhuys@cantab.net
 % 
 %==============================================================
 
 clear all; 
+addpath(genpath('.'));
 
-addpath(genpath('../.'));
-
-NumParams = 2; 								% number of parmeters 
-NumSubj = 20; 									% number of subjects
-T = 60; 											% number of choices per subject 
-
+modelListBasicRescorlaWagner;				% load list of models. There is one such
+													% list in each folder for each set of models
 try 
-	ver = version; 
-	if str2num(ver(1:3)>8.3);
-		pool = parpool(4) ; 						% try opening matlabpool to speed things up 
-	else
-		pool = matlabpool(4);
-	end
+	pool = parpool(4) ; 						% try opening matlabpool to speed things up 
 end
 
 %--------------------------------------------------------------
 % generate some surrogate data 
 %--------------------------------------------------------------
+
+NumSubj = 20; 									% number of subjects
+T = 60; 											% number of choices per subject 
 
 reg = randn(1,NumSubj); 							% random psychometric regressor 
 Etrue(1,:) = randn(1,NumSubj) + 1;			% parameter 1: mean 1, var 1 
@@ -35,23 +29,24 @@ Etrue(2,:) = randn(1,NumSubj) - 1 + reg;	% parameter 2: mean -1, correlated with
 
 % generate actual data 
 for sk=1:NumSubj
-	[a,r] = genrw(Etrue(:,sk),T);
+	[a,r] = llrw(Etrue(:,sk),T);
 	Data(sk).A = a; 
 	Data(sk).R = r;
 	Data(sk).Nch = T; 
 	AA(sk,:) = a; 
 end
 
-% do ML fit 
+% do standard basic ML fit 
 for sj=1:NumSubj
 	mlest(:,sj) = fminunc(@(x)llrw(x,Data(sj),zeros(NumParams,1),zeros(NumParams),0),randn(2,1));
 end
+
 clf; 
 	subplot(121); plot(Etrue(1,:),mlest(1,:),'o'); xlabel('True'); ylabel('ML estimate'); title('Parameter 1'); 
 	subplot(122); plot(Etrue(2,:),mlest(2,:),'o'); xlabel('True'); ylabel('ML estimate'); title('Parameter 2');
 
 %--------------------------------------------------------------
-% inference 
+% EM inference 
 %--------------------------------------------------------------
 
 regressors = cell(NumParams,1); 			% set up regressor cell structure 

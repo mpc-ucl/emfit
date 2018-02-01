@@ -10,7 +10,7 @@ function [E,V,alpha,stats,bf,fitparams] = emfit(llfunc,D,Np,varargin);
 % LLFUNC	- this is a string that points to a likelihood function of choices (a
 % model). The function must have the form: 
 %
-%    [l,dl] = llfunc(x,D,musj,nui,doprior);
+%    [l,dl] = llfunc(x,D,musj,nui,doprior,llopt);
 % 
 % where x are the parameters, D(sj) is the data for subject sj. MUSJ(:,sj) is
 % the prior mean parameter for subject sj. If no regressors (see below) are
@@ -111,12 +111,15 @@ if nargin>5 & ~isempty(t{6}); dofull      = t{6}; else dofull = 1;       end;
 if nargin>6 & ~isempty(t{7}); savestr     = t{7}; else savestr = '';     end; 
 if nargin>7 & ~isempty(t{8}); loadstr     = t{8}; else loadstr = '';     end; 
 
+% never simulate surrogate data while fitting: 
+llopt.generatesurrogatedata=0;
+
 % deal with gradients being provided or not 
 if nograd; 													% assume gradients are supplied 
 	fminopt=optimset('display','off','TolFun',fitparams.tol);
 	%fminopt = optimoptions(@fminunc,'Display','off','TolFun',fitparams.tol);
 else 
-	fminopt=optimset('display','off','GradObj','on','TolFun',fitparams.tol);
+	fminopt=optimset('display','off','GradObj','on','TolFun',fitparams.tol,'algorithm','trust-region');
 	%fminopt = optimoptions(@fminunc,'Display','off','GradObj','on','TolFun',fitparams.tol);
 	if docheckgrad; 											% if they are, then can check them. 
 		fminopt=optimset('display','off','GradObj','on','DerivativeCheck','on','TolFun',fitparams.tol);
@@ -163,7 +166,7 @@ catch 															% else set things up for new fit
 end
 
 % check gradients - always with prior 
-if docheckgrad; checkgrad(func2str(fstr),randn(Np,1),.001,D(1),musj(:,1),nui,1), end
+if docheckgrad; checkgrad(func2str(fstr),randn(Np,1),.001,D(1),musj(:,1),nui,1,llopt), return; end
 
 % prepare for multiple restarts 
 sjind_rs = repmat(sjind,[fitparams.robust,1]) + repmat((0:fitparams.robust-1)'*Nsj,[1,Nsj]);
@@ -179,6 +182,9 @@ while 1;emit=emit+1; t0=tic;
 
 	% start with ML estimates & set things up for multiple restarts 
 	if emit==1; doprior=0; sjind_pf = sjind; else doprior=1; sjind_pf = sjind_rs; end	
+	if emit==2; 
+		E = zeros(Np,Nsj) + sqrtm(nu)*randn(Np,Nsj);		% random initial individual subject parameter estimates
+	end
 	% main loop over subjects 
 	parfor sj=sjind_pf; tt0=tic; 
 		sk = mod(sj-1,Nsj)+1; 							% current subject
@@ -187,7 +193,7 @@ while 1;emit=emit+1; t0=tic;
 		while 1 												% have to deal with poor convergence 
 			init = E(:,sk);
 			if rs>1 | nfc>1; init = init+E(:,sk) + nfc*.1*real(sqrtm(nu))*randn(Np,1); end % add noise for next attempt
-			[est(:,nfc),fval(nfc),ex(nfc),foo,foo,hess(:,:,nfc)] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior),init,fminopt);
+			[est(:,nfc),fval(nfc),ex(nfc),foo,foo,hess(:,:,nfc)] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior,llopt),init,fminopt);
 			if  any(ex(nfc)==[1:3]) | emit==1 | nfc==3; break;end
 			if ~any(ex(nfc)==[1:3]) ; fprintf('sj %i, rep %i convergence failure %i exit status %i\n',sk,rs,nfc,ex); end
 			nfc=nfc+1; 
@@ -288,7 +294,7 @@ if ~isfield(D,'Nch');
 end
 
 for sk=sjind
-	stats.LL(sk)  = fstr(E(:,sk),D(sk),musj(:,sk),nui,0);
+	stats.LL(sk)  = fstr(E(:,sk),D(sk),musj(:,sk),nui,0,llopt);
 	bf.bic(sk) =  -2*stats.LL(sk)   + Np*log(D(sk).Nch);
 end
 	
@@ -308,7 +314,7 @@ for sk=sjind;
 	muo = musj(:,sk)*oo; 
 	es = sqrtm(nu)*randn(Np,Nsample)+muo; 
 	parfor k=1:Nsample;
-		LLi(k) = fstr(es(:,k),D(sk),musj(:,sk),nui,0); 
+		LLi(k) = fstr(es(:,k),D(sk),musj(:,sk),nui,0,llopt); 
 	end
 	lpk0 = max(-LLi);
 	pk0 = exp(-LLi-lpk0);
@@ -406,6 +412,6 @@ if length(savestr)>0;
 	eval(['save ' savestr ' E V alpha stats emit musj nui bf fitparams']);
 end
 	
-fprintf('\nDone ')
+fprintf('\nDone\n******************\n ')
 return 
 
