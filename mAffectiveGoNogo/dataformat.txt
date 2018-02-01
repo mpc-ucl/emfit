@@ -1,0 +1,18 @@
+Affective Go/Nogo task 
+
+The data for subject sj should be contained in D(sj) in the following format:
+this needs to contain the following fields:
+
+ Data(sj).a 		vector of choices, 1 is go, 2 nogo 
+ Data(sj).r 		vector of rewards (1), losses (-1), nothing (0)
+ Data(sj).s 		vector of stimuli presented
+						1 = go to win 
+						2 = nogo to win 
+						3 = go to avoid loss
+						4 = nogo to avoid loss 
+ Data(sj).id 		subject ID 
+ Data(sj).Nch 	= length(Data(sj).a);
+
+An example file is contained in data/exampleAffectiveGoNogoData.mat
+
+Quentin Huys, 2018 qhuys@cantab.net
