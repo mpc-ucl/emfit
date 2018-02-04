@@ -16,7 +16,7 @@ clear all;
 % 	mTwostep
 %  mPruning 
 
-modelClassToFit = 2; 
+modelClassToFit = 4; 
  
 modelClass{1} = 'mBasicRescorlaWagner';
 modelClass{2} = 'mAffectiveGoNogo';
@@ -35,8 +35,8 @@ models=modelList;
 
 %--------------------------------------------------------------
 % select models to actually fit and run 
-% whichinf = [1]; %
-% models = models(whichinf);
+whichinf = [2]; %
+models = models(whichinf);
 
 %--------------------------------------------------------------
 % load data 
