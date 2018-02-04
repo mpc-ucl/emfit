@@ -1,4 +1,8 @@
-Affective Go/Nogo task 
+Probabilistic reward task. 
+
+Mapping anhedonia onto reinforcement learning. A behavioural meta-analysis.
+Huys QJM, Pizzagalli DA, Bogdan R and Dayan P
+Biology of Mood & Anxiety Disorders (2013) 3:12 
 
 The data for subject sj should be contained in D(sj) in the following format:
 this needs to contain the following fields:

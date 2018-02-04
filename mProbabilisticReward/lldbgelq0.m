@@ -1,4 +1,4 @@
-function [l,dl] = lldbgelq0(x,D,mu,nui,doprior,options);
+function [l,dl,dsurr] = lldbgelq0(x,D,mu,nui,doprior,options);
 % 
 % Fit model to data from probabilistic reinforcement task (Pizzagalli et al. 2005
 % Biological Psychiatry). 
@@ -37,8 +37,8 @@ I0 = [1 1; 0 0];
 I = D.I;
 
 if options.generatesurrogatedata==1
-	a = zeros(size(a));
-	r = zeros(size(a));
+	a = NaN*zeros(size(a));
+	r = NaN*zeros(size(a));
 	dodiff=0;
 end
 
@@ -56,7 +56,7 @@ for t=1:length(a);
 	pa = exp(lpa);
 
 	if options.generatesurrogatedata==1
-		[a(t),r(t)] = generatera(pa',s(t),Z);
+		[a(t),r(t)] = generatera(pa,s(t),D.prc,D.I);
 	else
 		l = l + lpa(a(t));
 	end

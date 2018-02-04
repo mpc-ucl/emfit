@@ -1,11 +1,13 @@
-function [a,r] = generatera(pa,s,Z);
+function [a,r] = generatera(pa,s,prc,I);
 
-error('This isn''t properly implemented yet - and differs between different versions of the task, so be careful!');
-
+if isnan(s)
+	a = NaN;
+	r = NaN;
+else
 	a = sum(rand>cumsum([0 pa']));
-
-	if Z.I(a,s)
-		r = rand<Z.prc(a);
+	if I(a,s)
+		r = rand<prc(a);
 	else
 		r = 0;
 	end
+end

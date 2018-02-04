@@ -45,7 +45,7 @@ model(i).name = 'llbgeq0';
 model(i).npar = 4;
 model(i).parnames = {'\beta','\gamma','\alpha','q_0'};
 model(i).parnames_untr = {'log \beta','log \gamma','siginv \alpha','q_0'};
-model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)'};
+model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)x'};
 
 i=i+1; 
 model(i).descr = 'Stimulus-action Rescorla-Wagner model with separate sensitivities for reward and non-reward events. This allows for the possibility taht subjects treat non-rewards as actual punishments. This assumes individuals correctly assign the rewards to particular stimulus-action combinations. It has five parameters: a reward learning rate (\alpha), two reward sensitivitites (\beta_reward and \beta_punishment), an instruction sensitivity (\gamma) and an initial action bias q_0.';
@@ -53,7 +53,7 @@ model(i).name = 'll2bgeq0';
 model(i).npar = 5;
 model(i).parnames = {'\beta_{rew}','\beta_{pun}','\gamma','\alpha','q_0'};
 model(i).parnames_untr = {'log \beta_{rew}','log \beta_{pun}','log \gamma','siginv \alpha','q_0'};
-model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)'};
+model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)x'};
 
 i=i+1; 
 model(i).descr = 'Action only model. This assumes individuals only learn about the value of each action, independent of the stimuli. It has four parameters: a reward learning rate (\alpha) and sensitivity (\beta), an instruction sensitivity (\gamma) and an initial action bias q_0. Note that although this model superficially has the same parameters as the model llbgeq0, the meaning of these parameters is different.';
@@ -61,7 +61,7 @@ model(i).name = 'llageqa';
 model(i).npar = 4;
 model(i).parnames = {'\beta','\gamma','\alpha','q_a'};
 model(i).parnames_untr = {'log \beta','log \gamma','siginv \alpha','q_a'};
-model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)'};
+model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)x'};
 
 i=i+1; 
 model(i).descr = 'Belief model. As subjects are unsure about the presented stimulus, the might assign rewards to both stimuli, with only a certain preference for the actually presented stimulus. The model has five parameters: a reward learning rate (\alpha), a reward sensitivity \beta, a belief bl, an instruction sensitivity \gamma and an initial action bias q_0.';
@@ -69,7 +69,7 @@ model(i).name = 'llbgelq0';
 model(i).npar = 5;
 model(i).parnames = {'\beta','\gamma','\alpha','bl','q_0'};
 model(i).parnames_untr = {'log \beta','log \gamma','siginv bl','siginv \alpha','q_0'};
-model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)'};
+model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)x'};
 
 i=i+1; 
 model(i).descr = 'Belief model with counterfactual updates. As subjects are unsure about the presented stimulus, the might assign rewards to both stimuli, with only a certain preference for the actually presented stimulus. It additionally performs counterfactual updates. The model has five parameters: a reward learning rate (\alpha), a reward sensitivity \beta, a belief bl, an instruction sensitivity \gamma and an initial action bias q_0.';
@@ -77,7 +77,7 @@ model(i).name = 'lldbgelq0';
 model(i).npar = 5;
 model(i).parnames = {'\beta','\gamma','\alpha','bl','q_0'};
 model(i).parnames_untr = {'log \beta','log \gamma','siginv bl','siginv \alpha','q_0'};
-model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)'};
+model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)x'};
 
 
 nModls = i; 

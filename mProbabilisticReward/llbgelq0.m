@@ -33,8 +33,8 @@ s = D.s;
 I = D.I;
 
 if options.generatesurrogatedata==1
-	a = zeros(size(a));
-	r = zeros(size(a));
+	a = NaN*zeros(size(a));
+	r = NaN*zeros(size(a));
 	dodiff=0;
 end
 
@@ -51,7 +51,7 @@ for t=1:length(a);
 	pa = exp(lpa);
 
 	if options.generatesurrogatedata==1
-		[a(t),r(t)] = generatera(pa',s(t),Z);
+		[a(t),r(t)] = generatera(pa,s(t),D.prc,D.I);
 	else
 		l = l + lpa(a(t));
 	end
