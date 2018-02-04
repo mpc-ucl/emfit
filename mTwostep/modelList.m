@@ -58,7 +58,7 @@ model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)x'}
 
 i=i+1; 
 model(i).descr = 'Reparametrized mixture of model-based and model-free SARSA(lambda) model with sticky repetition factor and separate learning rates for the two levels. Here, MF and MB values have separate betas, but there is no weight w';
-model(i).name = 'llbmfbmb2alr';			
+model(i).name = 'll2bmfbmb2alr';			
 model(i).npar = 7;
 model(i).parnames = {'\beta_{MB}','\beta_{MF1}','\beta_{MF2}','\alpha_{1}','\alpha_{2}','\lambda','r'};
 model(i).parnames_untr = {'log \beta_{MB}','log \beta_{MF1}','log \beta_{MF2}','siginv \alpha_1','siginv \alpha_2','siginv \lambda','r'};
@@ -88,6 +88,13 @@ model(i).parnames = {'\beta_{MF1}','\beta_{MF2}','\alpha_{1}','\alpha_{2}','\lam
 model(i).parnames_untr = {'log \beta_{MF1}','log \beta_{MF2}','siginv \alpha_1','siginv \alpha_2','siginv \lambda','r'};
 model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)x'};
 
+i=i+1; 
+model(i).descr = 'Reparametrized mixture of model-based and model-free SARSA(lambda) model with sticky repetition factor and separate learning rates for the two levels. Here, MF and MB values have separate betas, but there is no weight w. This model additionally contains counterfactional updates in the MF system at level 2 only. ';
+model(i).name = 'llbmfbmb2alcr';			
+model(i).npar = 7;
+model(i).parnames = {'\beta_{MB}','\beta_{MF1}','\beta_{MF2}','\alpha_{1}','\alpha_{2}^{cfct}','\lambda','r'};
+model(i).parnames_untr = {'log \beta_{MB}','log \beta_{MF1}','log \beta_{MF2}','siginv \alpha_1','siginv \alpha_2^{cfct}','siginv \lambda','r'};
+model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)x'};
 
 
 nModls = i; 

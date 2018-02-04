@@ -1,11 +1,13 @@
-function [l,dl,dsurr] = llbmfbmb2alr(x,D,mu,nui,doprior,options);
+function [l,dl,dsurr] = llbmfbmb2alcr(x,D,mu,nui,doprior,options);
 % 
-% [l,dl,dsurr] = llbmfbmb2alr(x,D,mu,nui,doprior,options);
+% [l,dl,dsurr] = llbmfbmb2alcr(x,D,mu,nui,doprior,options);
 %
 % Joint model-based tree search and model-free SARSA(lambda) model with separate
 % learning rates and betas to two-step task. This is a reparametrisation of the
 % original model which has two separate betas, one for the MF system, and for
-% the MB system, but no weight w. 
+% the MB system, but no weight w. There is a sticky repetition factor and
+% separate learning rates for the two levels. This model additionally contains
+% counterfactional updates in the MF system both at level 2 only. 
 % 
 % X are the parameters for which to evaluate the likelihood D contains the data
 % (see dataformat.txt or generate some data using generateExampleDataset.m).  MU
@@ -18,6 +20,7 @@ function [l,dl,dsurr] = llbmfbmb2alr(x,D,mu,nui,doprior,options);
 
 np = size(x,1);
 if nargout==2; dodiff=1; else; dodiff=0;end
+
 
 bmb  = exp(x(1));
 bmf  = exp(x(2));
@@ -53,6 +56,7 @@ if any(D.S(2,:)==3); D.S(2,:) = D.S(2,:)-1; end
 bb=20;
 n=zeros(2);
 for t=1:length(D.A);
+
 	
 	s=D.S(1,t); sp=D.S(2,t);
 	a=D.A(1,t); ap=D.A(2,t);
@@ -99,7 +103,7 @@ for t=1:length(D.A);
 
 		de1 = Q2(ap,sp)-Q1(a);
 		de2 = r - Q2(ap,sp);
-
+		de2c = (1-r) - Q2(3-ap,sp);
 
 		if dodiff
 			dl(1) = dl(1) + bmb*(Qd(a) - pa'*Qd);
@@ -117,7 +121,7 @@ for t=1:length(D.A);
 			dQ1da2(a) = dQ1da2(a) + al(1)*(dQ2da2(ap,sp)-dQ1da2(a) + la*-dQ2da2(ap,sp));
 			dQdda2 = ( sum(pqm.* (dQ2da2 + bb*Q2.*(dQ2da2 - ones(2,1)*sum(pqm.*dQ2da2)))) * Tr )';
 			dQ2da2(ap,sp) = dQ2da2(ap,sp) + al(2)*(1-al(2))*de2 + al(2)*-dQ2da2(ap,sp);
-
+			dQ2da2(3-ap,sp) = dQ2da2(3-ap,sp) + al(2)*(1-al(2))*de2c + al(2)*-dQ2da2(3-ap,sp);
 
 			% grad wrt la
 			dQ1dl(a) = dQ1dl(a) + al(1)*la*(1-la)*de2+ al(1)*-dQ1dl(a);
@@ -134,6 +138,7 @@ for t=1:length(D.A);
 
 		Q1(a)     = Q1(a)     + al(1)*(de1 + la*de2);
 		Q2(ap,sp) = Q2(ap,sp) + al(2)*de2;
+		Q2(3-ap,sp) = Q2(3-ap,sp) + al(2)*de2c;
 
 		n(sp,a) = n(sp,a)+1;
 		a1old = a; 

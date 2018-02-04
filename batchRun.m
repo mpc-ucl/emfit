@@ -14,29 +14,23 @@ clear all;
 % 	mBasicRescorlaWagner
 % 	mProbabilisticReward
 % 	mTwostep
+%  mPruning 
+
+modelClassToFit = 2; 
  
-%modelClass = 'mAffectiveGoNogo';
-%modelClass = 'mBasicRescorlaWagner';
-%modelClass = 'mProbabilisticReward';
-modelClass = 'mTwostep';
-
-%--------------------------------------------------------------
-% load data 
-% 
-% see the dataformat.txt files in the model folders for instructions on how the
-% data contained Data should be formatted for fitting. 
-
-%load data/exampleAffectiveGoNogoData; 
-%load data/exampleProbabilisticReward;
-%load data/exampleTwostep;
-Data=generateExampleDataset(30); 
+modelClass{1} = 'mBasicRescorlaWagner';
+modelClass{2} = 'mAffectiveGoNogo';
+modelClass{3} = 'mProbabilisticReward';
+modelClass{4} = 'mTwostep';	% plots... 
+% modelClass{5} = 'mPruning';
+% modelClass{6} = 'mEffort';
+cleanpath(modelClass);
 
 %--------------------------------------------------------------
 % add folder to path and load the models 
  
-% cd /Users/qhuys/git/emfittoolbox/	% cd to emfit folder 
 addpath('lib'); 
-addpath(genpath(modelClass));
+addpath(genpath(modelClass{modelClassToFit}));
 models=modelList; 
 
 %--------------------------------------------------------------
@@ -45,13 +39,23 @@ models=modelList;
 % models = models(whichinf);
 
 %--------------------------------------------------------------
+% load data 
+% 
+% see the dataformat.txt files in the model folders for instructions on how the
+% data contained Data should be formatted for fitting. For demo purposes, we can
+% also generate some example surrogate data: 
+
+Data=generateExampleDataset(30); 
+
+%--------------------------------------------------------------
 % batchModelFit(Data,modelClass,whichinf,options)
-options.checkgradients=1;
+options.checkgradients = 1;			% check gradients of models? 
+options.bsub = 0; 						% submit to bsub? 
 batchModelFit(Data,models,options); 
 
 %--------------------------------------------------------------
 % perform model comparison 
-%bestmodel = batchModelComparison(Data,models);
+% bestmodel = batchModelComparison(Data,models);
 
 %--------------------------------------------------------------
 % generate surrogate data 
@@ -59,7 +63,6 @@ batchModelFit(Data,models,options);
 
 %--------------------------------------------------------------
 % plot surrogate data (specific to model)
-bestmodel=4;
 load fitResults/SurrogateData; 
 surrogateDataPlots(Data,models,SurrogateData,bestmodel)
 

@@ -1,0 +1,20 @@
+Two-step task 
+
+The data for subject sj should be contained in Data(sj) in the format containing
+the following fields:
+
+ Data(sj).ID 			subject ID 
+ Data(sj).A 			matrix of choices (1 or 2) of size 2xT
+ Data(sj).R 			1xT vector of rewards (1), or non-rewards (0)
+ Data(sj).S 			1xT vector of states
+ 							Data(sj).S(1,:) is always 1
+							Data(sj).S(2,:) is 1 or 2 
+ Data(sj).trans		1xT vector with 1 being frequent, 0 rare transition 
+ Data(sj).rewprob		2x2xT array with reward probabilities for the four outcome
+						 	states on each trial 
+ Data(sj).Nch 	= length(Data(sj).a);
+
+An example file is can be generated with generateExampleDataset.m in the folder
+mTwostep. 
+
+Quentin Huys, 2018 qhuys@cantab.net

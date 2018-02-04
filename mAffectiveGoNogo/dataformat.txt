@@ -13,6 +13,11 @@ this needs to contain the following fields:
  Data(sj).id 		subject ID 
  Data(sj).Nch 	= length(Data(sj).a);
 
-An example file is contained in data/exampleAffectiveGoNogoData.mat
+An example file is can be generated with generateExampleDataset.m in the folder
+mTwostep. 
+
+See also: Guitart-Masip M, Huys QJM, Fuentemilla L, Dayan P, Duezel E and Dolan
+RJ (2012): Go and nogo learning in reward and punishment: Interactions between
+affect and effect.  Neuroimage 62(1):154-66 
 
 Quentin Huys, 2018 qhuys@cantab.net
