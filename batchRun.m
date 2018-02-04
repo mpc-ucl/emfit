@@ -7,15 +7,6 @@
 clear all; 
 
 %--------------------------------------------------------------
-% load data 
-% 
-% see the dataformat.txt files in the model folders for instructions on how the
-% data contained Data should be formatted for fitting. 
-
-%load data/exampleAffectiveGoNogoData; 
-load data/exampleProbabilisticReward;
-
-%--------------------------------------------------------------
 % 
 % MODELCLASS can take on values
 % 
@@ -26,7 +17,19 @@ load data/exampleProbabilisticReward;
  
 %modelClass = 'mAffectiveGoNogo';
 %modelClass = 'mBasicRescorlaWagner';
-modelClass = 'mProbabilisticReward';
+%modelClass = 'mProbabilisticReward';
+modelClass = 'mTwostep';
+
+%--------------------------------------------------------------
+% load data 
+% 
+% see the dataformat.txt files in the model folders for instructions on how the
+% data contained Data should be formatted for fitting. 
+
+%load data/exampleAffectiveGoNogoData; 
+%load data/exampleProbabilisticReward;
+%load data/exampleTwostep;
+Data=generateExampleDataset(30); 
 
 %--------------------------------------------------------------
 % add folder to path and load the models 
@@ -38,24 +41,25 @@ models=modelList;
 
 %--------------------------------------------------------------
 % select models to actually fit and run 
-% whichinf = [1 4 7]; %
+% whichinf = [1]; %
 % models = models(whichinf);
 
 %--------------------------------------------------------------
 % batchModelFit(Data,modelClass,whichinf,options)
-options.checkgradients=0;
+options.checkgradients=1;
 batchModelFit(Data,models,options); 
 
 %--------------------------------------------------------------
 % perform model comparison 
-bestmodel = batchModelComparison(Data,models);
+%bestmodel = batchModelComparison(Data,models);
 
 %--------------------------------------------------------------
 % generate surrogate data 
-batchGenerateSurrogateData(Data,models);
+% batchGenerateSurrogateData(Data,models);
 
 %--------------------------------------------------------------
 % plot surrogate data (specific to model)
+bestmodel=4;
 load fitResults/SurrogateData; 
 surrogateDataPlots(Data,models,SurrogateData,bestmodel)
 
