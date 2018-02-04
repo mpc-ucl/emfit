@@ -162,7 +162,7 @@ catch 															% else set things up for new fit
 	nui = 0.1*eye(Np); nu = inv(nui);					% prior variance over all params 
 	E = zeros(Np,Nsj) + sqrtm(nu)*randn(Np,Nsj);		% random initial individual subject parameter estimates
 	emit=0;stats.ex=-1;
-	fprintf('No old fit loaded, starting new fit');if ~isempty(savestr); fprintf(', will save as %s\n',savestr); end
+	fprintf('No old fit loaded, starting new fit');if ~isempty(savestr); fprintf(', will save as %s\n',savestr); else fprintf('\n');end
 end
 
 % check gradients - always with prior 
