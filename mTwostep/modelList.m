@@ -8,7 +8,7 @@ function model = modelList;
 % list the models to run here. The models must be defined as likelihood functions in
 % the models folder. They must have the form: 
 % 
-%    [l,asurr] = ll(parameters,dataToFit,PriorMean,PriorInverseCovariance,doPrior,otherOptions)
+%    [l,dl,dsurr] = ll(parameters,dataToFit,PriorMean,PriorInverseCovariance,doPrior,otherOptions)
 % 
 % where otherOptions.generatesurrogatedata is a binary flag defining whether to apply the prior, and
 % doGenerate is a flag defining whether surrogate data (output in asurr) is
