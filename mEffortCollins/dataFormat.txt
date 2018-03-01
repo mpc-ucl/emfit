@@ -1,0 +1,27 @@
+Effort task 
+
+The data for subject sj should be contained in Data(sj) in the format containing
+the following fields:
+
+
+ Data(sj).ID 					subject ID 
+ Data(sj).Nch     			number of valid choices by this subject 
+
+ Data(sj).a 					Nchx1 vector of chioces 
+                              1 = low rew/low effort, 2 = high rew/high effort
+ Data(sj).rew 					Nchx1 vector of rewards for high reward option 
+                              (low reward option is always 1) 
+
+ Data(sj).EffortcostLo		effort associated with low effort option 
+                              (action 1) - default = -1 (NB: should be negative)
+ Data(sj).EffortcostHi		effort associated with action high effort option 
+                              (action 2) - default = -0.2 (NB: should be negative)
+
+ Data(sj).decisiontime  	Nchx1 vector times to first button press
+ Data(sj).inputtime			Nchx1 vector of durations of input 
+                              (last - first button press time)
+
+An example file is can be generated with generateExampleDataset.m in the folder
+mTwostep. 
+
+Quentin Huys, 2018 qhuys@cantab.net

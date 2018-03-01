@@ -220,9 +220,37 @@ end
 	end
 	myfig(gcf,'figs/Parameters');
 
-%catch 
-%	fprintf('No fits for model %s found, no parameters plotted \n',models(bestmodel).name);
-%end
+%--------------------------------------------------------------------
+% try plotting parameters against true values if ran on generated data
+%--------------------------------------------------------------------
+
+if isfield(Data,'trueModel');
+	nfig=nfig+1; 
+	figure(nfig);clf;
+	parTrue = [Data.trueParam];
+	parFitEM = R.(Data(1).trueModel).E;
+	parFitML = R.(Data(1).trueModel).stats.EML;
+
+	truemodelid = find(strcmp({models.name},Data(1).trueModel));
+
+	npar = size(parTrue,1);
+
+	for k=1:npar
+		subplot(1,npar,k)
+		plot(parTrue(k,:),parFitEM(k,:),'b+','markersize',20);
+		hon
+		plot(parTrue(k,:),parFitML(k,:),'k.','markersize',20);
+		hof
+		xlabel('True Param Value');
+		if k==1; ylabel('inferred param value');end
+		if k==1; legend({'EM-MAP','ML'},'location','northwest');end
+		title(models(truemodelid).parnames_untr(k));
+		set(gca,'fontsize',14);
+		mytightaxes
+	end
+
+	myfig(gcf,'figs/SurrogateDataParameterRecovery');
+end
 
 
 

@@ -9,34 +9,28 @@
 clear all; 
 
 %------------------------------------------------------------------------------
-% 
-% MODELCLASS can take on values
-% 
-% 	mAffectiveGoNogo
-% 	mBasicRescorlaWagner
-% 	mProbabilisticReward
-% 	mTwostep
-%  mPruning 
-
-modelClassToFit = 2; 
+% model class - define which type of model to fit 
+ 
+modelClassToFit = 1; 
  
 modelClass{1} = 'mBasicRescorlaWagner';
 modelClass{2} = 'mAffectiveGoNogo';
 modelClass{3} = 'mProbabilisticReward';
 modelClass{4} = 'mTwostep';
-modelClass{5} = 'mPruning';	 % old format, doesn't work with batch yet 
-cleanpath(modelClass);
+modelClass{5} = 'mEffortCollins';	 
+modelClass{6} = 'mPruning';	 % old format, doesn't work with batch yet 
 
 %------------------------------------------------------------------------------
 % add folder to path and load the models 
  
 addpath('lib'); 
+cleanpath(modelClass);
 addpath(genpath(modelClass{modelClassToFit}));
 models=modelList; 
 
 %------------------------------------------------------------------------------
 % select models to actually fit and run 
-% whichinf = [1:3]; %
+% whichinf = [1:2]; %
 % models = models(whichinf);
 
 %------------------------------------------------------------------------------
@@ -60,7 +54,7 @@ bestmodel = batchModelComparison(Data,models);
 
 %------------------------------------------------------------------------------
 % generate surrogate data 
-options.nSamples=10;
+options.nSamples=100;
 batchGenerateSurrogateData(Data,models,options);
 
 %------------------------------------------------------------------------------
