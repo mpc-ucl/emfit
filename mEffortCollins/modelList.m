@@ -5,24 +5,28 @@ function model = modelList;
 % 
 % GENERAL INFO: 
 % 
-% list the models to run here. The models must be defined as likelihood functions in
-% the models folder. They must have the form: 
+% list the models to run here. The models must be defined as likelihood
+% functions in the models folder. They must have the form: 
 % 
-%    [l,dl,dsurr] = ll(parameters,dataToFit,PriorMean,PriorInverseCovariance,doPrior,otherOptions)
+%    [l,dl,dsurr] =
+%    ll(parameters,dataToFit,PriorMean,PriorInverseCovariance,doPrior,otherOptions)
 % 
-% where otherOptions.generatesurrogatedata is a binary flag defining whether to apply the prior, and
-% doGenerate is a flag defining whether surrogate data (output in asurr) is
-% generated. 
+% where otherOptions.generatesurrogatedata is a binary flag defining whether to
+% apply the prior, and doGenerate is a flag defining whether surrogate data
+% (output in asurr) is generated. 
 % 
-% name: names of model likelihood function in folder models
-% npar: number of paramters for each 
-% parnames: names of parameters for plotting
-% partransform: what to do to the (transformed) parameter estimates to transform them into the
+% name: names of model likelihood function in folder models npar: number of
+% paramters for each parnames: names of parameters for plotting partransform:
+% what to do to the (transformed) parameter estimates to transform them into the
 % parameters
 %  
 % SPECIFIC INFO: 
 % 
-% This contain models for the effort task by Anne Collins. 
+% This contain models for the effort task by Gold, J. M.; Strauss, G. P.; Waltz,
+% J. A.; Robinson, B. M.; Brown, J. K. & Frank, M. J. Negative symptoms of
+% schizophrenia are associated with abnormal effort-cost computations. Biol
+% Psychiatry, 2013, 74, 130-136
+% 
 % 
 % Quentin Huys 2018 qhuys@cantab.net
 

@@ -2,8 +2,10 @@ function Data=generateExampleDataset(Nsj)
 % 
 % Data = generateExampleDataset(Nsj)
 % 
-% Generate example dataset containing Nsj subjects for effort task using the
-% standard model. 
+% Generate example dataset containing Nsj subjects for effort task by Gold, J.
+% M.; Strauss, G. P.; Waltz, J.  A.; Robinson, B. M.; Brown, J. K. & Frank, M.
+% J. Negative symptoms of schizophrenia are associated with abnormal effort-cost
+% computations. Biol Psychiatry, 2013, 74, 130-136
 % 
 % Quentin Huys 2018 www.quentinhuys.com 
 
@@ -12,7 +14,8 @@ fprintf('Generating example dataset for effort task\n')
 
 options.generatesurrogatedata=1; 
 
-load TrialSeq.mat; 
+load TrialSeq.mat; 	% this is the fixed sequence of reward options presented in
+							% the task. 
 
 T = 60; 
 for sj=1:Nsj; 

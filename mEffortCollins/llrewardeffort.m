@@ -2,14 +2,15 @@ function [l,dl,dsurr] = llreweffscaling(x,D,mu,nui,doprior,options)
 % 
 % [l,dl,dsurr] = llreweffscaling(x,D,mu,nui,doprior,options)
 % 
-% Fit model to data from effort task by Anne Collins. 
+% Fit model to data from effort task by Gold, J. M.; Strauss, G. P.; Waltz, J.
+% A.; Robinson, B. M.; Brown, J. K. & Frank, M. J. Negative symptoms of
+% schizophrenia are associated with abnormal effort-cost computations. Biol
+% Psychiatry, 2013, 74, 130-136
 % 
-% This is the most basic model which assumes participants entirely disregard the
-% reward information and only focus on the effort. It contains one parameter
-% theta measuring the effort sensitivity. 
+% This is the standard model which assumes participants weigh both rewards and
+% effort in their choices. It fits a weight for the rewards and the efforts. 
 % 
-% Quentin Huys 2018
-% www.quentinhuys.com 
+% Quentin Huys 2018 www.quentinhuys.com 
 
 np = length(x);
 dodiff= nargout==2;

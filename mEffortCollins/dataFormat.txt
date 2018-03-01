@@ -1,5 +1,11 @@
 Effort task 
 
+As per: 
+
+Gold, J. M.; Strauss, G. P.; Waltz, J. A.; Robinson, B. M.; Brown, J. K. &
+Frank, M. J. Negative symptoms of schizophrenia are associated with abnormal
+effort-cost computations. Biol Psychiatry, 2013, 74, 130-136
+
 The data for subject sj should be contained in Data(sj) in the format containing
 the following fields:
 
