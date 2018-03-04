@@ -1,24 +1,37 @@
-function [D] = extractValidTrials(D)
+function [D] = extractValidTrials(Din)
 
-dmax = 6; 
+% find out maximal depth 
+dmax=0;
+for sj=1:length(Din);
+	dmax = max(dmax,size(Din(sj).choices,2));
+end
+Z.dmax = dmax; 
 
-sk=0;
-for sj=1:length(D);sk=sk+1;
+% precompute matrices for rapid inference 
+% NB: assumes standard experimental setup 
+Z = precomputeParams(Z);
+
+for sj=1:length(Din);
+	D(sj).choices = Din(sj).choices;
+	D(sj).states  = Din(sj).states;
+	D(sj).rewards = Din(sj).rewards;
+
 	a = D(sj).choices;
 	s = D(sj).states;
 	r = D(sj).rewards;
+
+	D(sj).depths = sum(a~=0,2);
     
-    d = zeros(length(r),6);
-    for j=1:length(d);
-        d(j,1:D(sj).depths(j)) = [D(sj).depths(j):-1:1];
-    end
-    
+   d = zeros(length(r),6);
+   for j=1:length(d);
+       d(j,1:D(sj).depths(j)) = [D(sj).depths(j):-1:1];
+   end
 
 	% exclude no response trials 
 	i = (sum(a,2)>0) & ~(r(:,1)==-200);
-    D(sj).i = [1:length(a)];
-    D(sj).nTotal = length(a);
-    D(sj).i = D(sj).i(i);
+   D(sj).i = [1:length(a)];
+   D(sj).nTotal = length(a);
+   D(sj).i = D(sj).i(i);
 
 	a = a(i,:);
 	s = s(i,:);
@@ -45,21 +58,14 @@ for sj=1:length(D);sk=sk+1;
 	D(sj).sn = sn;
 	D(sj).dn = dn;
 
-    try
-        D(sj).feedback = subj.feedback(i);
-    catch
-        D(sj).feedback = zeros(length(a));
-    end
 	D(sj).Nch=length(an);
     
-    % add transition matrix
-    transitions = zeros(size(a));
-    for ai = 1:length(a);
-       transitions(ai,1:d(ai)) = s(ai,1:d(ai)) * 2 + a(ai,1:d(ai)) - 2;
-    end
-    D(sj).transitions = transitions;
-    
-    % additional info
-    D(sj).nTrials = size(D(sj).a,1);
+   % add transition matrix
+   transitions = zeros(size(a));
+   for ai = 1:length(a);
+      transitions(ai,1:d(ai)) = s(ai,1:d(ai)) * 2 + a(ai,1:d(ai)) - 2;
+   end
+   D(sj).transitions = transitions;
+	D(sj).Z = Z; 
 end
 

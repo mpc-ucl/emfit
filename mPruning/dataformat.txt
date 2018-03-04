@@ -1,0 +1,43 @@
+Pruning task 
+
+The data for subject sj should be contained in D(sj) in the following format:
+
+ Data(sj).ID 		subject ID 
+ Data(sj).Nch 	= length(Data(sj).a);
+
+ Data(sj).choices 	dmax x nTotal matrix of choices, 
+                     the sequence of choices on trial i in row i 
+ Data(sj).rewards 	dmax x nTotal matrix of rewards 
+                     the sequence of rewards on trial i in row i 
+ Data(sj).states 		dmax+1 x nTotal matrix of states 
+                     the sequence of states on trial i in row i 
+ Data(sj).depths		nTotal x 1 vector of depths 
+
+
+where dmax is the maximum depth of plans (e.g. 6) and nTotal is the total number
+of trials subject sj was presented with.  The matrices contain 0 as fillers for
+sequences shorter than dmax such that Data(sj).depths = sum(Data(sj).choices~=0,2);
+
+Providing the above to the function EXTRACTVALIDTRIALS.m will add the following,
+which is required for the scripts to run: 
+
+ Data(sj).i				Nch x 1 vector of valid trials 
+ Data(sj).nTotal		total number of choices
+ Data(sj).Nch			number of valid trials 
+ Data(sj).a				Nch x dmax matrix of valid choices
+ Data(sj).s				Nch x dmax+1 matrix of valid states visited
+ Data(sj).r				Nch x dmax matrix of valid rewards earned 
+ Data(sj).d				Nch x dmax matrix of choices remaining 
+ Data(sj).ri			Nch x dmax matrix of reward identities
+ Data(sj).an			Nch x 1 vector of action sequence identities 
+ Data(sj).sn			Nch x 1 vector of starting states 
+ Data(sj).dn			Nch x 1 vector of depths 
+ Data(sj).transitions Nch x dmax vector of transition identities 
+
+An example file can be generated with generateExampleDataset.m. 
+
+See also: The neural basis of aversive Pavlovian guidance during planning Lally*
+N, Huys* QJM, Eshel N, Faulkner P, Dayan P and Roiser JP J. Neurosci. (2017)
+37(42):10215-10229 https://quentinhuys.com/pub/LallyEa17-PruningfMRI.pdf
+
+Quentin Huys, 2018 qhuys@cantab.net

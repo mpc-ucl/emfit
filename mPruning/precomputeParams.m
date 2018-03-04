@@ -1,6 +1,7 @@
-function [Z] = precomputeParams;
+function [Z] = precomputeParams(Z);
 
-Z.dmax=6;
+fprintf('standard reward/transition matrix setup assumed!\n');
+
 R_matrix = [140 20; -20 -70; -70 -20; 20 -20; -70 -20; 20 -20];
 T_matrix = [2  4;   3   5;   6   4;  2   5;   1   6;  3   1]; 
 trans_matrix = [1 2; 3 4; 5 6; 7 8; 9 10; 11 12]; 

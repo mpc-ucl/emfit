@@ -46,8 +46,9 @@ for t=1:length(a)
 
 	if options.generatesurrogatedata==1
 		[a(t),r(t)] = generatera(pa',s(t));
+	else
+		l = l + la(a(t));
 	end
-	l = l + la(a(t));
 
 	er = beta * r(t);
 

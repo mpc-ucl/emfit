@@ -36,7 +36,5 @@ for sj=1:Nsj;
 
 end
 
-
-
-
-
+fprintf('Saved example dataset as Data.mat');
+save Data.mat Data; 

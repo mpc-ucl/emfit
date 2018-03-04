@@ -10,7 +10,7 @@ this needs to contain the following fields:
 						2 = nogo to win 
 						3 = go to avoid loss
 						4 = nogo to avoid loss 
- Data(sj).id 		subject ID 
+ Data(sj).ID 		subject ID 
  Data(sj).Nch 	= length(Data(sj).a);
 
 An example file is can be generated with generateExampleDataset.m in the folder
