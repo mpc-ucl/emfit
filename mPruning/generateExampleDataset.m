@@ -48,6 +48,10 @@ for sj=1:Nsj;
 end
 
 Data = extractValidTrials(D);
+for sj=1:Nsj
+	Data(sj).trueParam = trueParam(:,sj);
+	Data(sj).trueModel='llsrho2p';
+end
 
 fprintf('Saved example dataset as Data.mat');
 save Data.mat Data; 

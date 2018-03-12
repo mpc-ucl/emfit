@@ -4,56 +4,8 @@ nModls = length(models);
 Nsj = length(Data);
 
 nfig=0; 
-
 mkdir figs 
 
-%--------------------------------------------------------------------
-% plot parameters of best model 
-%--------------------------------------------------------------------
-
-nfig=nfig+1; figure(nfig);clf;
-for mdl=1:nModls
-	R.(models(mdl).name) = load(sprintf('fitResults/%s',models(mdl).name));
-end
-
-for j=1:3
-
-	if j==1
-		% posterior parameters 
-		par = R.(models(bestmodel).name).E;	
-		yl = models(bestmodel).parnames_untr;
-		yl{1} = {'EM-MAP',yl{1}};
-	elseif j==2
-		% transformed posterior parameters 
-		R = modelConvertParams(R,models);	
-		par = R.(models(bestmodel).name).parConvert;
-		yl = models(bestmodel).parnames;
-		yl{1} = {'EM-MAP',yl{1}};
-	elseif j==3
-		% lightly regularized ML parameters - closest to the data
-		par = R.(models(bestmodel).name).stats.EMAP0; 
-		npar= models(bestmodel).npar;
-		yl = models(bestmodel).parnames_untr;
-		yl{1} = {'MAP',yl{1}};
-	end
-
-	npar = size(par,1);
-	m = mean(par,2);
-	s = std(par,[],2)/sqrt(Nsj);
-
-	for k=1:npar
-		subplot(3,npar,k+(j-1)*npar)
-		mybar(m(k),.7);
-		hon
-		plot(linspace(0.7,1.3,Nsj),par(k,:),'k.');
-		mydeb(0,m(k),s(k));
-		hof
-		set(gca,'xtick',[]);
-		ylabel(yl{k});
-	end
-
-end
-myfig(gcf,'figs/Parameters');
 
 %--------------------------------------------------------------------
 % stage 1 repetition probabilities 

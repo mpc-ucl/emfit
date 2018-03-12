@@ -64,7 +64,7 @@ model(i).name = 'llsrho';
 model(i).npar = 4;
 model(i).parnames = {'\rho_{-70}','\rho_{-20}','\rho_{20}','\rho_{140}'};
 model(i).parnames_untr = {'log \rho_{-70}','log \rho_{-20}','log \rho_{20}','log \rho_{140}'};
-model(i).partransform = {'@(x)','@(x)','@(x)','@(x)'};
+model(i).partransform = {'@(x)x','@(x)x','@(x)x','@(x)x'};
 
 i=i+1; 
 model(i).descr = 'Discount model but fitting separate reward sensitivities to separate outcomes. ';
@@ -72,7 +72,7 @@ model(i).name = 'llsrhop';
 model(i).npar = 5;
 model(i).parnames = {'\rho_{-70}','\rho_{-20}','\rho_{20}','\rho_{140}','\gamma'};
 model(i).parnames_untr = {'\rho_{-70}','\rho_{-20}','\rho_{20}','\rho_{140}','siginv \gamma'};
-model(i).partransform = {'@(x)','@(x)','@(x)','@(x)','@(x)1./(1+exp(-x))'};
+model(i).partransform = {'@(x)x','@(x)x','@(x)x','@(x)x','@(x)1./(1+exp(-x))'};
 
 i=i+1; 
 model(i).descr = 'Pruning model discounting decision-tree separately after large losses and other outcomes, and fitting separate reward sensitivities to separate outcomes. ';
@@ -80,7 +80,7 @@ model(i).name = 'llsrho2p';
 model(i).npar = 6;
 model(i).parnames = {'\rho_{-70}','\rho_{-20}','\rho_{20}','\rho_{140}','\gamma_G','\gamma_S'};
 model(i).parnames_untr = {'\rho_{-70}','\rho_{-20}','\rho_{20}','\rho_{140}','siginv \gamma_G','siginv \gamma_S'};
-model(i).partransform = {'@(x)','@(x)','@(x)','@(x)','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))'};
+model(i).partransform = {'@(x)x','@(x)x','@(x)x','@(x)x','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))'};
 
 nModls = i; 
 fprintf('%i models in model list\n',i);

@@ -29,6 +29,7 @@ for sj=1:Nsj;
 	[foo,foo,dsurr] = llrw(Data(sj).trueParam,Data(sj),0,0,0,options); 
 	Data(sj).a = dsurr.a;
 	Data(sj).r = dsurr.r;
+	Data(sj).trueModel='llrw';
 
 end
 

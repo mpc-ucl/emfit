@@ -33,6 +33,7 @@ for sj=1:Nsj;
 	[foo,foo,dsurr] = llbgelq0(Data(sj).trueParam,Data(sj),0,0,0,options); 
 	Data(sj).a = dsurr.a;
 	Data(sj).r = dsurr.r;
+	Data(sj).trueModel='llbgelq0';
 
 end
 

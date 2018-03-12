@@ -35,6 +35,7 @@ for sj=1:Nsj;
 	Data(sj).A = dsurr.A;
 	Data(sj).S = dsurr.S;
 	Data(sj).R = dsurr.R;
+	Data(sj).trueModel='llm2b2alr';
 
 end
 

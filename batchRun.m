@@ -44,9 +44,10 @@ models=modelList; 										% get complete model list
 
 %------------------------------------------------------------------------------
 % fit models using emfit.m
-options.checkgradients = 0;			% check gradients of models? 
-options.bsub = 0; 						% submit to bsub? - in progress 
-batchModelFit(Data,models,options); 
+options.checkgradients = 0;							% check gradients of models? 
+options.bsub = 0; 										% submit to bsub? - in progress 
+batchModelFit(Data,models,options); 				% perform the fitting
+batchParameterPlots(Data,models,bestmodel);		% plot parameters 
 
 %------------------------------------------------------------------------------
 % perform model comparison 
@@ -58,7 +59,7 @@ options.nSamples=100;
 batchGenerateSurrogateData(Data,models,options);
 
 %------------------------------------------------------------------------------
-% plot surrogate data (specific to model)
+% plot surrogate data, compare with real data (specific to model)
 load fitResults/SurrogateData; 
 surrogateDataPlots(Data,models,SurrogateData,bestmodel)
 
