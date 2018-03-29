@@ -1,17 +1,34 @@
-%==============================================================================
+function batchRunEMfit(modelClassToFit,pathToData);
 % 
-% Perform batch EM inference 
+% batchRunEMfit(modelClassToFit,pathToData);
+% 
+% Performs batch EM inference by first fitting a set of models from each model
+% class, plotting the inferred parameters, performing iBIC model comparison,
+% generating surrogate data and performing some visual comparisons of the true
+% and surrogate data. 
+%
+% MODELCLASSTOFIT determines which model sets are fitted: 
+% 
+% 1: 'mBasicRescorlaWagner';			% basic Rescorla-Wagner example 
+% 2: 'mAffectiveGoNogo';				% Guitart et al. 2012 
+% 3: 'mProbabilisticReward';			% Huys et al., 2013 
+% 4: 'mTwostep';							% Daw et al., 2011 
+% 5: 'mEffortCollins';	 				% Gold et al., 2013 
+% 6: 'mPruning'; 						   % Lally et al., 2017 
+% 
+% PATHTODATA is the path to the data .mat file. The required data format is
+% contained in the dataformat.txt files in each mXXX model folder. 
 % 
 % Quentin Huys, 2018 qhuys@cantab.net
 % 
 %==============================================================================
 
-clear all; 
+% clear all; 
 
 %------------------------------------------------------------------------------
 % MODEL CLASS - define which type of model to fit 
  
-modelClassToFit = 6; 	% choose one of the classes below 
+% modelClassToFit = 6; 	% choose one of the classes below 
  
 modelClass{1} = 'mBasicRescorlaWagner';			% basic example 
 modelClass{2} = 'mAffectiveGoNogo';					% Guitart et al. 2012 
@@ -27,9 +44,13 @@ modelClass{6} = 'mPruning'; 							% Lally et al., 2017
 % data contained Data should be formatted for fitting. For demo purposes, we can
 % also generate some example surrogate data: 
 
-generateExampleDataset(30); 			% only if you don't have your own data! 
-load Data; 
-
+if exist('pathToData');
+	Data = eval(['load ' pathToData]);
+	% checkDataFormat; % to be written 
+else
+	fprintf('No data provided so generating example dataset\n');
+	generateExampleDataset(30); 			
+end
 
 %==============================================================================
 % everything below here should just run without alterations 
