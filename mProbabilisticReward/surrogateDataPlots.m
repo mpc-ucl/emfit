@@ -1,4 +1,4 @@
-function surrogateDataPlots(Data,models,SurrogateData,bestmodel)
+function surrogateDataPlots(Data,models,SurrogateData,bestmodel,fitResults)
 
 nModls = length(models);
 Nsj = length(Data);

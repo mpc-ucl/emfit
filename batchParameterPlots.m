@@ -1,4 +1,4 @@
-function batchParameterPlots(Data,models,bestmodel)
+function batchParameterPlots(Data,models,resultsDir,bestmodel)
 
 nModls = length(models);
 Nsj = length(Data);
@@ -12,7 +12,7 @@ mkdir figs
 
 nfig=nfig+1; figure(nfig);clf;
 for mdl=1:nModls
-	R.(models(mdl).name) = load(sprintf('fitResults/%s',models(mdl).name));
+	R.(models(mdl).name) = load(sprintf('%s/%s',resultsDir,models(mdl).name));
 end
 
 for j=1:3
@@ -52,6 +52,7 @@ for j=1:3
 	end
 
 end
+mkdir resultsDir/figs 
 myfig(gcf,'figs/Parameters');
 
 %--------------------------------------------------------------------

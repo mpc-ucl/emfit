@@ -1,4 +1,4 @@
-function surrogateDataPlots(Data,models,SurrogateData,bestmodel)
+function surrogateDataPlots(Data,models,SurrogateData,bestmodel,fitResults)
 
 nModls = length(models);
 Nsj = length(Data);
@@ -73,5 +73,5 @@ le = {models.name};
 le = {'Data',le{:}};
 legend(le,'location','best'); 
 
-myfig(gcf,'figs/SurrogateDataPlots');
+myfig(gcf,sprintf('%s/figs/SurrogateDataPlots',fitResults));
 

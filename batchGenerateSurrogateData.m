@@ -19,7 +19,7 @@ for mdl = 1:nModls
 
 	% load EM-MAP parameters 
 	try 
-		R.(models(mdl).name) = load(sprintf('fitResults/%s',models(mdl).name));
+		R.(models(mdl).name) = load(sprintf('%s/%s',opt.resultsDir,models(mdl).name));
 		par = R.(models(mdl).name).E; 
 	catch 
 		fprintf('No fits for model %s found, not surrogate data generated\n',models(mdl).name);
@@ -40,7 +40,7 @@ for mdl = 1:nModls
 		end
 		SurrogateData(sj).(models(mdl).name) = dsurr; 
 	end
-	save fitResults/SurrogateData.mat R SurrogateData; 
+	save([opt.resultsDir '/SurrogateData.mat'],'R', 'SurrogateData');
 	fprintf('\n')
 end
 

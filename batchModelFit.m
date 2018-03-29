@@ -39,7 +39,7 @@ end
 for mdl = 1:length(models)
 	fprintf('Performing EM fit %s.m model \n',models(mdl).name);
 	regressors = cell(models(mdl).npar,1); 		% set up empty regressor cell structure 
-	savestr = sprintf('fitResults/%s',models(mdl).name);
+	savestr = sprintf('%s/%s',opt.resultsDir,models(mdl).name);
 	if ~opt.bsub
 		[params,var,alpha,stats,bf,fitparams] = emfit(models(mdl).name,Data,models(mdl).npar,[],[],[],[],[],[],savestr); 
 	else

@@ -1,4 +1,4 @@
-function bestmodel = batchModelComparison(Data,models);
+function bestmodel = batchModelComparison(Data,models,resultsDir);
 
 nModls = length(models);
 Nsj = length(Data);
@@ -9,7 +9,7 @@ Nsj = length(Data);
 
 for k=1:nModls
 	try 
-		loadstr = sprintf('fitResults/%s',models(k).name);
+		loadstr = sprintf('%s/%s',resultsDir,models(k).name);
 		fprintf('loading model %i %s',k,loadstr);
 		R.(models(k).name) = load(loadstr);
 		PL(k,:) = R.(models(k).name).stats.PL;
@@ -61,14 +61,14 @@ subplot(122)
 	xlabel('\Delta iBIC score (right: #params)')
 labelplots(2,'out')
 
-mkdir figs 
-myfig(gcf,'figs/ModelComparison');
+mkdir([resultsDir '/figs']);
+myfig(gcf,sprintf('%s/figs/ModelComparison',resultsDir));
 
 %--------------------------------------------------------------------
 % output as latex table 
 %--------------------------------------------------------------------
 fprintf('Outputting model comparison data as latex table\n');
-fid = fopen('fitResults/modelComparison.tex','w');
+fid = fopen(sprintf('%s/modelComparison.tex',resultsDir),'w');
 fprintf(fid,'model name & \\# params & iBIC & Description');
 for k=1:nModls
 	try 

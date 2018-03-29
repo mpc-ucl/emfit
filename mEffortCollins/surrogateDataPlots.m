@@ -1,4 +1,4 @@
-function surrogateDataPlots(Data,models,SurrogateData,bestmodel); 
+function surrogateDataPlots(Data,models,SurrogateData,bestmodel,fitResults); 
 
 nModls = length(models);
 Nsj = length(Data);
@@ -46,5 +46,4 @@ nfig=nfig+1; figure(nfig);clf;
 	h = legend({'Data',models.name},'location','best');
 	mytightaxes; 
 
-myfig(gcf,'figs/SurrogateDataComparison');
-
+myfig(gcf,sprintf('%s/figs/SurrogateDataPlots',fitResults));
