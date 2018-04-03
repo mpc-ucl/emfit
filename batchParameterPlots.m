@@ -52,7 +52,7 @@ for j=1:3
 	end
 
 end
-mkdir resultsDir/figs 
+eval(['mkdir ' resultsDir '/figs']);
 myfig(gcf,'figs/Parameters');
 
 %--------------------------------------------------------------------
@@ -60,30 +60,35 @@ myfig(gcf,'figs/Parameters');
 %--------------------------------------------------------------------
 
 if isfield(Data,'trueModel');
-	nfig=nfig+1; 
-	figure(nfig);clf;
-	parTrue = [Data.trueParam];
-	parFitEM = R.(Data(1).trueModel).E;
-	parFitML = R.(Data(1).trueModel).stats.EML;
 
-	truemodelid = find(strcmp({models.name},Data(1).trueModel));
+	try 
+		parTrue = [Data.trueParam];
+		parFitEM = R.(Data(1).trueModel).E;
+		parFitML = R.(Data(1).trueModel).stats.EML;
 
-	npar = size(parTrue,1);
+		truemodelid = find(strcmp({models.name},Data(1).trueModel));
 
-	for k=1:npar
-		subplot(1,npar,k)
-		plot(parTrue(k,:),parFitEM(k,:),'b+','markersize',20);
-		hon
-		plot(parTrue(k,:),parFitML(k,:),'k.','markersize',20);
-		hof
-		xlabel('True Param Value');
-		if k==1; ylabel('inferred param value');end
-		if k==1; legend({'EM-MAP','ML'},'location','northwest');end
-		title(models(truemodelid).parnames_untr(k));
-		set(gca,'fontsize',14);
-		mytightaxes
+		npar = size(parTrue,1);
+
+		nfig=nfig+1; 
+		figure(nfig);clf;
+		for k=1:npar
+			subplot(1,npar,k)
+			plot(parTrue(k,:),parFitEM(k,:),'b+','markersize',20);
+			hon
+			plot(parTrue(k,:),parFitML(k,:),'k.','markersize',20);
+			hof
+			xlabel('True Param Value');
+			if k==1; ylabel('inferred param value');end
+			if k==1; legend({'EM-MAP','ML'},'location','northwest');end
+			title(models(truemodelid).parnames_untr(k));
+			set(gca,'fontsize',14);
+			mytightaxes
+		end
+
+		myfig(gcf,'figs/ParameterRecovery');
+	catch 
+		fprintf('Plotting true against inferred parameters failed.\n');
 	end
-
-	myfig(gcf,'figs/ParameterRecovery');
 end
 

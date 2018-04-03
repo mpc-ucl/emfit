@@ -60,7 +60,7 @@ for k=1:length(D.an);
 	pa = exp(la);
 
 	if options.generatesurrogatedata==1
-		[ansurr(k)] = simulateActions(pa);
+		[ansurr(k,1)] = simulateActions(pa);
 		% Pa(k) = pa(an);
 		% Pa2(k,i) = pa;
 	else
@@ -80,5 +80,5 @@ l  = -l;
 dl = -dl; 
 
 if options.generatesurrogatedata==1
-	dsurr.an = an; 
+	dsurr.an = ansurr; 
 end

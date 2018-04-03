@@ -57,7 +57,7 @@ for k=1:length(an);
 	i=1:2^dn(k);
 
 	if options.generatesurrogatedata==1
-		[ansurr(k)] = simulateActions(pa(i,d-2,s)');
+		[ansurr(k,1)] = simulateActions(pa(i,d-2,s)');
 		% Pa(k) = pa(a,d-2,s);
 		% Pa2(k,i) = pa(i,d-2,s);
 	else
@@ -73,7 +73,6 @@ l  = -l;
 dl = -dl; 
 
 if options.generatesurrogatedata==1
-	dsurr.an = an; 
+	dsurr.an = ansurr; 
 end
-
 

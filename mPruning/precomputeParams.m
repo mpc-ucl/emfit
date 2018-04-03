@@ -1,6 +1,6 @@
 function [Z] = precomputeParams(Z);
 
-fprintf('standard reward/transition matrix setup assumed!\n');
+fprintf('precomputing pruning parameters for standard reward/transition matrix setup\n');
 
 R_matrix = [140 20; -20 -70; -70 -20; 20 -20; -70 -20; 20 -20];
 T_matrix = [2  4;   3   5;   6   4;  2   5;   1   6;  3   1]; 
