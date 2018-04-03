@@ -15,14 +15,14 @@ function batchRunEMfit(modelClassToFit,Data,resultsDir);
 % 'mTwostep';							% Daw et al., 2011 
 % 'mEffortCollins';	 				% Gold et al., 2013 
 % 'mPruning'; 						   % Lally et al., 2017 
-%  
-% DATA contains the data.  See the dataformat.txt files in the model folders for
-% instructions on how the data contained in DATA should be formatted for
-% fitting. For demo purposes, a correct dataset is generated if no data is
+%   
+% DATA (optional) contains the data.  See the dataformat.txt files in the model
+% folders for instructions on how the data contained in DATA should be formatted
+% for fitting. For demo purposes, a correct dataset is generated if no data is
 % provided. 
 % 
-% RESULTSDIR is a path to a directory containing the results. If it is not
-% provided then the current working directory is used. 
+% RESULTSDIR (optional) is a path to a directory containing the results. If it
+% is not provided then fitResults in the current working directory is used. 
 % 
 % Quentin Huys, 2018 qhuys@cantab.net
 % 

@@ -116,13 +116,13 @@ llopt.generatesurrogatedata=0;
 
 % deal with gradients being provided or not 
 if nograd; 													% assume gradients are supplied 
-	fminopt=optimset('display','off','TolFun',fitparams.tol);
+	fminopt=optimoptions('fminunc','display','off','TolFun',fitparams.tol);
 	%fminopt = optimoptions(@fminunc,'Display','off','TolFun',fitparams.tol);
 else 
-	fminopt=optimset('display','off','GradObj','on','TolFun',fitparams.tol,'algorithm','trust-region');
+	fminopt=optimoptions('fminunc','display','off','GradObj','on','TolFun',fitparams.tol,'algorithm','trust-region');
 	%fminopt = optimoptions(@fminunc,'Display','off','GradObj','on','TolFun',fitparams.tol);
 	if docheckgrad; 											% if they are, then can check them. 
-		fminopt=optimset('display','off','GradObj','on','DerivativeCheck','on','TolFun',fitparams.tol);
+		fminopt=optimoptions('fminunc','display','off','GradObj','on','DerivativeCheck','on','TolFun',fitparams.tol);
 		%fminopt = optimoptions(@fminunc,'Display','off','GradObj','on','DerivativeCheck','on','TolFun',fitparams.tol);
 	end
 end
