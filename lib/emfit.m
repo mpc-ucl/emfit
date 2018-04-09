@@ -198,7 +198,7 @@ while 1;emit=emit+1; t0=tic;
 			if ~any(ex(nfc)==[1:3]) ; fprintf('sj %i, rep %i convergence failure %i exit status %i\n',sk,rs,nfc,ex); end
 			nfc=nfc+1; 
 		end
-		[foo,best] = min(fval);							% take fit that led to best function value among those that didn't converge
+		[foo,best] = min(fval);							% take fit that led to best function value among those that converged
 		tE(:,sj)		= est(:,best);						% parameter estimates 
 		tW(:,:,sj) 	= pinv(full(hess(:,:,best)));	% covariance matrix around parameter estimate
 		tV(:,sj)		= diag(tW(:,:,sj));				% diagonal undertainty around parameter estimate
@@ -212,12 +212,12 @@ while 1;emit=emit+1; t0=tic;
 	end
 	for sj=1:Nsj; 
 		sk = sj+(best(sj)-1)*Nsj;						% take fit that led to best function value over the restarts
-		Ex(sj) 	= tEx(   sk);                    % parameter estimates 
-		E(:,sj)	= tE(:,  sk);                    % covariance matrix around parameter estimate
-		W(:,:,sj)= tW(:,:,sk);                    % diagonal undertainty around parameter estimate
-		V(:,sj)	= tV(:,  sk);                    % posterior likelihood 
-		PL(sj) 	= tPL(   sk);                    % time info 
-		tt(sj) 	= ttt(   sk);                    % exit codes - for debugging
+		E(:,sj)	= tE(:,  sk);                    % parameter estimates 
+		W(:,:,sj)= tW(:,:,sk);                    % covariance matrix around parameter estimate
+		V(:,sj)	= tV(:,  sk);                    % diagonal undertainty around parameter estimate
+		PL(sj) 	= tPL(   sk);                    % posterior likelihood 
+		tt(sj) 	= ttt(   sk);                    % time info 
+		Ex(sj) 	= tEx(   sk);                    % exit codes - for debugging
 	end
  
 	fprintf('\nEMit=%i/%i PL=%.2f loop=%.2gs mean/subj=%.2gs longest=%.2gs parfor speedup=%.2g',emit,maxit,sum(PL),toc(t0),mean(tt),max(tt),mean(tt)*Nsj*fitparams.robust/toc(t0))
