@@ -6,19 +6,23 @@ function batchEMFit(Data,models,opt)
 % 
 % MODELCLASS can take on values: 
 % 
-% 	 mAffectiveGoNogo
-% 	 mBasicRescorlaWagner
-% 	 mProbabilisticReward
-% 	 mTwostep
+% 'mBasicRescorlaWagner';			% basic Rescorla-Wagner example 
+% 'mAffectiveGoNogo';				% Guitart et al. 2012 
+% 'mProbabilisticReward';			% Huys et al., 2013 
+% 'mTwostep';							% Daw et al., 2011 
+% 'mEffortCollins';	 				% Gold et al., 2013 
+% 'mPruning'; 						   % Lally et al., 2017 
 % 
 % The optional parameter options.CHECKGRADIENTS can be used to check the gradients of
-% the provided likelihood files 
+% the provided likelihood files, and options.maxit to limit the number of EM
+% iterations. 
 %  
 % Quentin Huys, 2018 qhuys@cantab.net
 
 % set options 
 if ~exist('opt'); opt = struct; end
-if ~isfield(opt,'checkgradients'); 	opt.checkgradients = 0; 				end
+if ~isfield(opt,'checkgradients'); 	opt.checkgradients = 0; end
+if ~isfield(opt,'maxit');           opt.maxit = [];         end
 
 %--------------------------------------------------------------
 % Check all the gradients 
@@ -40,34 +44,8 @@ for mdl = 1:length(models)
 	fprintf('Performing EM fit %s.m model \n',models(mdl).name);
 	regressors = cell(models(mdl).npar,1); 		% set up empty regressor cell structure 
 	savestr = sprintf('%s/%s',opt.resultsDir,models(mdl).name);
-	if ~opt.bsub
-		[params,var,alpha,stats,bf,fitparams] = emfit(models(mdl).name,Data,models(mdl).npar,[],[],[],[],[],[],savestr); 
-	else
+	[params,var,alpha,stats,bf,fitparams] = emfit(models(mdl).name,Data,models(mdl).npar,[],[],[],[],opt.maxit,[],savestr); 
 		
-		% bsub -W 8:00 -o ${outdir}/${i}pre -J ${i}pre ${matlab} -r "preprocPruning($i)"
-
-		% numproc=length(models)
-		% 
-		% # where to write output files (what matlab would display)
-		% batchname='batch' # what the name of the output files will be
-		% outdir='/cluster/scratch/huysq/aida/pruningfmri/data/'${batchname}'/'
-		% matlab='/cluster/apps/matlab/9.1/x86_64/bin/./matlab -nodisplay -nosplash -singleCompThread'
-		% 
-		% rm -r $outdir
-		% mkdir -p $outdir
-		% 
-		% for ((i=1;i<=$numproc;i++)); do
-		%    # first run the preprocessing
-		%    # then run firstlevel analysis after preprocessing is done
-		%    # bsub -w "done(${i}pre)" -W 1:00 -o ${outdir}/${i}fir -J ${i}fir ${matlab} -r "firstlevel($i)"
-		%    bsub                     -W 1:00 -o ${outdir}/${i}fir -J ${i}fir ${matlab} -r "firstlevel($i)"
-		%    waitlist[$i]="-w done(${i}fir)"
-		% done
-		% 
-		% bsub ${waitlist[*]} -W 4:00 -o ${outdir}/secondlevel -J secondlevel ${matlab} -r "secondlevel"
-
-	end
 end
 
-% 
-% 
+
