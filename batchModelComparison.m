@@ -36,14 +36,15 @@ pc = exp(-LL*diag(1./[Data.Nch]));
 %--------------------------------------------------------------------
 fprintf('Making some plots\n');
 
+clf; 
 subplot(121)
 	h=barh(mean(pc,2));set(h,'facecolor',[.7 .7 .7]);
 	hon 
 	plot(pc,1:nModls,'.','color',[0 0 .4]);
 	plot(pc,1:nModls,'--','color',[.4 .4 1])
 	hof
-	set(gca,'yticklabel',{models.name},'ytick',1:nModls,'fontsize',14)
-	xlabel('Average model log posterior probability (given prior)')
+	set(gca,'yticklabel',{models.name},'ytick',1:nModls)
+	xlabel({'Average model log posterior','probability (given prior)'})
 subplot(122)
 	h=barh(iBIC-min(iBIC));set(h,'facecolor',[.7 .7 .7]);
 	hon
@@ -57,7 +58,7 @@ subplot(122)
 	end
 	hof
 		
-	set(gca,'yaxislocation','right','ytick',1:nModls,'yticklabel',{models.npar},'fontsize',14);
+	set(gca,'yaxislocation','right','ytick',1:nModls,'yticklabel',{models.npar});
 	xlabel('\Delta iBIC score (right: #params)')
 labelplots(2,'out')
 

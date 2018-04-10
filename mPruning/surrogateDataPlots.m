@@ -14,9 +14,15 @@ nfig=nfig+1; figure(nfig);clf;
 
 Z = Data(1).Z;
 
-Dn = [Data.dn];
-Sn = [Data.sn];
-An = [Data.an];
+maxch = max(cellfun(@(x)length(x),{Data.dn}));
+Dn = NaN(maxch,Nsj);
+Sn = NaN(maxch,Nsj);
+An = NaN(maxch,Nsj);
+for sj=1:Nsj
+	Dn(1:length(Data(sj).an),sj) = Data(sj).dn;
+	Sn(1:length(Data(sj).an),sj) = Data(sj).sn;
+	An(1:length(Data(sj).an),sj) = Data(sj).an;
+end
 
 ax=mysubplot(4,12,.1,.1,.85,.85);
 xxs = linspace(-.2,.2,Nsj);
@@ -75,7 +81,9 @@ for ss=1:6
 	end
 end
 
-myfig(gcf,'figs/SurrogateDataPlots');
+legend({'Data', models.name})
+
+myfig(gcf,[resultsDir '/figs/SurrogateDataDetailedHistogram']);
 
 %--------------------------------------------------------------------
 % compare with surrogate data 
@@ -128,16 +136,34 @@ m = nanmean(pcorr,3);
 s = nanstd(pcorr,[],3)/sqrt(Nsj);
 ms = nanmean(pcorrs,4);
 
+DX=[.22 .15 .22 .275 .31 linspace(.332,.367,10)];
+nx = length(unique(dn)); 
+ny = 2*(nModls+1)+1; 
+dx = DX(ny);
+xx = (1:nx)'*ones(1,ny) + ones(nx,1)*linspace(-dx,dx,ny);
+
 nfig=nfig+1; figure(nfig);clf;
-	h1=bar(m);
-	hon
-	mydeb(0,m,s);
-	h2=plot(sq(ms(:,1,:)));
-	plot(sq(ms(:,2,:)));
-	hof
-	legend(h1,'No large loss','Large loss');
-	xlabel('Fraction optimal choice');
-	ylabel('Depth');
-	set(gca,'xticklabel',[3:6]);
+M(:,[1 nModls+3]) = m;
+S(:,[1 nModls+3]) = s; 
+M(:,nModls+2) = NaN;
+for k=1:6; 
+	M(:,[1 nModls+3]+k) = ms(:,:,k);
+end
 
+h=bar(M);
+hon
+mydeb(xx(:,[1 nModls+3]),M(:,[1 nModls+3]),S(:,[1 nModls+3]));
+hof
+set(h(1),'facecolor',[.3 .3 .3],'barwidth',1);
+set(h(nModls+3),'facecolor',[.7 .7 .7],'barwidth',1);
+col = jet(6);
+for k=1:6
+	set(h([1+k,nModls+3+k]),'facecolor',col(k,:),'barwidth',.6);
+end
 
+legend(h([1, nModls+3, (1:nModls)+1]),{'No large loss data','Large loss data',models.name});
+	ylabel('Fraction optimal choice');
+	xlabel('Depth');
+	set(gca,'xticklabel',unique(dn));
+
+myfig(gcf,[resultsDir '/figs/SurrogateDataSimpleHistogram']);

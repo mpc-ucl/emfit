@@ -11,6 +11,7 @@ function SurrogateData = batchGenerateSurrogateData(Data,models,opt)
 
 if ~exist('opt'); opt = struct; end
 if ~isfield(opt,'nSamples'); 		opt.nSamples = 100; 					end;
+if ~isfield(opt,'resultsDir'); 	opt.resultsDir= [pwd filesep 'resultsDir'];end;
 
 nModls = length(models);
 Nsj = length(Data);
