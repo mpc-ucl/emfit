@@ -53,7 +53,7 @@ for j=1:3
 
 end
 eval(['mkdir ' resultsDir '/figs']);
-myfig(gcf,'figs/Parameters');
+myfig(gcf,[resultsDir filesep 'figs/Parameters'[);
 
 %--------------------------------------------------------------------
 % try plotting parameters against true values if ran on generated data
@@ -86,7 +86,7 @@ if isfield(Data,'trueModel');
 			mytightaxes
 		end
 
-		myfig(gcf,'figs/ParameterRecovery');
+		myfig(gcf,[resultsDir filesep 'figs/ParameterRecovery']);
 	catch 
 		fprintf('Plotting true against inferred parameters failed.\n');
 	end
