@@ -1,9 +1,9 @@
-function [D] = extractValidTrials(Din)
+function [D] = extractValidTrials(D)
 
 % find out maximal depth 
 dmax=0;
-for sj=1:length(Din);
-	dmax = max(dmax,size(Din(sj).choices,2));
+for sj=1:length(D);
+	dmax = max(dmax,size(D(sj).choices,2));
 end
 Z.dmax = dmax; 
 
@@ -11,10 +11,7 @@ Z.dmax = dmax;
 % NB: assumes standard experimental setup 
 Z = precomputeParams(Z);
 
-for sj=1:length(Din);
-	D(sj).choices = Din(sj).choices;
-	D(sj).states  = Din(sj).states;
-	D(sj).rewards = Din(sj).rewards;
+for sj=1:length(D);
 
 	a = D(sj).choices;
 	s = D(sj).states;
