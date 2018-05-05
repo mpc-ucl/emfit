@@ -20,8 +20,8 @@ for sj=1:Nsj;
 	Data(sj).r = zeros(T,1);					% preallocate space
 
 	rs = randperm(T);								% randomise stimuli 
-	Data(sj).s(rs<=T/2)=1; 
-	Data(sj).s(rs>T/2)=2; 
+	Data(sj).s(rs<=T/2,1)=1; 
+	Data(sj).s(rs>T/2,1)=2; 
 
 	Data(sj).bias = (rand>0.5)+1;				% rich stimulus 
 	Data(sj).Nch = T; 							% length 
