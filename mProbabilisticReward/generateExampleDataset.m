@@ -17,8 +17,11 @@ for sj=1:Nsj;
 	Data(sj).ID = sprintf('Subj %i',sj);
 	
 	Data(sj).a = zeros(T,1);					% preallocate space
-	Data(sj).s = (rand(T,1)>0.5)+1;			% randomise stimuli 
 	Data(sj).r = zeros(T,1);					% preallocate space
+
+	rs = randperm(T);								% randomise stimuli 
+	Data(sj).s(rs<=T/2)=1; 
+	Data(sj).s(rs>T/2)=2; 
 
 	Data(sj).bias = (rand>0.5)+1;				% rich stimulus 
 	Data(sj).Nch = T; 							% length 
@@ -38,4 +41,4 @@ for sj=1:Nsj;
 end
 
 fprintf('Saved example dataset as Data.mat\n');
-save([resultsDir filesep 'Data.mat','Data');
+save([resultsDir filesep 'Data.mat'],'Data');

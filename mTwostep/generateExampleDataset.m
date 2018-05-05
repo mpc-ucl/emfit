@@ -40,4 +40,4 @@ for sj=1:Nsj;
 end
 
 fprintf('Saved example dataset as Data.mat\n');
-save([resultsDir filesep 'Data.mat','Data');
+save([resultsDir filesep 'Data.mat'],'Data');
