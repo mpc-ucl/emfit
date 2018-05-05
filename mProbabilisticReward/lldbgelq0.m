@@ -37,8 +37,8 @@ I0 = [1 1; 0 0];
 I = D.I;
 
 if options.generatesurrogatedata==1
-	a = NaN*zeros(size(a));
-	r = NaN*zeros(size(a));
+	a = zeros(size(a));
+	r = zeros(size(a));
 	dodiff=0;
 end
 
