@@ -13,8 +13,10 @@ mkdir figs
 nfig=nfig+1; figure(nfig);clf;
 
 T = length(Data(1).a); 
-ns = zeros(size([Data.a],1)/2,2);
-nns = zeros(size([Data.a],1)/2,2,nModls);
+ns = zeros(size([Data.a],1),2);
+as = zeros(size([Data.a],1),2);
+bs = zeros(size([Data.a],1),2);
+nns = zeros(size([Data.a],1),2,nModls);
 
 % determine block length for blocked response bias plots 
 blocklength = floor(length(Data(1).a)/3); 
