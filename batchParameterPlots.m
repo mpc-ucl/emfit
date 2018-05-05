@@ -74,8 +74,9 @@ if isfield(Data,'trueModel');
 		figure(nfig);clf;
 		for k=1:npar
 			subplot(1,npar,k)
-			plot(parTrue(k,:),parFitEM(k,:),'b+','markersize',20);
+			plot(parTrue(k,:),parTrue(k,:),'r-','linewidth',2);
 			hon
+			plot(parTrue(k,:),parFitEM(k,:),'b+','markersize',20);
 			plot(parTrue(k,:),parFitML(k,:),'k.','markersize',20);
 			hof
 			xlabel('True Param Value');
