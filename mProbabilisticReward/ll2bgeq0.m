@@ -45,8 +45,6 @@ dqdq=[1 1;0 0];
 for t=1:length(a);
 	if ~isnan(a(t))
 
-		er = b(2-r(t)) * (2*r(t)-1);
-
 		qe = q(:,s(t)) + g*I(:,s(t));
 		q0 = max(qe);
 		lpa = qe-q0 - log(sum(exp(qe-q0)));
@@ -57,6 +55,8 @@ for t=1:length(a);
 		else
 			l = l + lpa(a(t));
 		end
+
+		er = b(2-r(t)) * (2*r(t)-1);
 
 		if dodiff
 
