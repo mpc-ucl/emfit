@@ -1,4 +1,4 @@
-function Data=generateExampleDataset(Nsj)
+function Data=generateExampleDataset(Nsj,resultsDir)
 % 
 % Data = generateExampleDataset(Nsj)
 % 
@@ -40,8 +40,4 @@ for sj=1:Nsj;
 end
 
 fprintf('Saved example dataset as Data.mat\n');
-save Data.mat Data; 
-
-
-
-
+save([resultsDir filesep 'Data.mat','Data');

@@ -83,7 +83,7 @@ end
 % generate surrogate data if no data was provided
 if ~exist('Data') | isempty(Data)
 	fprintf('No data provided so generating example dataset\n');
-	Data=generateExampleDataset(30); 			
+	Data=generateExampleDataset(30,resultsDir); 			
 end
 
 %------------------------------------------------------------------------------
