@@ -4,7 +4,7 @@ nModls = length(models);
 Nsj = length(Data);
 
 nfig=0; 
-mkdir figs 
+eval(['mkdir ' resultsDir '/figs']);
 
 %--------------------------------------------------------------------
 % plot parameters of best model 
@@ -52,7 +52,6 @@ for j=1:3
 	end
 
 end
-eval(['mkdir ' resultsDir '/figs']);
 myfig(gcf,[resultsDir filesep 'figs/Parameters']);
 
 %--------------------------------------------------------------------

@@ -1,4 +1,4 @@
-function surrogateDataPlots(Data,models,SurrogateData,bestmodel)
+function surrogateDataPlots(Data,models,SurrogateData,bestmodel,resultsDir)
 
 nModls = length(models);
 Nsj = length(Data);
@@ -91,6 +91,11 @@ ylabel('Surrogate data');
 mytightaxes; 
 
 subplot(2,4,7);
+
+for mdl=1:nModls
+	R.(models(mdl).name) = load(sprintf('%s/%s',resultsDir,models(mdl).name));
+end
+
 [c,p] = corr(mf',R.(models(bestmodel).name).stats.EMAP0','type','Spearman'); 
 mybar(c,.7);
 for k=1:models(bestmodel).npar
@@ -120,7 +125,7 @@ set(gca,'xticklabel',models(bestmodel).parnames,'xticklabelrotation',90);
 title({'Correlation w/','reward x freq int'}); 
 mytightaxes; 
 
-myfig(gcf,'figs/TwostepSurrogateDataRepetitionEffects');
+myfig(gcf,[resultsDir filesep 'figs/TwostepSurrogateDataRepetitionEffects']);
 
 % elseif whichfig==5
 % %whichfig = 5; % Figure 5 - Compare time course of generated choices to true data 

@@ -15,8 +15,10 @@ nfig=nfig+1; figure(nfig);clf;
 
 cr = [1 1 2 2];
 
-ns = zeros(40,4);
-nns = zeros(40,4,nModls);
+ns = zeros(max([Data.Nch]),4);
+as = zeros(max([Data.Nch]),4);
+bs = zeros(max([Data.Nch]),4);
+nns = zeros(max([Data.Nch]),4,nModls);
 for sj=1:Nsj
 	a = Data(sj).a; 
 	s = Data(sj).s; 
@@ -29,7 +31,9 @@ for sj=1:Nsj
 	end
 
 	for mdl=1:nModls;
-		a = [SurrogateData(sj).(models(mdl).name).a];
+		a = [SurrogateData(sj).(models(mdl).name).a]; 
+		nsample = numel(SurrogateData(sj).(models(mdl).name)); 
+		a = reshape(a,size(a,2)/nsample,nsample);
 		b = mean(a==1,2);
 		for ss=1:4
 			i = s==ss; 
