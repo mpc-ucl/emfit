@@ -1,6 +1,6 @@
-function [l,dl] = ll2bmf2alr(x,D,mu,nui,doprior,options);
+function [l,dl,dsurr] = ll2bmf2alr(x,D,mu,nui,doprior,options);
 %
-% [l,dl] = ll2bmf2alr(x,D,mu,nui,doprior,options);
+% [l,dl,dsurr] = ll2bmf2alr(x,D,mu,nui,doprior,options);
 %
 % Fit SARSA(lambda) model with separate learning rates and betas to two-step
 % task. Note here both the learning rates and the model-free weights at level
@@ -15,7 +15,6 @@ function [l,dl] = ll2bmf2alr(x,D,mu,nui,doprior,options);
 %
 % Quentin Huys, 2018 www.quentinhuys.com qhuys@cantab.net
 
-np = size(x,1);
 if nargout==2; dodiff=1; else; dodiff=0;end
 
 
@@ -51,6 +50,7 @@ if any(D.S(2,:)==3); D.S(2,:) = D.S(2,:)-1; end
 
 bb=20;
 n=zeros(2);
+a1old=-1;
 for t=1:length(D.A);
 
 	
@@ -58,9 +58,9 @@ for t=1:length(D.A);
 	a=D.A(1,t); ap=D.A(2,t);
 	r=D.R(1,t);
 
-	if ~isnan(a) & ~isnan(ap); 
+	if ~isnan(a) && ~isnan(ap); 
 
-		if t>1 & exist('a1old');
+		if t>1 && a1old > 0;
 			Qeff= bmf*Q1 + rep(:,a1old);
 		else
 			Qeff= bmf*Q1;
@@ -108,7 +108,7 @@ for t=1:length(D.A);
 			dQedl = bmf*dQ1dl;
 
 			% grad wrt rep 
-			if t>1 & exist('a1old');
+			if t>1 && a1old > 0;
 				dl(6) = dl(6) + ((a==a1old) - pa'*drep(:,a1old));
 			end
 

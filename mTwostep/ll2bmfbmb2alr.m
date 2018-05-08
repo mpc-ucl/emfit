@@ -16,7 +16,6 @@ function [l,dl,dsurr] = llbmfbmb2alr(x,D,mu,nui,doprior,options);
 % 
 % Quentin Huys, 2018 www.quentinhuys.com qhuys@cantab.net
 
-np = size(x,1);
 if nargout==2; dodiff=1; else; dodiff=0;end
 
 bmb  = exp(x(1));
@@ -52,13 +51,14 @@ if any(D.S(2,:)==3); D.S(2,:) = D.S(2,:)-1; end
 
 bb=20;
 n=zeros(2);
+a1old=-1;
 for t=1:length(D.A);
 	
 	s=D.S(1,t); sp=D.S(2,t);
 	a=D.A(1,t); ap=D.A(2,t);
 	r=D.R(1,t);
 
-	if ~isnan(a) & ~isnan(ap); 
+	if ~isnan(a) && ~isnan(ap); 
 
 		if n(1,1)+n(2,2) > n(1,2)+n(2,1)
 			Tr = .3+.4*eye(2);
@@ -72,7 +72,7 @@ for t=1:length(D.A);
 		pqm = pqm*diag(1./sum(pqm));
 		Qd = (sum(Q2.*pqm)*Tr)';
 
-		if t>1 & exist('a1old');
+		if t>1 && a1old > 0;
 			Qeff= bmb*Qd + bmf*Q1 + rep(:,a1old);
 		else
 			Qeff= bmb*Qd + bmf*Q1;
@@ -126,7 +126,7 @@ for t=1:length(D.A);
 			dl(5) = dl(5) + bmb*(dQdda2(a)- pa'*dQdda2);
 
 			% grad wrt rep 
-			if t>1 & exist('a1old');
+			if t>1 && a1old > 0;
 				dl(7) = dl(7) + ((a==a1old) - pa'*drep(:,a1old));
 			end
 

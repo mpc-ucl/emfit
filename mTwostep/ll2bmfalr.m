@@ -13,12 +13,8 @@ function [l,dl,dsurr] = ll2bmfalr(x,D,mu,nui,doprior,options);
 % OPTIONS.generatesurrogatedata defines whether to return the likelihood of data
 % D (0) or whether to generate new surrogate data from the given parameters (1). 
 % 
-% Quentin Huys, 2016 
-% www.quentinhuys.com/code.html 
-% www.quentinhuys.com/pub.html
-% qhuys@cantab.net
+% Quentin Huys, 2018 www.quentinhuys.com qhuys@cantab.net
 
-np = size(x,1);
 if nargout==2; dodiff=1; else; dodiff=0;end
 
 
@@ -53,6 +49,7 @@ if any(D.S(2,:)==3); D.S(2,:) = D.S(2,:)-1; end
 
 bb=20;
 n=zeros(2);
+a1old=-1;
 for t=1:length(D.A);
 
 	
@@ -60,9 +57,9 @@ for t=1:length(D.A);
 	a=D.A(1,t); ap=D.A(2,t);
 	r=D.R(1,t);
 
-	if ~isnan(a) & ~isnan(ap); 
+	if ~isnan(a) && ~isnan(ap); 
 
-		if t>1 & exist('a1old');
+		if t>1 && a1old > 0;
 			Qeff= bmf*Q1 + rep(:,a1old);
 		else
 			Qeff= bmf*Q1;
@@ -107,7 +104,7 @@ for t=1:length(D.A);
 			dQedl = bmf*dQ1dl;
 
 			% grad wrt rep 
-			if t>1 & exist('a1old');
+			if t>1 && a1old > 0;
 				dl(5) = dl(5) + ((a==a1old) - pa'*drep(:,a1old));
 			end
 

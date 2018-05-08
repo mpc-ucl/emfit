@@ -1,4 +1,6 @@
-function [l,dl] = ll2bmfbmbalr(x,D,mu,nui,doprior);
+function [l,dl,dsurr] = ll2bmfbmbalr(x,D,mu,nui,doprior);
+% 
+% [l,dl,dsurr] = ll2bmfbmbalr(x,D,mu,nui,doprior);
 %
 % Fit joint tree search and SARSA(lambda) model with separate 
 % betas to two-step task. This version is reparametrised such that there are two
@@ -12,9 +14,7 @@ function [l,dl] = ll2bmfbmbalr(x,D,mu,nui,doprior);
 % www.quentinhuys.com/pub.html
 % qhuys@cantab.net
 
-np = size(x,1);
 if nargout==2; dodiff=1; else; dodiff=0;end
-
 
 bmb  = exp(x(1));
 bmf  = exp(x(2));
