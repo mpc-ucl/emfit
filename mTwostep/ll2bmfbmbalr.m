@@ -1,6 +1,6 @@
-function [l,dl,dsurr] = ll2bmfbmbalr(x,D,mu,nui,doprior);
+function [l,dl,dsurr] = ll2bmfbmbalr(x,D,mu,nui,doprior,options);
 % 
-% [l,dl,dsurr] = ll2bmfbmbalr(x,D,mu,nui,doprior);
+% [l,dl,dsurr] = ll2bmfbmbalr(x,D,mu,nui,doprior,options);
 %
 % Fit joint tree search and SARSA(lambda) model with separate 
 % betas to two-step task. This version is reparametrised such that there are two
@@ -33,24 +33,29 @@ dQedl = zeros(2,1);
 dQedw = zeros(2,1);
 drep = eye(2);
 
-if doprior;
-	l = -1/2*(x-mu)'*nui*(x-mu) - np/2*log(2*pi) - 1/2*log(1/det(nui));
-	dl = - nui*(x-mu);
-else;
-	l=0;
-	dl=zeros(np,1);
+% add Gaussian prior with mean mu and variance nui^-1 if doprior = 1 
+[l,dl] = logGaussianPrior(x,mu,nui,doprior);
+
+if options.generatesurrogatedata==1
+	dodiff=0;
+	rewprob = D.rewprob; 
+	trans = D.trans;
 end
+
+% if second-level states are coded as '2' and '3' change to '1' and '2' 
+if any(D.S(2,:)==3); D.S(2,:) = D.S(2,:)-1; end
 
 bb=20;
 n=zeros(2);
+a1old=-1;
 for t=1:length(D.A);
 
 	
-	s=D.S(1,t); sp=D.S(2,t)-1;
+	s=D.S(1,t); sp=D.S(2,t);
 	a=D.A(1,t); ap=D.A(2,t);
 	r=D.R(1,t);
 
-	if ~isnan(a) & ~isnan(ap); 
+	if ~isnan(a) && ~isnan(ap); 
 
 		if n(1,1)+n(2,2) > n(1,2)+n(2,1)
 			Tr = .3+.4*eye(2);
@@ -64,7 +69,7 @@ for t=1:length(D.A);
 		pqm = pqm*diag(1./sum(pqm));
 		Qd = (sum(Q2.*pqm)*Tr)';
 
-		if t>1 & exist('a1old');
+		if t>1 && a1old > 0
 			Qeff= bmb*Qd + bmf*Q1 + rep(:,a1old);
 		else
 			Qeff= bmb*Qd + bmf*Q1;
@@ -72,14 +77,22 @@ for t=1:length(D.A);
 		lpa = Qeff;
 		lpa = lpa - max(lpa);
 		lpa = lpa - log(sum(exp(lpa)));
-		l = l + lpa(a);
 		pa = exp(lpa);
+		if options.generatesurrogatedata==1
+			[a,sp] = simulateTwostep(pa,s,trans(t));
+		else
+			l = l + lpa(a);
+		end
 
 		lpap = b2*Q2(:,sp);
 		lpap = lpap - max(lpap);
 		lpap = lpap - log(sum(exp(lpap)));
-		l = l + lpap(ap);
 		pap = exp(lpap);
+		if options.generatesurrogatedata==1
+			[ap,r] = simulateTwostep(pap,sp,trans(t),rewprob(:,:,t));
+		else
+			l = l + lpap(ap);
+		end
 
 		de1 = Q2(ap,sp)-Q1(a);
 		de2 = r - Q2(ap,sp);
@@ -105,7 +118,7 @@ for t=1:length(D.A);
 			dl(4) = dl(4) + bmb*(dQdda(a) - pa'*dQdda); 
 
 			% grad wrt rep 
-			if t>1 & exist('a1old');
+			if t>1 && a1old > 0
 				dl(6) = dl(6) + ((a==a1old) - pa'*drep(:,a1old));
 			end
 
@@ -116,6 +129,12 @@ for t=1:length(D.A);
 
 		n(sp,a) = n(sp,a)+1;
 		a1old = a; 
+
+		if options.generatesurrogatedata==1
+			dsurr.A(1,t)=a; dsurr.A(2,t)=ap;
+			dsurr.S(1,t)=s; dsurr.S(2,t)=sp;
+			dsurr.R(1,t)=r;
+		end
 	end
 
 end

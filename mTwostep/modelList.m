@@ -65,6 +65,14 @@ model(i).parnames_untr = {'log \beta_{MB}','log \beta_{MF1}','log \beta_{MF2}','
 model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)x'};
 
 i=i+1; 
+model(i).descr = 'Reparametrized mixture of model-based and model-free SARSA(lambda) model with sticky repetition factor and single learning rates for the two levels. Here, MF and MB values have separate betas, but there is no weight w';
+model(i).name = 'll2bmfbmbalr';
+model(i).npar = 6;
+model(i).parnames = {'\beta_{MB}','\beta_{MF1}','\beta_{MF2}','\alpha','\lambda','r'};
+model(i).parnames_untr = {'log \beta_{MB}','log \beta_{MF1}','log \beta_{MF2}','siginv \alpha','siginv \lambda','r'};
+model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)x'};
+
+i=i+1; 
 model(i).descr = 'Reparametrized mixture of model-based and model-free SARSA(lambda) model with sticky repetition factor and separate learning rates for the two levels. Here, MF and MB values have separate betas, but there is no weight w. In addition, MF betas and learning rates at level 1 and 2 are assumed the same.';
 model(i).name = 'llbmfbmbalr';			
 model(i).npar = 5;
@@ -77,8 +85,8 @@ model(i).descr = 'Pure model-free SARSA(lambda) model with sticky repetition fac
 model(i).name = 'll2bmfalr';			
 model(i).npar = 5;
 model(i).parnames = {'\beta_{MF1}','\beta_{MF2}','\alpha','\lambda','r'};
-model(i).parnames_untr = {'log \beta','siginv \alpha','siginv \lambda','r'};
-model(i).partransform = {'@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)x'};
+model(i).parnames_untr = {'log \beta_{MF1}','log \beta_{MF2}','siginv \alpha','siginv \lambda','r'};
+model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)x'};
 
 i=i+1; 
 model(i).descr = 'Pure model-free SARSA(lambda) model with sticky repetition factor, separate betas and learning rates for the two levels';

@@ -1,4 +1,4 @@
-function [l,dl,dsurr] = llbmfbmb2alr(x,D,mu,nui,doprior,options);
+function [l,dl,dsurr] = ll2bmfbmb2alr(x,D,mu,nui,doprior,options);
 % 
 % [l,dl,dsurr] = llbmfbmb2alr(x,D,mu,nui,doprior,options);
 %
