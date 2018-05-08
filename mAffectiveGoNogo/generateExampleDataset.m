@@ -18,7 +18,9 @@ for sj=1:Nsj;
 	
 	Data(sj).a = zeros(1,T);					% preallocate space
 	Data(sj).r = zeros(1,T);					% preallocate space
-	Data(sj).s = randi(4,T,1);					% randomise stimuli 
+	rs = randperm(160);							% randomise stimuli 
+	s = [1:4]'*ones(1,T/4);
+	Data(sj).s = s(rs);							
 
 	Data(sj).Nch = T; 							% length 
 
