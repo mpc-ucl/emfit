@@ -1,4 +1,4 @@
-function batchRunEMfit(modelClassToFit,Data,resultsDir,varargin);
+function batchRunEMfit(modelClassToFit,Data,resultsDir,varargin)
 % 
 % batchRunEMfit(modelClassToFit,pathToData,resultsDir,'key1','val1','key2','val2');
 % 
@@ -38,7 +38,7 @@ function batchRunEMfit(modelClassToFit,Data,resultsDir,varargin);
 % 
 %==============================================================================
 
-if exist('resultsDir')~=1 | isempty(resultsDir); 
+if exist('resultsDir')~=1 || isempty(resultsDir)
 	resultsDir = [pwd '/fitResults'];
 end
 warning('off','MATLAB:MKDIR:DirectoryExists');
@@ -46,9 +46,9 @@ mkdir(resultsDir);
 
 % check optional arguments 
 validvarargins = {'modelsToFit','checkgradients','maxit','bsub'};
-if exist('varargin');
+if exist('varargin')
 	for k=1:length(validvarargins)
-		i = find(cellfun(@(x)strcmpi(x,validvarargins{k}),varargin));
+		i = find(cellfun(@(x)strcmpi(x,validvarargins{k}),varargin),1);
 		if ~isempty(i); eval([validvarargins{k} '= varargin{i+1};']);end
 	end
 end
@@ -76,22 +76,22 @@ cleanpath(modelClass);									% clean all model paths
 addpath(genpath([emfitpath '/' modelClass{modelClassToFit}]));	% add chosen model path
 models=modelList; 										% get complete model list 
 if exist('modelsToFit')
-	models = models(modelsToFit); 							% select specific models to fit 
+	models = models(modelsToFit); 					% select specific models to fit 
 end
 
 %------------------------------------------------------------------------------
 % generate surrogate data if no data was provided
-if ~exist('Data') | isempty(Data)
+if ~exist('Data') || isempty(Data)
 	fprintf('No data provided so generating example dataset\n');
 	Data=generateExampleDataset(30,resultsDir); 			
 end
 
 %------------------------------------------------------------------------------
 % fit models using emfit.m
-if exist('checkgradients');
+if exist('checkgradients')
 	options.checkgradients = checkgradients;		% check gradients of models? 
 end
-if exist('maxit'); 
+if exist('maxit')
 	options.maxit = maxit; 								% limit EM iterations
 end
 options.resultsDir = resultsDir; 					% directory with results
