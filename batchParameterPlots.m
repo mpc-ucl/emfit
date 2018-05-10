@@ -75,12 +75,12 @@ if isfield(Data,'trueModel');
 			subplot(1,npar,k)
 			plot(parTrue(k,:),parTrue(k,:),'r-','linewidth',2);
 			hon
-			plot(parTrue(k,:),parFitEM(k,:),'b+','markersize',20);
-			plot(parTrue(k,:),parFitML(k,:),'k.','markersize',20);
+			h(1) = plot(parTrue(k,:),parFitEM(k,:),'b+','markersize',20);
+			h(2) = plot(parTrue(k,:),parFitML(k,:),'k.','markersize',20);
 			hof
 			xlabel('True Param Value');
 			if k==1; ylabel('inferred param value');end
-			if k==1; legend({'EM-MAP','ML'},'location','northwest');end
+			if k==1; legend(h,{'EM-MAP','ML'},'location','northwest');end
 			title(models(truemodelid).parnames_untr(k));
 			set(gca,'fontsize',14);
 			mytightaxes
