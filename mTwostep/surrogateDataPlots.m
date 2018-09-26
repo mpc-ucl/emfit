@@ -3,7 +3,7 @@ function surrogateDataPlots(Data,models,SurrogateData,bestmodel,resultsDir)
 nModls = length(models);
 Nsj = length(Data);
 
-nfig=0; 
+nfig=get(gcf,'Number');
 mkdir figs 
 
 

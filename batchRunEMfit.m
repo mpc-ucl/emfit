@@ -97,6 +97,8 @@ end
 options.resultsDir = resultsDir; 					% directory with results
 batchModelFit(Data,models,options); 				% perform the fitting
 
+close all; 
+
 %------------------------------------------------------------------------------
 % perform model comparison 
 bestmodel = batchModelComparison(Data,models,resultsDir);

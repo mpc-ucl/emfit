@@ -36,7 +36,7 @@ pc = exp(-LL*diag(1./[Data.Nch]));
 %--------------------------------------------------------------------
 fprintf('Making some plots\n');
 
-clf; 
+figure(1);clf;
 subplot(121)
 	h=barh(mean(pc,2));set(h,'facecolor',[.7 .7 .7]);
 	hon 

@@ -10,7 +10,7 @@ eval(['mkdir ' resultsDir '/figs']);
 % plot parameters of best model 
 %--------------------------------------------------------------------
 
-nfig=nfig+1; figure(nfig);clf;
+figure(2);clf;
 for mdl=1:nModls
 	R.(models(mdl).name) = load(sprintf('%s/%s',resultsDir,models(mdl).name));
 end
@@ -69,8 +69,7 @@ if isfield(Data,'trueModel');
 
 		npar = size(parTrue,1);
 
-		nfig=nfig+1; 
-		figure(nfig);clf;
+		figure(3);clf;
 		for k=1:npar
 			subplot(1,npar,k)
 			plot(parTrue(k,:),parTrue(k,:),'r-','linewidth',2);
