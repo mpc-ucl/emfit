@@ -46,5 +46,7 @@ for j = 1:length(X)
   dh(j) = (y2 - y1)/(2*e);
 end
 
-disp([dy dh])                                          % print the two vectors
+%disp([dy dh])  % print the two vectors
+
+fprintf('%f %f %f \n', dy(2), dh(2), X(2));
 d = norm(dh-dy)/norm(dh+dy);       % return norm of diff divided by norm of sum

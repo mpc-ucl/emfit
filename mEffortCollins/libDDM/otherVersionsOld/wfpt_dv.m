@@ -7,7 +7,7 @@ function p = wfpt_dv(t,v,dv,a,z,err)
 % z = starting point
 % err = 10^-29 (default)
 if t<0
-    p=(10^-20)^(-t);
+    p=0;
     return      
 end
 
@@ -47,10 +47,10 @@ else % if large t is better...
 end
 
 % convert to f(t|v,a,w)
-p = p*exp(-v*a*w -(v^2)*t/2)/(a^2)*(-dv*a*w-v*dv*t);
+p = -a*w-v*t;
 
-if p < 10^-20
-    p = 10^-20*tt;
-end
+% if p < 10^-20
+%     p = 0;
+% end
 
 end

@@ -22,7 +22,7 @@ sp = spf*b;              % starting point is a fraction of the boundary
 
 a = D.a; 
 r = D.rew; 
-totalT = D.decisionTime;
+totalT = D.decisiontime;
 
 effortCostLo = D.effortCostLo;%  set to - 0.2 in original task; 
 effortCostHi = D.effortCostHi;%  set to - 1 in original task; 
@@ -60,9 +60,11 @@ for t=1:length(a)
     % only actually decision time is taking into account in DDM, thus
     % non-decision time is subtracted from recorded time 
     decT = totalT(t)-ndt; 
-    pt = wfpt_prep(b,v,sp,decT);
-    
-    
+%     if decT < 0
+%         decT = 10e-2;
+%     end
+    [pt, dv, da, dz, dt] = wfpt_prep(b,v,sp,decT);
+  
 	if options.generatesurrogatedata==1
         rewidx = r(t)-2; % reward index 
 		[asurr(t), simTime(t)] = generateDataDDM(combined_t(rewidx,:), combined_prob(rewidx,:), ndt);
@@ -72,20 +74,33 @@ for t=1:length(a)
     
     if dodiff
        % derivative of starting point
-       ptdz = wfpt_prep_dz(b,v,sp,decT);
-       dl(1) = ptdz(a(t)); 
+       if a(t) == 1
+           dl(1) = dl(1)+dz(a(t))*(-1)*(spf*(1-spf))*b; 
+       else
+           dl(1) = dl(1)+dz(a(t))*(spf*(1-spf))*b;
+       end
        % derivative of boundary
-       ptda = wfpt_prep_da(b,v,sp,decT);
-       dl(2) = ptda(a(t)); 
+       if a(t) == 1
+           dl(2) = dl(2)+(da(a(t))*b+dz(a(t))*(b-spf*b));
+       else 
+           dl(2) = dl(2)+(da(a(t))*b+dz(a(t))*spf*b);
+       end
        % derivative of betarew
        dvbr = -1*(betarew*r(t)-betarew*1); 
-       ptbr = wfpt_prep_dv(b,v,dvbr,sp,decT);
-       dl(3) = ptbr(a(t)); 
+       if a(t) == 1
+           dl(3) = dl(3)+dv(a(t))*-dvbr;  
+       elseif a(t) == 2
+           dl(3) = dl(3)+dv(a(t))*dvbr; 
+       end
        % derivative of betaeff
        dvbe = -1*(betaeff*effortCostHi-betaeff*effortCostLo); 
-       ptbe = wfpt_prep_dv(b,v,dvbe,sp,decT);
-       dl(4)= ptbe(a(t)); 
+       if a(t) == 1
+           dl(4) = dl(4)+dv(a(t))*-dvbe;
+       elseif a(t) == 2
+           dl(4) = dl(4)+dv(a(t))*dvbe;
+       end
        % derivative of non-decision time
+       dl(5) = dl(5)+dt(a(t))*(-1*ndt); 
     end
     
 end

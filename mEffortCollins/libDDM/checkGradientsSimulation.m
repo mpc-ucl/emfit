@@ -1,13 +1,15 @@
 
-paramRange1 = -6:0.1:6;
-paramRange2 = -6:0.1:6;
+%paramRange1 = -6:0.1:6;
+%paramRange2 = -6:0.1:6;
 
-%D = Data(2); 
+paramRange1 = -1:0.1:1; 
+paramRange2 = -1:0.1:1; 
+
 x = [0.2000    0.7000   -0.5000    0.8000   -0.5000];
-pn1 = 1;
-pn2 = 2; 
-param1 = 'starting point'; 
-param2 = 'boundary';
+pn1 = 3;
+pn2 = 4; 
+param1 = 'betarew'; 
+param2 = 'betaeff';
 
 for i = 1:length(paramRange1)
     x(pn1) = paramRange1(i); 
@@ -55,7 +57,7 @@ for i = 1:length(paramRange1)
             decT = totalT(t)-ndt; 
             pt = wfpt_prep(b,v,sp,decT);
             l = l+log(pt(a(t)));
-        end
+        
 
             if dodiff
                % derivative of starting point
@@ -66,14 +68,17 @@ for i = 1:length(paramRange1)
                 dl(2) = ptda(a(t)); 
                % derivative of betarew
                dvbr = -1*(betarew*r(t)-betarew*1); 
-               pt = wfpt_prep_dv(b,v,dvbr,sp,decT);
-               dl(3) = pt(a(t)); 
+               ptbr = wfpt_prep_dv(b,v,dvbr,sp,decT);
+               dl(3) = ptbr(a(t)); 
                % derivative of betaeff
                dvbe = -1*(betaeff*effortCostHi-betaeff*effortCostLo); 
-               pt = wfpt_prep_dv(b,v,dvbe,sp,decT);
-               dl(4)= pt(a(t)); 
+               ptbe = wfpt_prep_dv(b,v,dvbe,sp,decT);
+               dl(4)= ptbe(a(t)); 
                % derivative of non-decision time
             end
+            
+        end
+        
         l = -l; 
         dl = -dl;
         dlpn1(i,j) = dl(pn1); 

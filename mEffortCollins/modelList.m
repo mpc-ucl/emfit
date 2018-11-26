@@ -31,22 +31,31 @@ function model = modelList;
 % Quentin Huys 2018 qhuys@cantab.net
 
 i=0; 
+i=i+1;
 
-i=i+1; 
-model(i).descr = 'Effort sensitivity only. This model disregards the reward information and provides a constant bias as a function of the effort associated with the choices.';
-model(i).name = 'lleffort';			
-model(i).npar = 1;
-model(i).parnames = {'\theta'};
-model(i).parnames_untr = {'\theta'};
-model(i).partransform = {'@(x)x'};
+model(i).descr = 'DDIM in combination with linear effort and reward sensitivity. This model contains an effort and reward sensitivity parameter determining the drift rate and parameters for boundary, starting point and non-decision time.';
+model(i).name = 'llreweffscalingDDMBSP';				
+model(i).npar = 5;
+model(i).parnames = {'starting point', 'boundary','rew','effort', 'nonDecisionTime'};
+model(i).parnames_untr = {'sig starting pont','log boundary', 'log rew','log eff', 'log nonDecisionTime'};
+model(i).partransform = {'@(x)1/(1+exp(-x))','@(x)exp(x)','@(x)exp(x)', '@(x)exp(x)', '@(x)exp(x)'};
 
-i=i+1; 
-model(i).descr = 'Linear effort and reward sensitivity. This model contains an effort and reward sensitivity parameter.';
-model(i).name = 'llrewardeffort';			
-model(i).npar = 2;
-model(i).parnames = {'\beta_{rew}','\beta_{effort}'};
-model(i).parnames_untr = {'log \beta_{rew}','log \beta_{effort}'};
-model(i).partransform = {'@(x)exp(x)','@(x)exp(x)'};
+
+% i=i+1; 
+% model(i).descr = 'Effort sensitivity only. This model disregards the reward information and provides a constant bias as a function of the effort associated with the choices.';
+% model(i).name = 'lleffort';			
+% model(i).npar = 1;
+% model(i).parnames = {'\theta'};
+% model(i).parnames_untr = {'\theta'};
+% model(i).partransform = {'@(x)x'};
+% 
+% i=i+1; 
+% model(i).descr = 'Linear effort and reward sensitivity. This model contains an effort and reward sensitivity parameter.';
+% model(i).name = 'llrewardeffort';			
+% model(i).npar = 2;
+% model(i).parnames = {'\beta_{rew}','\beta_{effort}'};
+% model(i).parnames_untr = {'log \beta_{rew}','log \beta_{effort}'};
+% model(i).partransform = {'@(x)exp(x)','@(x)exp(x)'};
 
 
 nModls = i; 

@@ -1,7 +1,7 @@
-function p = wfpt(t,v,a,z,err)
+function [p, dv, da, dz,dt]  = wfpt(t,v,a,z,err)
 % This function calculates the probability for Wiener first passage time
 % according to Navarro et al 2009.
-% t = time [s]
+% t = time 
 % v = drift
 % a = boundary
 % z = starting point
@@ -35,19 +35,24 @@ p = 0; %initialize density
 if ks < kl % if small t is better...
     K = ceil(ks); % round to smallest integer meeting error
     for k = -floor((K-1)/2):ceil((K-1)/2) % loop over k
-        p = p + (w + 2*k)*exp(-((w + 2*k)^2)/2/tt); % increment sum
+        p = p + ((z/a) + 2*k)*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2)))); % increment sum
     end
-    p = p/sqrt(2*pi*tt^3); % add constant term
+    p = p/sqrt(2*pi*(t/(a^2))^3); % add constant term
 else % if large t is better...
     K=ceil(kl); % round to smallest integer meeting error
     for k = 1:K
-        p = p+k*exp(-(k^2)*(pi^2)*tt/2)*sin(k*pi*w); % increment sum
+        p = p+k*exp(-(k^2)*(pi^2)*(t/(a^2)/2))*sin(k*pi*(z/a) ); % increment sum
     end
     p = p*pi; % add constant term
 end
 
 % convert to f(t|v,a,w)
 p = p*exp(-v*a*w -(v^2)*t/2)/(a^2);
+dv = -z-v*t;
+da = 0;
+dz = 0; 
+dt = 0; 
+
 
 if p < 10^-20
     p = 10^-20*tt;

@@ -22,7 +22,7 @@ for sj=1:Nsj;
 	Data(sj).ID = sprintf('Subj %i',sj);
 	Data(sj).Nch = T; 					    % length 
 	Data(sj).a = zeros(T,1);                % preallocate space
-    Data(sj).decisionTime = zeros(T,1);     % preallocate space
+    Data(sj).decisiontime = zeros(T,1);     % preallocate space
 	Data(sj).rew =allResults(sj).rewardTrace;		    % high reward options 
 	Data(sj).effortCostLo = - 0.2; 			% standard setting for 20 button presse
 	Data(sj).effortCostHi = - 1; 		    % standard setting for 100 button presse
@@ -36,7 +36,7 @@ for sj=1:Nsj;
 	%  generate surrogate behavioural data 
 	[foo,foo,dsurr] = llreweffscalingDDMBSP(Data(sj).trueParam,Data(sj),0,0,0,options); 
 	Data(sj).a = dsurr.a;
-    Data(sj).decisionTime = dsurr.simTime;  
+    Data(sj).decisiontime = dsurr.simTime;  
 	Data(sj).trueModel='llreweffscalingDDMBSP';
 
 end

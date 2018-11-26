@@ -1,7 +1,12 @@
-Data=generateExampleDataset(Nsj,resultsDir, allResults);
-simpleModelFit; 
-%simpleModelFitFminCon; 
-%simpleModelFitGA; 
+
+%Uncomment beneath if want to use model with or without pswitch and which
+%optimization algorithm to use (Pswitch might only work with fminunc for
+%now)
+%Data=generateExampleDataset(Nsj,resultsDir, allResults); % for model without Pswitch
+Data=generateExampleDatasetPSwitch(Nsj,resultsDir, allResults); % for model with Pswitch
+simpleModelFit;             % uses fminunc 
+%simpleModelFitFminCon;     % uses fmincon
+%simpleModelFitGA;          % uses GA
 
 paramsEst = [];
 for i=1:Nsj
@@ -63,5 +68,15 @@ rho = corr(paramsTrue(:,i), paramsEst(:,i));
 xlabel('true params'); 
 ylabel('estimated params');
 title(sprintf('betaeff: rho = %.4f', rho)); 
+xlim([-2 3])
+ylim([-2 3])
+
+subplot(2,3,6)
+i = 6;
+plot(paramsTrue(:,i), paramsEst(:,i),'.'); 
+rho = corr(paramsTrue(:,i), paramsEst(:,i));
+xlabel('true params'); 
+ylabel('estimated params');
+title(sprintf('pswitch: rho = %.4f', rho)); 
 xlim([-2 3])
 ylim([-2 3])
