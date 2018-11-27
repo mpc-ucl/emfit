@@ -33,7 +33,7 @@ function model = modelList;
 i=0; 
 i=i+1;
 
-model(i).descr = 'DDIM in combination with linear effort and reward sensitivity. This model contains an effort and reward sensitivity parameter determining the drift rate and parameters for boundary, starting point and non-decision time.';
+model(i).descr = 'DDM in combination with linear effort and reward sensitivity. This model contains an effort and reward sensitivity parameter determining the drift rate and parameters for boundary, starting point and non-decision time.';
 model(i).name = 'llreweffscalingDDMBSP';				
 model(i).npar = 5;
 model(i).parnames = {'starting point', 'boundary','rew','effort', 'nonDecisionTime'};
