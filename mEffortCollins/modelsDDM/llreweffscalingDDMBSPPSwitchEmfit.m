@@ -29,25 +29,6 @@ effortCostHi = D.effortCostHi;%  set to - 1 in original task;
 effortCost = [effortCostLo effortCostHi]';
 
 
-% if dogenerate
-%     Vlow =  betarew*1    - betaeff*Effortcost2;     
-%     for i = 1:5
-%         reward = i+2; % 3,4,5,6,7
-%         Vhigh(i) = betarew*reward- betaeff*Effortcost1;
-%         % define drift rate as difference of value for high and low option
-%         % "correct" boundary is lower boundary.
-%         v = -1*(Vhigh(i)-Vlow);  
-%         rew = 0; % not needed in this model
-%         bscale = 0; % not needed in this model 
-%         % make probability distributions with fitted parameters for
-%         % possible time intervals to speed up simulations
-%         [combined_t(i,:), combined_prob(i,:)]=make_cdfs_sp(v,b,sp,rew, bscale);      
-%     end
-%     %plotsprobs(combined_t, combined_prob) % to check if fitted
-%     %distributions look reasonable
-% end
-
-
 for t=1:length(a)
 	% define in terms of task 
 	Vhigh = betarew*r(t)+betaeff*effortCostHi;
@@ -66,7 +47,7 @@ for t=1:length(a)
 	if options.generatesurrogatedata==1
         rew = 0; 
         bscale = 0; 
-        [combined_t(:), combined_prob(:)]=make_cdfs_sp(v,b,sp,rew, bscale); 
+        [combined_t(:), combined_prob(:)]=make_cdfs_dist(v,b,sp,rew, bscale); 
 		[asurr(t), simTime(t)] = generateDataDDM(combined_t(:), combined_prob(:), ndt);
         if r(t) < 5 && asurr(t) == 2
             if rand<pswitch 
@@ -82,9 +63,38 @@ for t=1:length(a)
             end
         else 
             l = l+log(pt(a(t))); 
+        end
     end
     
-        
+    if dodiff
+       % derivative of starting point
+       if a(t) == 1
+           dl(1) = dl(1)+dz(a(t))*(-1)*(spf*(1-spf))*b; 
+       else
+           dl(1) = dl(1)+dz(a(t))*(spf*(1-spf))*b;
+       end
+       % derivative of boundary
+       if a(t) == 1
+           dl(2) = dl(2)+(da(a(t))*b+dz(a(t))*(b-spf*b));
+       else 
+           dl(2) = dl(2)+(da(a(t))*b+dz(a(t))*spf*b);
+       end
+       % derivative of betarew
+       dvbr = -1*(betarew*r(t)-betarew*1); 
+       if a(t) == 1
+           dl(3) = dl(3)+dv(a(t))*-dvbr;  
+       elseif a(t) == 2
+           dl(3) = dl(3)+dv(a(t))*dvbr; 
+       end
+       % derivative of betaeff
+       dvbe = -1*(betaeff*effortCostHi-betaeff*effortCostLo); 
+       if a(t) == 1
+           dl(4) = dl(4)+dv(a(t))*-dvbe;
+       elseif a(t) == 2
+           dl(4) = dl(4)+dv(a(t))*dvbe;
+       end
+       % derivative of non-decision time
+       dl(5) = dl(5)+dt(a(t))*(-1*ndt); 
     end
     
     
@@ -94,6 +104,11 @@ if options.generatesurrogatedata==1
     dsurr.simTime = simTime; 
 end
 
-dl = 0; 
+dl = -dl; 
 l = -l; 
+
+if options.generatesurrogatedata==1
+	dsurr.a = asurr; 
+    dsurr.simTime = simTime; 
+end
 end

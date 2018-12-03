@@ -193,7 +193,17 @@ while 1;emit=emit+1; t0=tic;
 		while 1 												% have to deal with poor convergence 
 			init = E(:,sk);
 			if rs>1 | nfc>1; init = init+ nfc*.1*real(sqrtm(nu))*randn(Np,1); end % add noise for next attempt
-			[est(:,nfc),fval(nfc),ex(nfc),foo,foo,hess(:,:,nfc)] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior,llopt),init,fminopt);
+			sto = 1; 
+            while sto == 1
+                try
+                    %init(end) = -1.6; 
+                    [est(:,nfc),fval(nfc),ex(nfc),foo,foo,hess(:,:,nfc)] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior,llopt),init,fminopt);
+                    sto = 0;
+                catch
+                    init = init+ nfc*.1*real(sqrtm(nu))*randn(Np,1);
+                end
+            end
+                
 			if  any(ex(nfc)==[1:3]) | emit==1 | nfc==3; break;end
 			if ~any(ex(nfc)==[1:3]) ; fprintf('sj %i, rep %i convergence failure %i exit status %i\n',sk,rs,nfc,ex); end
 			nfc=nfc+1; 

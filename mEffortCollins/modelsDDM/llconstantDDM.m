@@ -1,4 +1,4 @@
-function [l, dl, dsurr] = llreweffscalingDDMB(x,D,mu,nui,doprior,options)
+function [l, dl, dsurr] = llconstantDDM(x,D,mu,nui,doprior,options)
 
 % This model consits of the analytical version of the drift
 % diffusion model by Navarro % Fuss (2009). Its fits parameters for the starting point, 
@@ -9,10 +9,9 @@ function [l, dl, dsurr] = llreweffscalingDDMB(x,D,mu,nui,doprior,options)
 np = length(x);
 dodiff= nargout==2;
 
-spf = 0.5;  % parameter for starting point fraction
-b = exp(x(1));           % parameter for boundary
-betarew = exp(x(2));     % beta for reward
-betaeff = exp(x(3));     % beta for effort
+spf = 1/(1+exp(-x(1)));  % parameter for starting point fraction
+b = exp(x(2));           % parameter for boundary
+theta = x(3);             % constant parameter for drift rate
 ndt = exp(x(4));         % parameter for non-decision time
 
 
@@ -31,9 +30,10 @@ effortCost = [effortCostLo effortCostHi]';
 
 if options.generatesurrogatedata==1
     dodiff=0;
-    Vlow =  betarew*1+betaeff*effortCostLo;
+    Vlow = 0;
     for i = 1:5
-        Vhigh(i) = betarew*(i+2)+betaeff*effortCostHi;
+        reward = i+2; % 3,4,5,6,7
+        Vhigh(i) = theta;
         % define drift rate as difference of value for high and low option
         % "correct" boundary is lower boundary, therefore drift rate defined here as neg.  
         v = -1*(Vhigh(i)-Vlow); 
@@ -50,16 +50,20 @@ end
 
 for t=1:length(a)
 	% define in terms of task 
-	Vhigh = betarew*r(t)+betaeff*effortCostHi;
-	Vlow =  betarew*1+betaeff*effortCostLo;
+	Vhigh = theta;
+	Vlow =  0;
     % define drift rate as difference of value for high and low option
+    % here defined such that drift rate is negative if goes to high value
+    % option
     v = -1*(Vhigh-Vlow); 
     % only actually decision time is taking into account in DDM, thus
     % non-decision time is subtracted from recorded time 
     decT = totalT(t)-ndt; 
+%     if decT < 0
+%         decT = 10e-2;
+%     end
     [pt, dv, da, dz, dt] = wfpt_prep(b,v,sp,decT);
-    
-    
+  
 	if options.generatesurrogatedata==1
         rewidx = r(t)-2; % reward index 
 		[asurr(t), simTime(t)] = generateDataDDM(combined_t(rewidx,:), combined_prob(rewidx,:), ndt);
@@ -68,26 +72,25 @@ for t=1:length(a)
     end
     
     if dodiff
+       % derivative of starting point
+       if a(t) == 1
+           dl(1) = dl(1)+dz(a(t))*(-1)*(spf*(1-spf))*b; 
+       else
+           dl(1) = dl(1)+dz(a(t))*(spf*(1-spf))*b;
+       end
        % derivative of boundary
        if a(t) == 1
-           dl(1) = dl(1)+(da(a(t))*b+dz(a(t))*(b-spf*b));
+           dl(2) = dl(2)+(da(a(t))*b+dz(a(t))*(b-spf*b));
        else 
-           dl(1) = dl(1)+(da(a(t))*b+dz(a(t))*spf*b);
+           dl(2) = dl(2)+(da(a(t))*b+dz(a(t))*spf*b);
        end
-       % derivative of betarew
-       dvbr = -1*(betarew*r(t)-betarew*1); 
+       % derivative of theta
+       dvth = -1; 
        if a(t) == 1
-           dl(2) = dl(2)+dv(a(t))*-dvbr;  
+           dl(3) = dl(3)+dv(a(t))*-dvth;  
        elseif a(t) == 2
-           dl(2) = dl(2)+dv(a(t))*dvbr; 
-       end
-       % derivative of betaeff
-       dvbe = -1*(betaeff*effortCostHi-betaeff*effortCostLo); 
-       if a(t) == 1
-           dl(3) = dl(3)+dv(a(t))*-dvbe;
-       elseif a(t) == 2
-           dl(3) = dl(3)+dv(a(t))*dvbe;
-       end
+           dl(3) = dl(3)+dv(a(t))*dvth; 
+       end       
        % derivative of non-decision time
        dl(4) = dl(4)+dt(a(t))*(-1*ndt); 
     end

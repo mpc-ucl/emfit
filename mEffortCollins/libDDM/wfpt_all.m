@@ -6,14 +6,14 @@ function [p, dv, da, dz, dt]  = wfpt_all(t,v,a,z,err)
 % a = boundary
 % z = starting point
 % err = 10^-29 (default)
-%     if t<0
-%         p=(10^-20)^(-t);
-%         dv = 0; 
-%         da = 0; 
-%         dz = 0; 
-%         dt = (10^-20)^(-t)*log(10^-20); 
-%         return      
-%     end
+    if t<0
+        p=(10^-20)^(-t);
+        dv = 0; 
+        da = 0; 
+        dz = 0; 
+        dt = log(10^20); 
+        return      
+    end
 
 tt = t/(a^2); % use normalized time
 w = z/a; % convert to relative start point
@@ -48,21 +48,21 @@ if ks < kl % if small t is better...
         p = p + ((z/a) + 2*k)*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2)))); % increment sum
         dz = dz+((1/a)*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2))))+((z/a) + 2*k)*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2))))*(-1/(t/a^2))*((z/a) + 2*k)*(1/a));   
         da = da+(-1)*exp(-(2*k*a+z)^2/(2*t))*(8*k^3*a^3+8*k^2*a^2*z+2*k*a*z^2+t*z)/(t*a^2); 
-        dt = dt+((z/a) + 2*k)*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2))))*(-1*(((z/a) + 2*k)^2)/(2*(1/(a^2))))*-t^-2; 
+        dt = dt+a^2*((z/a) + 2*k)^3*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2))))/(2*t^2);
     end
     dz = dz * (1/p);
     da = da*(1/p); 
     dt = dt*(1/p); 
     p = p/sqrt(2*pi*(t/(a^2))^3); % add constant term 
     da = da+(3/a); 
-    dt = dt-(1/sqrt(2*pi*(t/(a^2))^3))*sqrt(2*pi*a^-(3/2))*(3/2)*t^(1/2); 
+    dt = dt-(3/(2*t)); 
 else % if large t is better...
     K=ceil(kl); % round to smallest integer meeting error
     for k = 1:K
         p = p+k*exp(-(k^2)*(pi^2)*(t/(a^2))/2)*sin(k*pi*(z/a)); % increment sum
         dz = dz + k*exp(-(k^2)*(pi^2)*(t/(a^2))/2)*cos(k*pi*(z/a))*(k*pi/a); 
         da = da+k*(exp(-(k^2)*(pi^2)*(t/(a^2))/2)*((k^2)*(pi^2)*(t/(a^3)))*sin(k*pi*(z/a))+exp(-(k^2)*(pi^2)*(t/(a^2))/2)*cos(k*pi*(z/a))*(-k*pi*z/a^2));
-        dt = dt+k*exp(-(k^2)*(pi^2)*(t/(a^2))/2)*sin(k*pi*(z/a))*(-(k^2)*(pi^2)*(1/(a^2))/2);
+        dt = dt+k*exp(-(k^2)*(pi^2)*(t/(a^2))/2)*sin(k*pi*(z/a))*(-(k^2)*(pi^2)*(1/(2*a^2)));
     end
     dz = dz*(1/p); 
     da = da*(1/p); 

@@ -48,5 +48,5 @@ end
 
 disp([dy dh])  % print the two vectors
 
-%fprintf('%f %f %f \n', dy(2), dh(2), X(2));
+%fprintf('%f %f %f \n', dy(5), dh(5), X(5));
 d = norm(dh-dy)/norm(dh+dy);       % return norm of diff divided by norm of sum
