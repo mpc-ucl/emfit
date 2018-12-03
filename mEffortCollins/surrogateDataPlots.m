@@ -23,7 +23,7 @@ end
 % the samples
 for mdl=1:nModls
 	for sj=1:Nsj
-		Asurr = [SurrogateData(sj).(models(mdl).name).a];
+		Asurr = [SurrogateData(sj).(models(mdl).name).a]';
 		for rew = 3:7
 			i = rew==Data(sj).rew;
 			probHESurr(rew-2,sj,mdl)	= mean(sum(Asurr(i,:)==2)/sum(i));
