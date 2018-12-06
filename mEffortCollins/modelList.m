@@ -41,13 +41,13 @@ i=0;
 % model(i).partransform = {'@(x)1./(1+exp(-x))','@(x)exp(x)','@(x)x', '@(x)exp(x)'};
 % 
 
-i=i+1;
-model(i).descr = 'DDM in combination with linear effort and reward sensitivity. This model contains an effort and reward sensitivity parameter determining the drift rate and parameters for boundary and non-decision time.';
-model(i).name = 'llreweffscalingDDMB';				
-model(i).npar = 4;
-model(i).parnames = {'boundary','rew','effort', 'nonDecisionTime'};
-model(i).parnames_untr = {'log boundary', 'log rew','log eff', 'log nonDecisionTime'};
-model(i).partransform = {'@(x)exp(x)','@(x)exp(x)', '@(x)exp(x)', '@(x)exp(x)'};
+% i=i+1;
+% model(i).descr = 'DDM in combination with linear effort and reward sensitivity. This model contains an effort and reward sensitivity parameter determining the drift rate and parameters for boundary and non-decision time.';
+% model(i).name = 'llreweffscalingDDMB';				
+% model(i).npar = 4;
+% model(i).parnames = {'boundary','rew','effort', 'nonDecisionTime'};
+% model(i).parnames_untr = {'log boundary', 'log rew','log eff', 'log nonDecisionTime'};
+% model(i).partransform = {'@(x)exp(x)','@(x)exp(x)', '@(x)exp(x)', '@(x)exp(x)'};
 
 
 i=i+1;

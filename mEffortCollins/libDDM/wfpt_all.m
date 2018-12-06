@@ -6,14 +6,14 @@ function [p, dv, da, dz, dt]  = wfpt_all(t,v,a,z,err)
 % a = boundary
 % z = starting point
 % err = 10^-29 (default)
-    if t<0
-        p=(10^-20)^(-t);
-        dv = 0; 
-        da = 0; 
-        dz = 0; 
-        dt = log(10^20); 
-        return      
-    end
+if t<0
+    p=(10^-20)^(-t);
+    dz=0; 
+    da=0; 
+    dv=0; 
+    dt=log(10^20); 
+    return      
+end
 
 tt = t/(a^2); % use normalized time
 w = z/a; % convert to relative start point
@@ -36,7 +36,6 @@ end
 
 
 
-
 % compute f(tt|0,1,w)
 p = 0; %initialize density
 dz = 0; 
@@ -45,6 +44,15 @@ dt = 0;
 if ks < kl % if small t is better...
     K = ceil(ks); % round to smallest integer meeting error
     for k = -floor((K-1)/2):ceil((K-1)/2) % loop over k
+%      if ((z/a) + 2*k)^2/(2*(t/(a^2)))<0.00135
+%          p=0;
+%          dv=-z-v*t;
+%          da=0;
+%          dz=-1e4;
+%          dt=1e4;
+%          return      
+%      end
+
         p = p + ((z/a) + 2*k)*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2)))); % increment sum
         dz = dz+((1/a)*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2))))+((z/a) + 2*k)*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2))))*(-1/(t/a^2))*((z/a) + 2*k)*(1/a));   
         da = da+(-1)*exp(-(2*k*a+z)^2/(2*t))*(8*k^3*a^3+8*k^2*a^2*z+2*k*a*z^2+t*z)/(t*a^2); 
