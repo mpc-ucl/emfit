@@ -40,7 +40,7 @@ for t=1:length(a)
     % only actually decision time is taking into account in DDM, thus
     % non-decision time is subtracted from recorded time 
     decT = totalT(t)-ndt; 
-    [pt, dv, da, dz, dt] = wfpt_prep(b,v,sp,decT);
+    [pt, dv, da, dz, dt, dv_ps, dz_ps, da_ps, dt_ps] = wfpt_prep(b,v,sp,decT);
     
     
 
@@ -68,34 +68,90 @@ for t=1:length(a)
     
     if dodiff
        % derivative of starting point
-       if a(t) == 1
-           dl(1) = dl(1)+dz(a(t))*(-1)*(spf*(1-spf))*b; 
-       else
-           dl(1) = dl(1)+dz(a(t))*(spf*(1-spf))*b;
-       end
-       % derivative of boundary
-       if a(t) == 1
-           dl(2) = dl(2)+(da(a(t))*b+dz(a(t))*(b-spf*b));
+       if r(t) == 3 || r(t) == 4; 
+            if a(t) == 1 % low
+                dl(1) = dl(1)+(1/(pt(1)+pt(2)*pswitch))*(dz_ps(1)*(-1)*(spf*(1-spf))*b+dz_ps(2)*(spf*(1-spf))*b*pswitch);
+            elseif a(t) == 2 % high
+                dl(1) = dl(1)+dz(2)*(spf*(1-spf))*b;
+            end
        else 
-           dl(2) = dl(2)+(da(a(t))*b+dz(a(t))*spf*b);
+           if a(t) == 1
+               dl(1) = dl(1)+dz(a(t))*(-1)*(spf*(1-spf))*b; 
+           else
+               dl(1) = dl(1)+dz(a(t))*(spf*(1-spf))*b;
+           end
        end
+       
+       % derivative of boundary
+       if r(t) == 3 || r(t) == 4; 
+            if a(t) == 1 % low
+                dl(2) = dl(2)+(1/(pt(1)+pt(2)*pswitch))*((da_ps(1)*b+dz_ps(1)*(b-spf*b)+(da_ps(2)*b+dz_ps(2)*spf*b)*pswitch));
+            elseif a(t) == 2 % high
+                dl(2) = dl(2)+(da(a(t))*b+dz(a(t))*spf*b);
+            end
+       else 
+           if a(t) == 1
+               dl(2) = dl(2)+(da(a(t))*b+dz(a(t))*(b-spf*b));
+           else 
+               dl(2) = dl(2)+(da(a(t))*b+dz(a(t))*spf*b);
+           end
+       end
+           
        % derivative of betarew
-       dvbr = -1*(betarew*r(t)-betarew*1); 
-       if a(t) == 1
-           dl(3) = dl(3)+dv(a(t))*-dvbr;  
-       elseif a(t) == 2
-           dl(3) = dl(3)+dv(a(t))*dvbr; 
+        dvbr = -1*(betarew*r(t)-betarew*1); 
+       if r(t) == 3 || r(t) == 4; 
+           if a(t) == 1 % low
+                dl(3) = dl(3)+(1/(pt(1)+pt(2)*pswitch))*(dv_ps(1)*-dvbr+dv_ps(2)*dvbr*pswitch);
+            elseif a(t) == 2 % high
+                dl(3) = dl(3)+dv(a(t))*dvbr; 
+           end     
+       else    
+           if a(t) == 1
+               dl(3) = dl(3)+dv(a(t))*-dvbr;  
+           elseif a(t) == 2
+               dl(3) = dl(3)+dv(a(t))*dvbr; 
+           end
        end
+       
        % derivative of betaeff
        dvbe = -1*(betaeff*effortCostHi-betaeff*effortCostLo); 
-       if a(t) == 1
-           dl(4) = dl(4)+dv(a(t))*-dvbe;
-       elseif a(t) == 2
-           dl(4) = dl(4)+dv(a(t))*dvbe;
+       if r(t) == 3 || r(t) == 4; 
+           if a(t) == 1 % low
+                dl(4) = dl(4)+(1/(pt(1)+pt(2)*pswitch))*(dv_ps(1)*-dvbe+dv_ps(2)*dvbe*pswitch);
+            elseif a(t) == 2 % high
+                dl(4) = dl(4)+dv(a(t))*dvbe; 
+           end     
+       else    
+           if a(t) == 1
+               dl(4) = dl(4)+dv(a(t))*-dvbe;  
+           elseif a(t) == 2
+               dl(4) = dl(4)+dv(a(t))*dvbe; 
+           end
        end
+       
        % derivative of non-decision time
-       dl(5) = dl(5)+dt(a(t))*(-1*ndt); 
+       if r(t) == 3 || r(t) == 4; 
+           if a(t) == 1 % low
+                dl(5) = dl(5)+(1/(pt(1)+pt(2)*pswitch))*(dt_ps(1)*(-ndt)+dt_ps(2)*(-ndt)*pswitch);
+            elseif a(t) == 2 % high
+                dl(5) = dl(5)+dt(a(t))*(-ndt); 
+           end     
+       else   
+           dl(5) = dl(5)+dt(a(t))*(-1*ndt); 
+       end
+       
+       % derivative of pswitch
+       if r(t) == 3 || r(t) == 4; 
+            if a(t) == 1; 
+                dl(6) = dl(6)+(1/(pt(1)+pt(2)*pswitch))*pt(2)*pswitch*(1-pswitch);         
+            elseif a(t) == 2 % high
+                dl(6) = dl(6)+(1/(1-pswitch))*(-1)*pswitch*(1-pswitch);
+            end
+       else
+           dl(6) = dl(6)+0; 
+       end       
     end
+    
     
     
 end

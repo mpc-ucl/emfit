@@ -1,4 +1,4 @@
-function [p, dv, da, dz, dt]  = wfpt_all(t,v,a,z,err)
+function [p, dv, da, dz, dt, dv_ps, dz_ps, da_ps, dt_ps]  = wfpt_all(t,v,a,z,err)
 % This function calculates the probability for Wiener first passage time
 % according to Navarro et al 2009.
 % t = time 
@@ -12,6 +12,10 @@ if t<0
     da=0; 
     dv=0; 
     dt=log(10^20); 
+    dv_ps = 0; 
+    dz_ps = 0; 
+    da_ps = 0; 
+    dt_ps = 4^(10*t+1)*5^(20*t+1)*log(10); 
     return      
 end
 
@@ -53,17 +57,29 @@ if ks < kl % if small t is better...
 %          return      
 %      end
 
-        p = p + ((z/a) + 2*k)*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2)))); % increment sum
+        p = p + ((z/a) + 2*k)*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2)))); % increment sum 
         dz = dz+((1/a)*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2))))+((z/a) + 2*k)*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2))))*(-1/(t/a^2))*((z/a) + 2*k)*(1/a));   
         da = da+(-1)*exp(-(2*k*a+z)^2/(2*t))*(8*k^3*a^3+8*k^2*a^2*z+2*k*a*z^2+t*z)/(t*a^2); 
         dt = dt+a^2*((z/a) + 2*k)^3*exp(-(((z/a) + 2*k)^2)/(2*(t/(a^2))))/(2*t^2);
     end
+    dz_part1 = dz/sqrt(2*pi*(t/(a^2))^3);
+    da_part11 = da;
+    dt_part11 = dt; 
     dz = dz * (1/p);
     da = da*(1/p); 
     dt = dt*(1/p); 
+    p_part11 = p;
     p = p/sqrt(2*pi*(t/(a^2))^3); % add constant term 
+    p_part12 = 1/sqrt(2*pi*(t/(a^2))^3);
+    p_part1 = p;
+    dv_part1 = p;
     da = da+(3/a); 
     dt = dt-(3/(2*t)); 
+    da_part12 = 3*t^3/(sqrt(2*pi)*a^7*(t^3/a^6)^(3/2));
+    dt_part12 = -3*t^2/(2*sqrt(2*pi)*a^6*(t^3/a^6)^(3/2));
+    da_part1 = da_part11*p_part12+da_part12*p_part11;
+    dt_part1 = dt_part11*p_part12+dt_part12*p_part11; 
+    
 else % if large t is better...
     K=ceil(kl); % round to smallest integer meeting error
     for k = 1:K
@@ -72,19 +88,30 @@ else % if large t is better...
         da = da+k*(exp(-(k^2)*(pi^2)*(t/(a^2))/2)*((k^2)*(pi^2)*(t/(a^3)))*sin(k*pi*(z/a))+exp(-(k^2)*(pi^2)*(t/(a^2))/2)*cos(k*pi*(z/a))*(-k*pi*z/a^2));
         dt = dt+k*exp(-(k^2)*(pi^2)*(t/(a^2))/2)*sin(k*pi*(z/a))*(-(k^2)*(pi^2)*(1/(2*a^2)));
     end
+    dz_part1 = dz*pi; 
+    da_part1 = da; 
+    dt_part1 = dt; 
     dz = dz*(1/p); 
     da = da*(1/p); 
     dt = dt*(1/p); 
     p = p*pi; % add constant term
+    p_part1 = p; 
+    dv_part1 = p; 
+    da_part1 = da_part1*pi; 
+    dt_part1 = dt_part1*pi; 
 end
 
 % convert to f(t|v,a,w)
 p = p*exp(-v*z-(v^2)*t/2)/(a^2);
+%da_part3 = 
 dv = -z-v*t;
+dv_ps = (-z-v*t)*dv_part1*exp(-v*z-(v^2)*t/2)/(a^2);
 da = (-2/a)+da;
+da_ps = exp(-v*z-(v^2)*t/2)*(-2)*a^(-3)*p_part1+da_part1*exp(-v*z-(v^2)*t/2)/(a^2);
 dz = -v+dz; 
+dz_ps = (exp(-v*z-(v^2)*t/2)/(a^2))*dz_part1+p_part1*(exp(-v*z-(v^2)*t/2)/(a^2))*(-v); 
 dt = (-v^2/2)+dt; 
-
+dt_ps = (exp(-v*z-(v^2)*t/2)/(a^2))*(-v^2/2)*p_part1+dt_part1*(exp(-v*z-(v^2)*t/2)/(a^2));
 
 
 % if p < 10^-20
