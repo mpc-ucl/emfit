@@ -6,18 +6,18 @@ function [p, dv, da, dz, dt, dv_ps, dz_ps, da_ps, dt_ps]  = wfpt_all(t,v,a,z,err
 % a = boundary
 % z = starting point
 % err = 10^-29 (default)
-if t<0
-    p=(10^-20)^(-t);
-    dz=0; 
-    da=0; 
-    dv=0; 
-    dt=log(10^20); 
-    dv_ps = 0; 
-    dz_ps = 0; 
-    da_ps = 0; 
-    dt_ps = 4^(10*t+1)*5^(20*t+1)*log(10); 
-    return      
-end
+% if t<0
+%     p=(10^-20)^(-t);
+%     dz=0; 
+%     da=0; 
+%     dv=0; 
+%     dt=log(10^20); 
+%     dv_ps = 0; 
+%     dz_ps = 0; 
+%     da_ps = 0; 
+%     dt_ps = 4^(10*t+1)*5^(20*t+1)*log(10); 
+%     return      
+% end
 
 tt = t/(a^2); % use normalized time
 w = z/a; % convert to relative start point
@@ -103,7 +103,6 @@ end
 
 % convert to f(t|v,a,w)
 p = p*exp(-v*z-(v^2)*t/2)/(a^2);
-%da_part3 = 
 dv = -z-v*t;
 dv_ps = (-z-v*t)*dv_part1*exp(-v*z-(v^2)*t/2)/(a^2);
 da = (-2/a)+da;

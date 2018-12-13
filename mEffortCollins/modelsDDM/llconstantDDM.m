@@ -12,9 +12,9 @@ dodiff= nargout==2;
 spf = 1/(1+exp(-x(1)));  % parameter for starting point fraction
 b = exp(x(2));           % parameter for boundary
 theta = x(3);             % constant parameter for drift rate
-ndt = exp(x(4));         % parameter for non-decision time
+ndtime = 1/(1+exp(-x(4)));         % parameter for non-decision time
 
-
+ndt = ndtime*0.7;
 sp = spf*b;              % starting point is a fraction of the boundary
 
 [l,dl] = logGaussianPrior(x,mu,nui,doprior);
@@ -92,7 +92,7 @@ for t=1:length(a)
            dl(3) = dl(3)+dv(a(t))*dvth; 
        end       
        % derivative of non-decision time
-       dl(4) = dl(4)+dt(a(t))*(-1*ndt); 
+       dl(4) = dl(4)+dt(a(t))*(-0.7*(ndtime*(1-ndtime))); 
     end
     
 end

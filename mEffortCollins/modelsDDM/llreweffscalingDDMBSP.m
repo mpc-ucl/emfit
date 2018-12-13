@@ -13,8 +13,9 @@ spf = 1/(1+exp(-x(1)));  % parameter for starting point fraction
 b = exp(x(2));           % parameter for boundary
 betarew = exp(x(3));     % beta for reward
 betaeff = exp(x(4));     % beta for effort
-ndt = exp(x(5));         % parameter for non-decision time
+ndtime = 1/(1+exp(-x(5)));         % parameter for non-decision time
 
+ndt = ndtime*0.7;
 
 sp = spf*b;              % starting point is a fraction of the boundary
 
@@ -100,7 +101,7 @@ for t=1:length(a)
            dl(4) = dl(4)+dv(a(t))*dvbe;
        end
        % derivative of non-decision time
-       dl(5) = dl(5)+dt(a(t))*(-1*ndt); 
+       dl(5) = dl(5)+dt(a(t))*(-0.7*(ndtime*(1-ndtime))); 
     end
     
 end
