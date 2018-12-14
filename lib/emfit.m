@@ -186,7 +186,7 @@ while 1;emit=emit+1; t0=tic;
 		E = zeros(Np,Nsj) + sqrtm(nu)*randn(Np,Nsj);		% random initial individual subject parameter estimates
 	end
 	% main loop over subjects 
-	parfor sj=sjind_pf; tt0=tic; 
+	for sj=sjind_pf; tt0=tic; 
 		sk = mod(sj-1,Nsj)+1; 							% current subject
 		rs = ceil(sj/Nsj);								% current restart for that subject 
 		est=[]; fval=[]; ex=-1; hess=[]; nfc=1; 
@@ -200,6 +200,9 @@ while 1;emit=emit+1; t0=tic;
                     [est(:,nfc),fval(nfc),ex(nfc),foo,foo,hess(:,:,nfc)] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior,llopt),init,fminopt);
                     sto = 0;
                 catch
+                    F = zeros(Np,1) + sqrtm(nu)*randn(Np,Nsj);
+                    E(:,sk) = F(:,sk); 
+                    init = E(:,sk);
                     init = init+ nfc*.1*real(sqrtm(nu))*randn(Np,1);
                 end
             end
