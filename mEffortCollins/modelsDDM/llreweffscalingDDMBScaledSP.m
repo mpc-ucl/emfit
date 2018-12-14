@@ -13,9 +13,10 @@ spf = 1/(1+exp(-x(1)));  % parameter for starting point fraction
 sb = exp(x(2));          % parameter for starting boundary
 betarew = exp(x(3));     % beta for reward
 betaeff = exp(x(4));     % beta for effort
-ndt = exp(x(5));         % parameter for non-decision time
+ndtime = 1/(1+exp(-x(5)));         % parameter for non-decision time
 btrialscale = 1/(1+exp(-x(6))); % parameter for scaling the boundary
 
+ndt = ndtime*0.7;
 btrialscaled = btrialscale * (sb/60); % to make sure that boundary cannot get negative 
 
 [l,dl] = logGaussianPrior(x,mu,nui,doprior);
@@ -87,7 +88,7 @@ for t=1:length(a)
            dl(4) = dl(4)+dv(a(t))*dvbe;
        end
        % derivative of non-decision time
-       dl(5) = dl(5)+dt(a(t))*(-1*ndt); 
+       dl(5) = dl(5)+dt(a(t))*(-0.7*(ndtime*(1-ndtime))); 
        % derivative of boundary scaling
        dbts = (-1)*btrialscale*(1-btrialscale)*(sb/60)*t;
         if a(t) == 1

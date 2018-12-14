@@ -13,10 +13,11 @@ spf = 1/(1+exp(-x(1)));  % parameter for starting point fraction
 sb = exp(x(2));          % parameter for starting boundary
 betarew = exp(x(3));     % beta for reward
 betaeff = exp(x(4));     % beta for effort
-ndt = exp(x(5));         % parameter for non-decision time
+ndtime = 1/(1+exp(-x(5)));         % parameter for non-decision time
 btrialscale = 1/(1+exp(-x(6))); % parameter for scaling the boundary
 pswitch = 1/(1+exp(-x(7)));
 
+ndt = ndtime*0.7;
 
 btrialscaled = btrialscale * (sb/60); % to make sure that boundary cannot get negative 
 
@@ -140,12 +141,12 @@ for t=1:length(a)
        % derivative of non-decision time
        if r(t) == 3 || r(t) == 4; 
            if a(t) == 1 % low
-                dl(5) = dl(5)+(1/(pt(1)+pt(2)*pswitch))*(dt_ps(1)*(-ndt)+dt_ps(2)*(-ndt)*pswitch);
+                dl(5) = dl(5)+(1/(pt(1)+pt(2)*pswitch))*(dt_ps(1)*(-0.7*(ndtime*(1-ndtime)))+dt_ps(2)*(-0.7*(ndtime*(1-ndtime)))*pswitch);
             elseif a(t) == 2 % high
-                dl(5) = dl(5)+dt(a(t))*(-ndt); 
+                dl(5) = dl(5)+dt(a(t))*(-0.7*(ndtime*(1-ndtime))); 
            end     
        else   
-           dl(5) = dl(5)+dt(a(t))*(-1*ndt); 
+           dl(5) = dl(5)+dt(a(t))*(-0.7*(ndtime*(1-ndtime))); 
        end
        
         % derivative of boundary scaling
