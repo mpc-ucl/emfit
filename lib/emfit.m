@@ -150,6 +150,9 @@ Npall= Np+Nreg;
 coeff_vec = Inf*ones(Npall,1);
 
 % load & continue previous fit or set up things for a new fit 
+%loadstr = '/cluster/home/berwiani/studies1/aida/EffortBehaviour/firstLevelResultsForEmfit/llreweffscalingDDMBScaledSPPSwitch.mat';
+
+
 try 																% Try continuing previous fit 
 	eval(['load ' loadstr ' E V alpha emit fitparams musj nui stats ']);
 	nu = inv(nui);
@@ -200,7 +203,7 @@ while 1;emit=emit+1; t0=tic;
                     [est(:,nfc),fval(nfc),ex(nfc),foo,foo,hess(:,:,nfc)] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior,llopt),init,fminopt);
                     sto = 0;
                 catch
-                    F = zeros(Np,1) + sqrtm(nu)*randn(Np,Nsj);
+                    F = zeros(Np,Nsj) + sqrtm(nu)*randn(Np,Nsj);
                     E(:,sk) = F(:,sk); 
                     init = E(:,sk);
                     init = init+ nfc*.1*real(sqrtm(nu))*randn(Np,1);

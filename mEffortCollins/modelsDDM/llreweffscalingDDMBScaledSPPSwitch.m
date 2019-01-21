@@ -155,7 +155,7 @@ for t=1:length(a)
             if a(t) == 1 % low
                 dl(6) = dl(6)+(1/(pt(1)+pt(2)*pswitch))*((da_ps(1)*dbts+dz_ps(1)*(dbts-spf*dbts)+(da_ps(2)*dbts+dz_ps(2)*spf*dbts)*pswitch));
             elseif a(t) == 2 % high
-                dl(6) = dl(6)+(da(a(t))*b+dz(a(t))*spf*dbts);
+                dl(6) = dl(6)+(da(a(t))*dbts+dz(a(t))*spf*dbts);
             end
        else 
            if a(t) == 1
