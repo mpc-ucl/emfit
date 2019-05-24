@@ -33,7 +33,7 @@ for sj=1:Nsj
 	for mdl=1:nModls;
 		a = [SurrogateData(sj).(models(mdl).name).a]; 
 		nsample = numel(SurrogateData(sj).(models(mdl).name)); 
-		a = reshape(a,size(a,2)/nsample,nsample);
+		%a = reshape(a,size(a,2)/nsample,nsample);
 		b = mean(a==1,2);
 		for ss=1:4
 			i = s==ss; 
