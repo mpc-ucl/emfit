@@ -150,7 +150,6 @@ Npall= Np+Nreg;
 coeff_vec = Inf*ones(Npall,1);
 
 % load & continue previous fit or set up things for a new fit 
-%loadstr = '/cluster/home/berwiani/studies1/aida/EffortBehaviour/firstLevelResultsForEmfit/llreweffscalingDDMBScaledSPPSwitch.mat';
 
 
 try 																% Try continuing previous fit 

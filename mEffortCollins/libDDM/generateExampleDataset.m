@@ -1,4 +1,4 @@
-function Data=generateExampleDataset(Nsj,resultsDir,allResults)
+function Data=generateExampleDataset(Nsj,resultsDir)
 % 
 % Data = generateExampleDataset(Nsj)
 % 
@@ -23,16 +23,14 @@ for sj=1:Nsj;
 	Data(sj).Nch = T; 					    % length 
 	Data(sj).a = zeros(T,1);                % preallocate space
     Data(sj).decisiontime = zeros(T,1);     % preallocate space
-	Data(sj).rew =allResults(sj).rewardTrace;		    % high reward options 
+    Data(sj).rew = TrialSeq(:,3);   	    % high reward options 
 	Data(sj).effortCostLo = - 0.2; 			% standard setting for 20 button presse
 	Data(sj).effortCostHi = - 1; 		    % standard setting for 100 button presse
 
 	% realistic random parameters 
     
-	%Data(sj).trueParam = [0.2 0.7 -0.5 0.8 -0.5 ]'+.6*randn(5,1);
-    Data(sj).trueParam = allResults(sj).llreweffscalingDDMBSP.params;
+	Data(sj).trueParam = [0.2 0.7 -0.5 0.8 -0.5 ]'+.6*randn(5,1);
     
-    %Data(sj).trueParam = rand(5,1)*8-4';
 	%  generate surrogate behavioural data 
 	[foo,foo,dsurr] = llreweffscalingDDMBSP(Data(sj).trueParam,Data(sj),0,0,0,options); 
 	Data(sj).a = dsurr.a;
