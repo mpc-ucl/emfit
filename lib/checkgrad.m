@@ -1,4 +1,4 @@
-function [d, dh, dy, X] = checkgrad(f, X, e, varargin);
+function [d] = checkgrad(f, X, e, varargin);
 %function [d] = check(f, X, e, P1, P2, P3, P4, P5,P6);
 
 % checkgrad checks the derivatives in a function, by comparing them to finite
@@ -46,7 +46,5 @@ for j = 1:length(X)
   dh(j) = (y2 - y1)/(2*e);
 end
 
-%disp([dy dh])  % print the two vectors
-
-%fprintf('%f %f %f \n', dy(5), dh(5), X(5));
-d = norm(dh-dy)/norm(dh+dy);       % return norm of diff divided by norm of sum
+disp([dy dh])  % print the two vectors
+qd = norm(dh-dy)/norm(dh+dy);       % return norm of diff divided by norm of sum
