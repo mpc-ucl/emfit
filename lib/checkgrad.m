@@ -1,4 +1,4 @@
-function [d] = checkgrad(f, X, e, varargin);
+function [d] = check(f, X, e, varargin);
 %function [d] = check(f, X, e, P1, P2, P3, P4, P5,P6);
 
 % checkgrad checks the derivatives in a function, by comparing them to finite
