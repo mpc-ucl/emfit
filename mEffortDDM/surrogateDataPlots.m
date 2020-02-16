@@ -46,6 +46,8 @@ nfig=nfig+1; figure(nfig);clf;
 	h = legend({'Data',models.name},'location','best');
 	mytightaxes; 
     
+myfig(gcf,sprintf('%s/figs/SurrogateChoiceDataPlots',fitResults));
+
     
 %--------------------------------------------------------------------
 % compare generated decision times to real ones 
@@ -101,4 +103,4 @@ nfig=nfig+1; figure(nfig);clf;
     
 %% save figure
 
-myfig(gcf,sprintf('%s/figs/SurrogateDataPlots',fitResults));
+myfig(gcf,sprintf('%s/figs/SurrogateDecisionTimeDataPlots',fitResults));
