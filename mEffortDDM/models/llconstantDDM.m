@@ -1,10 +1,10 @@
 function [l, dl, dsurr] = llconstantDDM(x,D,mu,nui,doprior,options)
 
-% This model consits of the analytical version of the drift
-% diffusion model by Navarro % Fuss (2009). Its fits parameters for the starting point, 
-% the boundary and non-decision time. The drift rate contains a standard model 
-% for effort and reward evaluation, which assumes participants weigh both rewards and
-% effort in their choices. The later model fits a weight for the rewards and the efforts. 
+% This model conists of the analytical version of the drift
+% diffusion model by Navarro % Fuss (2009). It fits parameters for the starting point, 
+% the boundary and non-decision time. The drift rate contains a constant model which assumes
+% that all high reward options have the same value theta (a parameter that
+% is fitted and all low reward options are 0. 
 
 np = length(x);
 dodiff= nargout==2;
@@ -14,7 +14,7 @@ b = exp(x(2));           % parameter for boundary
 theta = x(3);             % constant parameter for drift rate
 ndtime = 1/(1+exp(-x(4)));         % parameter for non-decision time
 
-ndt = ndtime*0.7;
+ndt = ndtime*0.7;        % ndt cannot be bigger than 0.7
 sp = spf*b;              % starting point is a fraction of the boundary
 
 [l,dl] = logGaussianPrior(x,mu,nui,doprior);
@@ -43,8 +43,6 @@ if options.generatesurrogatedata==1
         % possible time intervals to speed up simulations
         [combined_t(i,:), combined_prob(i,:)]=make_prob_dist(v,b,sp,rew,bscale);      
     end
-    %plotsprobs(combined_t, combined_prob) % to check if fitted
-    %distributions look reasonable
 end
 
 
@@ -59,9 +57,6 @@ for t=1:length(a)
     % only actually decision time is taking into account in DDM, thus
     % non-decision time is subtracted from recorded time 
     decT = totalT(t)-ndt; 
-%     if decT < 0
-%         decT = 10e-2;
-%     end
     [pt, dv, da, dz, dt] = wfpt_prep(b,v,sp,decT);
   
 	if options.generatesurrogatedata==1

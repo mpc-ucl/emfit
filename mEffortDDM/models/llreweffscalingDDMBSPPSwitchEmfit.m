@@ -1,8 +1,10 @@
 function [l,dl, dsurr] = llreweffscalingDDMBSPPSwitchEmfit(x,D,mu,nui,doprior,options)
 
-% This model consits of the analytical version of the drift
-% diffusion model by Navarro % Fuss (2009). Its fits parameters for the starting point, 
-% the boundary and non-decision time. The drift rate contains a standard model 
+% This model consists of the analytical version of the drift
+% diffusion model by Navarro % Fuss (2009). It fits parameters for the starting point, 
+% the starting boundary, the non-decision time and pswitch, which is an additional
+% probability to make a low effort choice instead of a high effort choice
+% if the high reward option is smaller than 5. The drift rate contains a standard model 
 % for effort and reward evaluation, which assumes participants weigh both rewards and
 % effort in their choices. The later model fits a weight for the rewards and the efforts. 
 
@@ -14,9 +16,9 @@ b = exp(x(2));           % parameter for boundary
 betarew = exp(x(3));     % beta for reward
 betaeff = exp(x(4));     % beta for effort
 ndtime = 1/(1+exp(-x(5)));         % parameter for non-decision time
-pswitch = 1/(1+exp(-x(6)));
+pswitch = 1/(1+exp(-x(6))); % parameter to switch from high to low choice 
 
-ndt = ndtime*0.7;
+ndt = ndtime*0.7;       % ndt cannot be larger than 0.7
 sp = spf*b;             % starting point is a fraction of the boundary
 
 [l,dl] = logGaussianPrior(x,mu,nui,doprior);
@@ -46,7 +48,6 @@ if options.generatesurrogatedata==1
     end
 end
 
-
 for t=1:length(a)
 	% define in terms of task 
 	Vhigh = betarew*r(t)+betaeff*effortCostHi;
@@ -60,14 +61,12 @@ for t=1:length(a)
     decT = totalT(t)-ndt; 
     [pt, dv, da, dz, dt, dv_ps, dz_ps, da_ps, dt_ps] = wfpt_prep(b,v,sp,decT);
     
-    
-
 	if options.generatesurrogatedata==1
         rewidx = r(t)-2; % reward index 
         sto = 1;
         while sto == 1        
             [asurr(t), simTime(t)] = generateDataDDM(combined_t(rewidx,:), combined_prob(rewidx,:), ndt);
-            if simTime(t) > 0.7
+            if simTime(t) > 0.7 % fitting of ndt only works if no trials are slower than 0.7
                 sto = 0;
             end
         end        
@@ -177,10 +176,6 @@ for t=1:length(a)
     
     
     
-end
-if options.generatesurrogatedata==1
-	dsurr.a = asurr; 
-    dsurr.simTime = simTime; 
 end
 
 dl = -dl; 

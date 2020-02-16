@@ -47,7 +47,7 @@ nfig=nfig+1; figure(nfig);clf;
 	mytightaxes; 
     
     
-    %--------------------------------------------------------------------
+%--------------------------------------------------------------------
 % compare generated decision times to real ones 
 %--------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ for mdl=1:nModls
 		AsurrTimes = [SurrogateData(sj).(models(mdl).name).simTime]';
 		for k = 1:100; 
             AsurrTime = SurrogateData(sj).(models(mdl).name)(k).simTime(:);
-            validTrials = AsurrTime<5.0 & AsurrTime>0.7;
+            validTrials = AsurrTime>0.7;
             for rew = 3:7
                 i = rew==Data(sj).rew;
                 for j = 1:length(i)

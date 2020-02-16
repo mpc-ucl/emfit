@@ -1,4 +1,4 @@
-Effort task 
+EffortDDM: Task and Model
 
 As per: 
 
@@ -26,5 +26,10 @@ the following fields:
                               (last - first button press time)
 
 An example data file can be generated with generateExampleDataset.m for the model llreweffscalingDDMBSP. 
+This model conists of the analytical version of the drift
+diffusion model by Navarro % Fuss (2009). Its fits parameters for the starting point, 
+the boundary and non-decision time. The drift rate contains a standard model 
+for effort and reward evaluation, which assumes participants weigh both rewards and
+effort in their choices. The later model fits a weight for the rewards and the efforts.
 
 Isabel Berwian & Quentin Huys, 2020, qhuys@cantab.net

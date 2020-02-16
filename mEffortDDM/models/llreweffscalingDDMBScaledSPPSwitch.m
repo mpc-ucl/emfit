@@ -1,8 +1,10 @@
 function [l, dl, dsurr] = llreweffscalingDDMBScaledSPPSwitch(x,D,mu,nui,doprior,options)
 
-% This model consits of the analytical version of the drift
-% diffusion model by Navarro % Fuss (2009). Its fits parameters for the starting point, 
-% the starting boundary, scaling boundary and non-decision time. The drift rate contains a standard model 
+% This model consists of the analytical version of the drift
+% diffusion model by Navarro % Fuss (2009). It fits parameters for the starting point, 
+% the starting boundary, scaling boundary, non-decision time and pswitch, which is an additional
+% probability to make a low effort choice instead of a high effort choice
+% if the high reward option is smaller than 5. The drift rate contains a standard model 
 % for effort and reward evaluation, which assumes participants weigh both rewards and
 % effort in their choices. The later model fits a weight for the rewards and the efforts. 
 
@@ -15,11 +17,11 @@ betarew = exp(x(3));     % beta for reward
 betaeff = exp(x(4));     % beta for effort
 ndtime = 1/(1+exp(-x(5)));         % parameter for non-decision time
 btrialscale = 1/(1+exp(-x(6))); % parameter for scaling the boundary
-pswitch = 1/(1+exp(-x(7)));
+pswitch = 1/(1+exp(-x(7)));     % parameter to switch from high to low choice 
 
-ndt = ndtime*0.7;
+ndt = ndtime*0.7;        % ndt cannot be larger than 0.7
 
-btrialscaled = btrialscale * (sb/60); % to make sure that boundary cannot get negative 
+btrialscaled = btrialscale * (sb/60); % to ensure that boundary cannot get negative 
 
 [l,dl] = logGaussianPrior(x,mu,nui,doprior);
 
@@ -30,10 +32,6 @@ totalT = D.decisiontime;
 effortCostLo = D.effortCostLo;%  set to - 0.2 in original task; 
 effortCostHi = D.effortCostHi;%  set to - 1 in original task; 
 effortCost = [effortCostLo effortCostHi]';
-
-
-
-
 
 for t=1:length(a)
 	% define in terms of task 
@@ -46,9 +44,6 @@ for t=1:length(a)
     % only actually decision time is taking into account in DDM, thus
     % non-decision time is subtracted from recorded time 
     decT = totalT(t)-ndt; 
-%     if decT < 0
-%         decT = 10e-2;
-%     end
     b = sb-btrialscaled*t; 
     sp = spf*b;              % starting point is a fraction of the boundary
     [pt, dv, da, dz, dt, dv_ps, dz_ps, da_ps, dt_ps]= wfpt_prep(b,v,sp,decT);
@@ -60,7 +55,7 @@ for t=1:length(a)
         sto = 1;
         while sto == 1        
             [asurr(t), simTime(t)] = generateDataDDM(combined_t(:), combined_prob(:), ndt);
-            if simTime(t) > 0.7
+            if simTime(t) > 0.7 % fitting of ndt only works if no trials are slower than 0.7
                 sto = 0;
             end
         end         

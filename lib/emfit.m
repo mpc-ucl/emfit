@@ -178,9 +178,7 @@ sjind_rs = sjind_rs'; sjind_rs = sjind_rs(:)';
 fprintf('\nStarting EM estimation');
 	
 PLold= -Inf; nextbreak=0;
-%while 1;emit=emit+1; t0=tic;
-while emit < 10;emit=emit+1; t0=tic;
-
+while 1;emit=emit+1; t0=tic;
 
 	% E step...........................................................................
 

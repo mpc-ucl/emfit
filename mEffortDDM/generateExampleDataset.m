@@ -1,20 +1,20 @@
 function Data=generateExampleDataset(Nsj,resultsDir)
 % 
 % Data = generateExampleDataset(Nsj)
-% 
-% Generate example dataset containing Nsj subjects for effort task by Gold, J.
-% M.; Strauss, G. P.; Waltz, J.  A.; Robinson, B. M.; Brown, J. K. & Frank, M.
-% J. Negative symptoms of schizophrenia are associated with abnormal effort-cost
-% computations. Biol Psychiatry, 2013, 74, 130-136
-% 
-% Quentin Huys 2018 www.quentinhuys.com 
+% Berwian, I.M., Wenzel, J.G, Collins, A.G.E, Seifritz, E., Stephan, K.E., 
+% Walter, H. & Huys, Q.J.M. (2020). Computational Mechanisms of Effort and 
+% Reward Decisions in Patients With Depression and Their Association With 
+% Relapse After Antidepressant Discontinuation. JAMA Psychiatry. 
+% doi:10.1001/jamapsychiatry.2019.4971 
+ 
+% Isabel Berwian & Quentin Huys 2020 www.quentinhuys.com 
 
 
 fprintf('Generating example dataset for effort task\n')
 
 options.generatesurrogatedata=1; 
 
-load TrialSeq.mat; 	% this is the fixed sequence of reward options presented in
+load TrialSeq.mat; 	% this is a fixed sequence of reward options presented in
 							% the task. 
 
 T = 60; 
@@ -28,8 +28,7 @@ for sj=1:Nsj;
 	Data(sj).effortCostHi = - 1; 		    % standard setting for 100 button presse
 
 	% realistic random parameters 
-    
-	Data(sj).trueParam = [0.2 0.7 -0.5 0.8 -0.5 ]'+.2*randn(5,1);
+	Data(sj).trueParam = [-0.15 0.9 -0.6 0.6 2.8 ]'+.3*randn(5,1);
   
 	%  generate surrogate behavioural data 
 	[foo,foo,dsurr] = llreweffscalingDDMBSP(Data(sj).trueParam,Data(sj),0,0,0,options); 

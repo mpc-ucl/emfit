@@ -1,21 +1,21 @@
 function [l, dl, dsurr] = llreweffscalingDDMB(x,D,mu,nui,doprior,options)
 
-% This model consits of the analytical version of the drift
-% diffusion model by Navarro % Fuss (2009). Its fits parameters for the starting point, 
-% the boundary and non-decision time. The drift rate contains a standard model 
+% This model conists of the analytical version of the drift
+% diffusion model by Navarro % Fuss (2009). It fits parameters for the the boundary and non-decision time. 
+% The drift rate contains a standard model 
 % for effort and reward evaluation, which assumes participants weigh both rewards and
 % effort in their choices. The later model fits a weight for the rewards and the efforts. 
 
 np = length(x);
 dodiff= nargout==2;
 
-spf = 0.5;  % parameter for starting point fraction
+spf = 0.5;               % starting point is fixed in the middle of the high and the low boundary
 b = exp(x(1));           % parameter for boundary
 betarew = exp(x(2));     % beta for reward
 betaeff = exp(x(3));     % beta for effort
 ndtime = 1/(1+exp(-x(4)));         % parameter for non-decision time
 
-ndt = ndtime*0.7;
+ndt = ndtime*0.7;        % ndt cannot be bigger than 0.7
 sp = spf*b;              % starting point is a fraction of the boundary
 
 [l,dl] = logGaussianPrior(x,mu,nui,doprior);
@@ -27,7 +27,6 @@ totalT = D.decisiontime;
 effortCostLo = D.effortCostLo;%  set to - 0.2 in original task; 
 effortCostHi = D.effortCostHi;%  set to - 1 in original task; 
 effortCost = [effortCostLo effortCostHi]';
-
 
 if options.generatesurrogatedata==1
     dodiff=0;
@@ -43,8 +42,6 @@ if options.generatesurrogatedata==1
         % possible time intervals to speed up simulations
         [combined_t(i,:), combined_prob(i,:)]=make_prob_dist(v,b,sp,rew,bscale);      
     end
-    %plotsprobs(combined_t, combined_prob) % to check if fitted
-    %distributions look reasonable
 end
 
 
@@ -58,7 +55,6 @@ for t=1:length(a)
     % non-decision time is subtracted from recorded time 
     decT = totalT(t)-ndt; 
     [pt, dv, da, dz, dt] = wfpt_prep(b,v,sp,decT);
-    
     
 	if options.generatesurrogatedata==1
         rewidx = r(t)-2; % reward index 
