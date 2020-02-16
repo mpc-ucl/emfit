@@ -45,8 +45,6 @@ if options.generatesurrogatedata==1
         % possible time intervals to speed up simulations
         [combined_t(i,:), combined_prob(i,:)]=make_prob_dist(v,b,sp,rew,bscale);      
     end
-    %plotsprobs(combined_t, combined_prob) % to check if fitted
-    %distributions look reasonable
 end
 
 
@@ -68,7 +66,14 @@ for t=1:length(a)
   
 	if options.generatesurrogatedata==1
         rewidx = r(t)-2; % reward index 
-		[asurr(t), simTime(t)] = generateDataDDM(combined_t(rewidx,:), combined_prob(rewidx,:), ndt);
+        sto = 1;
+        while sto == 1        
+            [asurr(t), simTime(t)] = generateDataDDM(combined_t(rewidx,:), combined_prob(rewidx,:), ndt);
+            if simTime(t) > 0.7
+                sto = 0;
+            end
+        end 
+        
     else 
         l = l+log(pt(a(t)));
     end

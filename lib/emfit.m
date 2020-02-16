@@ -178,7 +178,9 @@ sjind_rs = sjind_rs'; sjind_rs = sjind_rs(:)';
 fprintf('\nStarting EM estimation');
 	
 PLold= -Inf; nextbreak=0;
-while 1;emit=emit+1; t0=tic;
+%while 1;emit=emit+1; t0=tic;
+while emit < 10;emit=emit+1; t0=tic;
+
 
 	% E step...........................................................................
 
@@ -188,7 +190,7 @@ while 1;emit=emit+1; t0=tic;
 		E = zeros(Np,Nsj) + sqrtm(nu)*randn(Np,Nsj);		% random initial individual subject parameter estimates
 	end
 	% main loop over subjects 
-	for sj=sjind_pf; tt0=tic; 
+	parfor sj=sjind_pf; tt0=tic; 
 		sk = mod(sj-1,Nsj)+1; 							% current subject
 		rs = ceil(sj/Nsj);								% current restart for that subject 
 		est=[]; fval=[]; ex=-1; hess=[]; nfc=1; 
@@ -196,16 +198,15 @@ while 1;emit=emit+1; t0=tic;
 			init = E(:,sk);
 			if rs>1 | nfc>1; init = init+ nfc*.1*real(sqrtm(nu))*randn(Np,1); end % add noise for next attempt
 			sto = 1; 
-            while sto == 1
+            while sto == 1 %this loop was added to avoid convergence problems by re-initalizing the starting values in case of problems in fminunc
                 try
-                    %init(end) = -1.6; 
                     [est(:,nfc),fval(nfc),ex(nfc),foo,foo,hess(:,:,nfc)] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior,llopt),init,fminopt);
                     sto = 0;
+                    %E(:,sk) = initE;
                 catch
                     F = zeros(Np,Nsj) + sqrtm(nu)*randn(Np,Nsj);
-                    E(:,sk) = F(:,sk); 
-                    init = E(:,sk);
-                    init = init+ nfc*.1*real(sqrtm(nu))*randn(Np,1);
+                    initE = F(:,sk); 
+                    init = initE+ nfc*.1*real(sqrtm(nu))*randn(Np,1);
                 end
             end
                 

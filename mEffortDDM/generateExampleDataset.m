@@ -29,8 +29,8 @@ for sj=1:Nsj;
 
 	% realistic random parameters 
     
-	Data(sj).trueParam = [0.2 0.7 -0.5 0.8 -0.5 ]'+.6*randn(5,1);
-    
+	Data(sj).trueParam = [0.2 0.7 -0.5 0.8 -0.5 ]'+.2*randn(5,1);
+  
 	%  generate surrogate behavioural data 
 	[foo,foo,dsurr] = llreweffscalingDDMBSP(Data(sj).trueParam,Data(sj),0,0,0,options); 
 	Data(sj).a = dsurr.a;

@@ -29,6 +29,23 @@ effortCostLo = D.effortCostLo;%  set to - 0.2 in original task;
 effortCostHi = D.effortCostHi;%  set to - 1 in original task; 
 effortCost = [effortCostLo effortCostHi]';
 
+if options.generatesurrogatedata==1
+    dodiff=0;
+    Vlow =  betarew*1+betaeff*effortCostLo;
+    for i = 1:5
+        reward = i+2; % 3,4,5,6,7
+        Vhigh(i) = betarew*reward+betaeff*effortCostHi;
+        % define drift rate as difference of value for high and low option
+        % "correct" boundary is lower boundary, therefore drift rate defined here as neg.  
+        v = -1*(Vhigh(i)-Vlow); 
+        rew = 0; % not needed in this model
+        bscale = 0; % not needed in this model 
+        % make probability distributions with fitted parameters for
+        % possible time intervals to speed up simulations
+        [combined_t(i,:), combined_prob(i,:)]=make_prob_dist(v,b,sp,rew,bscale);      
+    end
+end
+
 
 for t=1:length(a)
 	% define in terms of task 
@@ -46,10 +63,15 @@ for t=1:length(a)
     
 
 	if options.generatesurrogatedata==1
-        rew = 0; 
-        bscale = 0; 
-        [combined_t(:), combined_prob(:)]=make_prob_dist(v,b,sp,rew, bscale); 
-		[asurr(t), simTime(t)] = generateDataDDM(combined_t(:), combined_prob(:), ndt);
+        rewidx = r(t)-2; % reward index 
+        sto = 1;
+        while sto == 1        
+            [asurr(t), simTime(t)] = generateDataDDM(combined_t(rewidx,:), combined_prob(rewidx,:), ndt);
+            if simTime(t) > 0.7
+                sto = 0;
+            end
+        end        
+        
         if r(t) < 5 && asurr(t) == 2
             if rand<pswitch 
                 asurr(t) = 1; 

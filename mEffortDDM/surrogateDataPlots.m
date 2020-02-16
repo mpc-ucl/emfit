@@ -12,7 +12,7 @@ mkdir figs
 %--------------------------------------------------------------------
 
 for sj=1:Nsj
-	a = Data(sj).a;
+	a = Data(sj).a';
 	for rew = 3:7
 		i = rew==Data(sj).rew;
 		probHE(rew-2,sj)	= sum(a(i,:)==2)/sum(i);
@@ -45,5 +45,60 @@ nfig=nfig+1; figure(nfig);clf;
 	set(gca,'fontsize',14);
 	h = legend({'Data',models.name},'location','best');
 	mytightaxes; 
+    
+    
+    %--------------------------------------------------------------------
+% compare generated decision times to real ones 
+%--------------------------------------------------------------------
+
+for sj=1:Nsj
+	dt = Data(sj).decisiontime;
+	for rew = 3:7
+		i = rew==Data(sj).rew;
+		decisionTimes(rew-2,sj)	= sum(dt(i))/sum(i);
+	end
+end
+
+% get choice probability as function of reward in surrogate data, averaging over
+% the samples
+for mdl=1:nModls
+	for sj=1:Nsj
+		AsurrTimes = [SurrogateData(sj).(models(mdl).name).simTime]';
+		for k = 1:100; 
+            AsurrTime = SurrogateData(sj).(models(mdl).name)(k).simTime(:);
+            validTrials = AsurrTime<5.0 & AsurrTime>0.7;
+            for rew = 3:7
+                i = rew==Data(sj).rew;
+                for j = 1:length(i)
+                    if validTrials(j) == 0
+                        i(j) = 0; 
+                    end
+                end        
+                idxAsurrTimes = (k-1)*(size(AsurrTimes,1)/100)+1:(k-1)*(size(AsurrTimes,1)/100)+(size(AsurrTimes,1)/100);
+                idxAsurrTimesRew = idxAsurrTimes(i);
+                decisionTimeSurrPerGen(rew-2,sj,mdl,k)	= mean(AsurrTimes(idxAsurrTimesRew));
+            end
+        end
+        decisionTimesSurr(:,sj,mdl)	= mean(decisionTimeSurrPerGen(:,sj,mdl,:),4);
+    end
+end
+
+rews = [3:7];
+
+nfig=nfig+1; figure(nfig);clf;
+	m = nanmean(decisionTimes,2);
+	ms = squeeze(nanmean(decisionTimesSurr,2));
+	plot(rews,m,'k-','linewidth',2);
+	hold on
+	plot(rews,ms);
+	hold off
+	xlabel({'Reward for','high effort option'});
+	ylabel('decision time (sec)');
+	set(gca,'fontsize',14);
+	h = legend({'Data',models.name},'location','best');
+	mytightaxes; 
+    
+    
+%% save figure
 
 myfig(gcf,sprintf('%s/figs/SurrogateDataPlots',fitResults));

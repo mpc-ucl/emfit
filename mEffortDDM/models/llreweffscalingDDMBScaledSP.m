@@ -54,8 +54,14 @@ for t=1:length(a)
 	if options.generatesurrogatedata==1
         rew = 0; 
         bscale = 0; 
-        [combined_t(:), combined_prob(:)]=make_prob_dist(v,b,sp,rew,bscale);      
-		[asurr(t), simTime(t)] = generateDataDDM(combined_t(:), combined_prob(:), ndt);
+        [combined_t(:), combined_prob(:)]=make_prob_dist(v,b,sp,rew,bscale); 
+        sto = 1;
+        while sto == 1        
+            [asurr(t), simTime(t)] = generateDataDDM(combined_t(:), combined_prob(:), ndt);
+            if simTime(t) > 0.7 
+                sto = 0;
+            end
+        end 
     else 
         l = l+log(pt(a(t)));
     end
