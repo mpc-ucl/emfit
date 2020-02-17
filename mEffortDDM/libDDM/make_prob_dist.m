@@ -14,13 +14,13 @@ pu = zeros(length(t),1);
 % Thus, sign for drift rate must be swapped if low option is better. 
 for i = 1:length(t)
     b = bscale*rew+b; % Boundary can vary depending on reward        
-    pl(i) = wfpt(t(i),-v,b,b-sp,err); 
+    pl(i) = wfpt_all(t(i),-v,b,b-sp,err); 
 end
 
 % Probability of making high choice (pu)
 for i = 1:length(t)
     b = bscale*rew+b;
-    pu(i) = wfpt(t(i),v,b,sp,err); 
+    pu(i) = wfpt_all(t(i),v,b,sp,err); 
 end
 
 % Uncomment this if want to check if probability distributions of low and
