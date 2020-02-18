@@ -6,7 +6,7 @@ function [p, dv, da, dz, dt, dv_ps, dz_ps, da_ps, dt_ps]  = wfpt_all(t,v,a,z,err
 % a = boundary
 % z = starting point
 % err = 10^-29 (default)
-
+warning('off','all')
 
 tt = t/(a^2); % use normalized time
 w = z/a; % convert to relative start point
