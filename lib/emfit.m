@@ -87,9 +87,8 @@ function [E,V,alpha,stats,bf,fitparams] = emfit(llfunc,D,Np,varargin);
 % setting up 
 
 fprintf('---------------------------------------------------------------------------\n')
-fprintf('NOTE: emfit.m is in development. Statistics on MAP and EM-MAP\n');
-fprintf('parameters are stable. The error bars around the group mean \n');
-fprintf('are only correct for small models. \n')
+fprintf('NOTE: Statistics on MAP and EM-MAP parameters are stable, but  \n');
+fprintf('the error bars around the group mean are only correct for small models. \n')
 fprintf('---------------------------------------------------------------------------\n')
 
 fitparams.dx= 0.001; 									% step for finite differences
@@ -117,17 +116,14 @@ llopt.generatesurrogatedata=0;
 % deal with gradients being provided or not 
 if nograd; 													% assume gradients are supplied 
 	fminopt=optimoptions('fminunc','display','off','TolFun',fitparams.tol);
-	%fminopt = optimoptions(@fminunc,'Display','off','TolFun',fitparams.tol);
 else 
 	fminopt=optimoptions('fminunc','display','off','GradObj','on','TolFun',fitparams.tol,'algorithm','trust-region');
-	%fminopt = optimoptions(@fminunc,'Display','off','GradObj','on','TolFun',fitparams.tol);
 	if docheckgrad; 											% if they are, then can check them. 
 		fminopt=optimoptions('fminunc','display','off','GradObj','on','DerivativeCheck','on','TolFun',fitparams.tol);
-		%fminopt = optimoptions(@fminunc,'Display','off','GradObj','on','DerivativeCheck','on','TolFun',fitparams.tol);
 	end
 end
 warning('off','MATLAB:mir_warning_maybe_uninitialized_temporary');
-%warning('off','optim:fminunc:WillRunDiffAlg');
+warning('off','optim:fminunc:WillRunDiffAlg');
 
 % check if regressors have been provided correctly 
 if Np~=length(reg); 
@@ -191,26 +187,20 @@ while 1;emit=emit+1; t0=tic;
 	parfor sj=sjind_pf; tt0=tic; 
 		sk = mod(sj-1,Nsj)+1; 							% current subject
 		rs = ceil(sj/Nsj);								% current restart for that subject 
-		est=[]; fval=[]; ex=-1; hess=[]; nfc=1; 
-		while 1 												% have to deal with poor convergence 
-			init = E(:,sk);
-			if rs>1 | nfc>1; init = init+ nfc*.1*real(sqrtm(nu))*randn(Np,1); end % add noise for next attempt
-			sto = 1; 
-            while sto == 1 %this loop was added to avoid convergence problems by re-initalizing the starting values in case of problems in fminunc
-                try
-                    [est(:,nfc),fval(nfc),ex(nfc),foo,foo,hess(:,:,nfc)] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior,llopt),init,fminopt);
-                    sto = 0;
-                    %E(:,sk) = initE;
-                catch
-                    F = zeros(Np,Nsj) + sqrtm(nu)*randn(Np,Nsj);
-                    initE = F(:,sk); 
-                    init = initE+ nfc*.1*real(sqrtm(nu))*randn(Np,1);
-                end
-            end
-                
-			if  any(ex(nfc)==[1:3]) | emit==1 | nfc==3; break;end
-			if ~any(ex(nfc)==[1:3]) ; fprintf('sj %i, rep %i convergence failure %i exit status %i\n',sk,rs,nfc,ex); end
+		est=[]; fval=[]; ex=-1; hess=[]; nfc=0; 
+		e = E(:,sk);
+		while 1 												% deal with poor convergence failures and poor initial values 
 			nfc=nfc+1; 
+			init = e; 
+			if rs>1 | nfc>1; init = init+ nfc*.1*real(sqrtm(nu))*randn(Np,1); end % add noise for next attempt
+			try
+				[est(:,nfc),fval(nfc),ex(nfc),foo,foo,hess(:,:,nfc)] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior,llopt),init,fminopt);
+			catch
+				e=real(sqrtm(nu))*randn(Np,1);
+				ex(nfc)=0;
+			end
+			if any(ex(nfc)==[1:3]); break;end
+			if ~mod(nfc,50); fprintf('\nsj %i not converging (it %i).',sk,nfc); end
 		end
 		[foo,best] = min(fval);							% take fit that led to best function value among those that converged
 		tE(:,sj)		= est(:,best);						% parameter estimates 
