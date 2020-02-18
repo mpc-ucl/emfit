@@ -37,18 +37,15 @@ nfig=nfig+1; clf;
 subplot(121)
 	m = mean(probHE,2);
 	ms = squeeze(mean(probHESurr,2));
-	plot(rews,m,'k-','linewidth',2);
+	plot(rews,m,'k.-','linewidth',2,'markersize',20);
 	hold on
 	plot(rews,ms);
 	hold off
 	xlabel({'Reward for','high effort option'});
 	ylabel('% chosen high effort');
 	set(gca,'fontsize',14);
-	h = legend({'Data',models.name},'location','best');
 	mytightaxes; 
     
-myfig(gcf,sprintf('%s/figs/SurrogateChoiceDataPlots',fitResults));
-
     
 %--------------------------------------------------------------------
 % compare generated decision times to real ones 
@@ -65,21 +62,15 @@ end
 % get choice probability as function of reward in surrogate data, averaging over
 % the samples
 for mdl=1:nModls
+   nSamples = size(SurrogateData(sj).(models(mdl).name),2);
 	for sj=1:Nsj
-		AsurrTimes = [SurrogateData(sj).(models(mdl).name).simTime]';
-		for k = 1:100; 
+		for k = 1:nSamples
             AsurrTime = SurrogateData(sj).(models(mdl).name)(k).simTime(:);
             validTrials = AsurrTime>0.7;
             for rew = 3:7
                 i = rew==Data(sj).rew;
-                for j = 1:length(i)
-                    if validTrials(j) == 0
-                        i(j) = 0; 
-                    end
-                end        
-                idxAsurrTimes = (k-1)*(size(AsurrTimes,1)/100)+1:(k-1)*(size(AsurrTimes,1)/100)+(size(AsurrTimes,1)/100);
-                idxAsurrTimesRew = idxAsurrTimes(i);
-                decisionTimeSurrPerGen(rew-2,sj,mdl,k)	= mean(AsurrTimes(idxAsurrTimesRew));
+					 i = i&validTrials; 
+                decisionTimeSurrPerGen(rew-2,sj,mdl,k)	= mean(AsurrTime(i));
             end
         end
         decisionTimesSurr(:,sj,mdl)	= mean(decisionTimeSurrPerGen(:,sj,mdl,:),4);
@@ -91,7 +82,7 @@ rews = [3:7];
 subplot(122)
 	m = nanmean(decisionTimes,2);
 	ms = squeeze(nanmean(decisionTimesSurr,2));
-	plot(rews,m,'k-','linewidth',2);
+	plot(rews,m,'k.-','linewidth',2,'markersize',20);
 	hold on
 	plot(rews,ms);
 	hold off
@@ -99,9 +90,10 @@ subplot(122)
 	ylabel('decision time (sec)');
 	set(gca,'fontsize',14);
 	h = legend({'Data',models.name},'location','best');
+	set(h,'fontsize',10);
 	mytightaxes; 
     
     
 %% save figure
 
-myfig(gcf,sprintf('%s/figs/SurrogateDecisionTimeDataPlots',fitResults));
+myfig(gcf,sprintf('%s/figs/SurrogateChoiceDecisionTime',fitResults));
