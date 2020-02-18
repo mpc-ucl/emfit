@@ -33,10 +33,11 @@ for mdl = 1:nModls
 	nui = []; 								% prior variance 
 	llopt.generatesurrogatedata=1;	% whether to generate surrogate data - here not 
 
-	for sj=1:Nsj;
-		fprintf('generating data from model %s.m for subject %i\r',models(mdl).name,sj);
-		clear dsurr;
-		parfor ns=1:opt.nSamples
+	dsurr0=repmat(struct('a',[],'simTime',[]),1,opt.nSamples);
+	fprintf('generating %i surrogate datasets from model %s\r',opt.nSamples,models(mdl).name);
+	parfor sj=1:Nsj;
+		dsurr=dsurr0;
+		for ns=1:opt.nSamples
 			[foo,foo,dsurr(ns)] = fstr(par(:,sj),Data(sj),mu,nui,doprior,llopt); 
 		end
 		SurrogateData(sj).(models(mdl).name) = dsurr; 

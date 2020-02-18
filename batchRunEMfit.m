@@ -15,7 +15,8 @@ function batchRunEMfit(modelClassToFit,Data,resultsDir,varargin)
 % 'mTwostep';							% Daw et al., 2011 
 % 'mEffortCollins';	 				% Gold et al., 2013 
 % 'mPruning'; 						   % Lally et al., 2017 
-%   
+% 'mEffortDDM';                  % Berwian et al., 2020
+%
 % DATA (optional) contains the data.  See the dataformat.txt files in the model
 % folders for instructions on how the data contained in DATA should be formatted
 % for fitting. For demo purposes, a correct dataset is generated if no data is
@@ -56,12 +57,14 @@ end
 %------------------------------------------------------------------------------
 % MODEL CLASS - define which type of model to fit 
  
-modelClass{1} = 'mBasicRescorlaWagner';			% basic example 
-modelClass{2} = 'mAffectiveGoNogo';					% Guitart et al. 2012 
-modelClass{3} = 'mProbabilisticReward';			% Huys et al., 2013 
-modelClass{4} = 'mTwostep';							% Daw et al., 2011 
-modelClass{5} = 'mEffortCollins';	 				% Gold et al., 2013 
-modelClass{6} = 'mPruning'; 							% Lally et al., 2017 
+modelClass{1} = 'mBasicRescorlaWagner';         % basic example 
+modelClass{2} = 'mAffectiveGoNogo';             % Guitart et al. 2012 
+modelClass{3} = 'mProbabilisticReward';         % Huys et al., 2013 
+modelClass{4} = 'mTwostep';                     % Daw et al., 2011 
+modelClass{5} = 'mEffortCollins';               % Gold et al., 2013 
+modelClass{6} = 'mPruning';                     % Lally et al., 2017 
+modelClass{7} = 'mEffortDDM';                   % Berwian et al., 2020 
+
 modelClassToFit = find(cellfun(@(x)strcmp(x,modelClassToFit),modelClass)); 
 if isempty(modelClassToFit); error('Model class not found');end
 
@@ -81,7 +84,7 @@ end
 
 %------------------------------------------------------------------------------
 % generate surrogate data if no data was provided
-if ~exist('Data') || isempty(Data)
+if ~exist('Data', 'var') || isempty(Data)
 	fprintf('No data provided so generating example dataset\n');
 	Data=generateExampleDataset(30,resultsDir); 			
 end

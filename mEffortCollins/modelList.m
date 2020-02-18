@@ -32,21 +32,57 @@ function model = modelList;
 
 i=0; 
 
-i=i+1; 
-model(i).descr = 'Effort sensitivity only. This model disregards the reward information and provides a constant bias as a function of the effort associated with the choices.';
-model(i).name = 'lleffort';			
-model(i).npar = 1;
-model(i).parnames = {'\theta'};
-model(i).parnames_untr = {'\theta'};
-model(i).partransform = {'@(x)x'};
+i=i+1;
+model(i).descr = 'DDM in combination with a constant model. This model contains one parameter determining the drift rate and parameters for boundary, starting point and non-decision time.';
+model(i).name = 'llconstantDDM';				
+model(i).npar = 4;
+model(i).parnames = {'starting point', 'boundary','theta', 'nonDecisionTime'};
+model(i).parnames_untr = {'sig starting pont','log boundary', 'theta', 'sig nonDecisionTime'};
+model(i).partransform = {'@(x)1./(1+exp(-x))','@(x)exp(x)','@(x)x', '@(x)1./(1+exp(-x))'};
+% % 
+% % 
+% i=i+1;
+% model(i).descr = 'DDM in combination with linear effort and reward sensitivity. This model contains an effort and reward sensitivity parameter determining the drift rate and parameters for boundary and non-decision time.';
+% model(i).name = 'llreweffscalingDDMB';				
+% model(i).npar = 4;
+% model(i).parnames = {'boundary','rew','effort', 'nonDecisionTime'};
+% model(i).parnames_untr = {'log boundary', 'log rew','log eff', 'sig nonDecisionTime'};
+% model(i).partransform = {'@(x)exp(x)','@(x)exp(x)', '@(x)exp(x)', '@(x)1./(1+exp(-x))'};
 
-i=i+1; 
-model(i).descr = 'Linear effort and reward sensitivity. This model contains an effort and reward sensitivity parameter.';
-model(i).name = 'llrewardeffort';			
-model(i).npar = 2;
-model(i).parnames = {'\beta_{rew}','\beta_{effort}'};
-model(i).parnames_untr = {'log \beta_{rew}','log \beta_{effort}'};
-model(i).partransform = {'@(x)exp(x)','@(x)exp(x)'};
+% 
+i=i+1;
+model(i).descr = 'DDM in combination with linear effort and reward sensitivity. This model contains an effort and reward sensitivity parameter determining the drift rate and parameters for boundary, starting point and non-decision time.';
+model(i).name = 'llreweffscalingDDMBSP';				
+model(i).npar = 5;
+model(i).parnames = {'starting point', 'boundary','rew','effort', 'nonDecisionTime'};
+model(i).parnames_untr = {'sig starting pont','log boundary', 'log rew','log eff', 'sig nonDecisionTime'};
+model(i).partransform = {'@(x)1./(1+exp(-x))','@(x)exp(x)','@(x)exp(x)', '@(x)exp(x)', '@(x)1./(1+exp(-x))'};
+% % % 
+% i=i+1;
+% model(i).descr = 'DDM in combination with linear effort and reward sensitivity and probability for post-decision wavering pswitch. This model contains an effort and reward sensitivity parameter determining the drift rate and parameters for boundary, starting point, non-decision time and pswitch.';
+% model(i).name = 'llreweffscalingDDMBSPPSwitchEmfit';				
+% model(i).npar = 6;
+% model(i).parnames = {'starting point', 'boundary','rew','effort', 'nonDecisionTime','pswitch'};
+% model(i).parnames_untr = {'sig starting pont','log boundary', 'log rew','log eff', 'sig nonDecisionTime','sig pswitch'};
+% model(i).partransform = {'@(x)1./(1+exp(-x))','@(x)exp(x)','@(x)exp(x)', '@(x)exp(x)', '@(x)1./(1+exp(-x))', '@(x)1./(1+exp(-x))'};
+% 
+% i=i+1;
+%  model(i).descr = 'DDM in combination with linear effort and reward sensitivity. This model contains an effort and reward sensitivity parameter determining the drift rate and parameters for starting boundary, scaling of boundary,  starting point and non-decision time.';
+% model(i).name = 'llreweffscalingDDMBScaledSP';				
+% model(i).npar = 6;
+% model(i).parnames = {'starting point', 'starting boundary','rew','effort', 'nonDecisionTime', 'boundary scaling'};
+% model(i).parnames_untr = {'sig starting pont','log boundary', 'log rew','log eff', 'sig nonDecisionTime','sig boundary scaling'};
+% model(i).partransform = {'@(x)1./(1+exp(-x))','@(x)exp(x)','@(x)exp(x)', '@(x)exp(x)', '@(x)1./(1+exp(-x))', '@(x)1./(1+exp(-x))'};
+
+ 
+%  i=i+1;
+%  model(i).descr = 'DDM in combination with linear effort and reward sensitivity. This model contains an effort and reward sensitivity parameter determining the drift rate and parameters for starting boundary, scaling of boundary,  starting point and non-decision time and pswitch.';
+%  model(i).name = 'llreweffscalingDDMBScaledSPPSwitch';				
+%  model(i).npar = 7;
+%  model(i).parnames = {'starting point', 'starting boundary','rew','effort', 'nonDecisionTime', 'boundary scaling', 'pswitch'};
+%  model(i).parnames_untr = {'sig starting pont','log boundary', 'log rew','log eff', 'sig nonDecisionTime','sig boundary scaling','sig pswitch'};
+%  model(i).partransform = {'@(x)1./(1+exp(-x))','@(x)exp(x)','@(x)exp(x)', '@(x)exp(x)', '@(x)1./(1+exp(-x))', '@(x)1./(1+exp(-x))', '@(x)1./(1+exp(-x))'};
+
 
 
 nModls = i; 

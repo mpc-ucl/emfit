@@ -12,6 +12,7 @@ function batchEMFit(Data,models,opt)
 % 'mTwostep';							% Daw et al., 2011 
 % 'mEffortCollins';	 				% Gold et al., 2013 
 % 'mPruning'; 						   % Lally et al., 2017 
+% 'mEffortDDM';                  % Berwian et al., 2020
 % 
 % The optional parameter options.CHECKGRADIENTS can be used to check the gradients of
 % the provided likelihood files, and options.maxit to limit the number of EM

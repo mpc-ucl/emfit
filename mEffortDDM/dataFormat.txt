@@ -1,0 +1,35 @@
+EffortDDM: Task and Model
+
+As per: 
+
+Berwian, I.M., Wenzel, J.G, Collins, A.G.E, Seifritz, E., Stephan, K.E., Walter, H. & Huys, Q.J.M. (2020). Computational Mechanisms of Effort and Reward Decisions in Patients With Depression and Their Association With Relapse After Antidepressant Discontinuation. JAMA Psychiatry. doi:10.1001/jamapsychiatry.2019.4971 
+
+The data for subject sj should be contained in Data(sj) in the format containing
+the following fields:
+
+
+ Data(sj).ID 					subject ID 
+ Data(sj).Nch     			number of valid choices by this subject 
+
+ Data(sj).a 					Nchx1 vector of chioces 
+                              1 = low rew/low effort, 2 = high rew/high effort
+ Data(sj).rew 					Nchx1 vector of rewards for high reward option 
+                              (low reward option is always 1) 
+
+ Data(sj).EffortcostLo		effort associated with low effort option 
+                              (action 1) - default = -1 (NB: should be negative)
+ Data(sj).EffortcostHi		effort associated with action high effort option 
+                              (action 2) - default = -0.2 (NB: should be negative)
+
+ Data(sj).decisiontime  	Nchx1 vector times to first button press
+ Data(sj).inputtime			Nchx1 vector of durations of input 
+                              (last - first button press time)
+
+An example data file can be generated with generateExampleDataset.m for the model llreweffscalingDDMBSP. 
+This model conists of the analytical version of the drift
+diffusion model by Navarro % Fuss (2009). Its fits parameters for the starting point, 
+the boundary and non-decision time. The drift rate contains a standard model 
+for effort and reward evaluation, which assumes participants weigh both rewards and
+effort in their choices. The later model fits a weight for the rewards and the efforts.
+
+Isabel Berwian & Quentin Huys, 2020, qhuys@cantab.net
