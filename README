@@ -15,12 +15,12 @@ Preprint: https://quentinhuys.com/abstr_Huys17-BayesianModellingDecisionMaking.h
 Currently the following models are implemented: 
 
 'mBasicRescorlaWagner';			% basic Rescorla-Wagner example 
-'mAffectiveGoNogo';				% Guitart et al. 2012, Neuroimage 62(1):154-66 
+'mAffectiveGoNogo';			% Guitart et al. 2012, Neuroimage 62(1):154-66 
 'mProbabilisticReward';			% Huys et al., 2013 Biology of Mood & Anxiety Disorders 3:12 
-'mTwostep';							% Daw et al., 2011 Neuron 69:1204
-'mEffortCollins';	 				% Gold et al., 2013 Biological Psychiatry 74:130
-'mPruning'; 						% Lally et al., 2017 J. Neurosci 37(42):10215
-'mEffortDDM';                 % Berwian et al., 2020 JAMA Psychiatry doi:10.1001/jamapsychiatry.2019.4971
+'mTwostep';				% Daw et al., 2011 Neuron 69:1204
+'mEffortCollins';	 		% Gold et al., 2013 Biological Psychiatry 74:130
+'mPruning'; 				% Lally et al., 2017 J. Neurosci 37(42):10215
+'mEffortDDM';                           % Berwian et al., 2020 JAMA Psychiatry doi:10.1001/jamapsychiatry.2019.4971
 
 You can try these out by simply changing into the emfit directory within matlab
 and then running
