@@ -33,7 +33,8 @@ end
 
 rews = [3:7];
 
-nfig=nfig+1; figure(nfig);clf;
+nfig=nfig+1; clf;
+subplot(121)
 	m = mean(probHE,2);
 	ms = squeeze(mean(probHESurr,2));
 	plot(rews,m,'k-','linewidth',2);
@@ -87,7 +88,7 @@ end
 
 rews = [3:7];
 
-nfig=nfig+1; figure(nfig);clf;
+subplot(122)
 	m = nanmean(decisionTimes,2);
 	ms = squeeze(nanmean(decisionTimesSurr,2));
 	plot(rews,m,'k-','linewidth',2);
