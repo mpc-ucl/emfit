@@ -28,15 +28,15 @@ for sj=1:Nsj;
 	Data(sj).effortCostHi = - 1; 		    % standard setting for 100 button presse
 
 	% realistic random parameters 
-	%Data(sj).trueParam = [-0.15 0.9 -0.6 0.6 2.8 ]'+.3*randn(5,1); mean HC
-    Data(sj).trueParam = [-0.2 1 -0.6 1 2.8 ]'+.1*randn(5,1);
- 
+    % Data(sj).trueParam = [-0.2 1 -0.6 1 2.8 ]'+.1*randn(5,1); % for llreweffscalingDDMBSP
+    Data(sj).trueParam = [0.08 1.06 -0.8 0.4 3.2 -0.4 0.7]'+.1*randn(7,1); % for llreweffscalingDDMBScaledSPPSwitch
+
     
 	%  generate surrogate behavioural data 
-	[foo,foo,dsurr] = llreweffscalingDDMBSP(Data(sj).trueParam,Data(sj),0,0,0,options); 
+	[foo,foo,dsurr] = llreweffscalingDDMBScaledSPPSwitch(Data(sj).trueParam,Data(sj),0,0,0,options); 
 	Data(sj).a = dsurr.a;
     Data(sj).decisiontime = dsurr.simTime;  
-	Data(sj).trueModel='llreweffscalingDDMBSP';
+	Data(sj).trueModel='llreweffscalingDDMBScaledSPPSwitch';
 
 end
 
