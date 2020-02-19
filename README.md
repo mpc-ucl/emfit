@@ -8,9 +8,8 @@ comparison, generating surrogate data and performing some visual comparisons of
 the true and surrogate data. 
 
 A general overview over this modelling approach can be found here: 
-Huys (2017): Bayesian approaches to Learning and Decision Making. 
-In: Computational Psychiatry: Mathematical Modelling of Mental Disorders. Editors: Alan Anticevic and John Murray
-Preprint: https://quentinhuys.com/abstr_Huys17-BayesianModellingDecisionMaking.html
+[Huys (2017): Bayesian approaches to Learning and Decision Making. 
+In: Computational Psychiatry: Mathematical Modelling of Mental Disorders. Editors: Alan Anticevic and John Murray](https://quentinhuys.com/abstr_Huys17-BayesianModellingDecisionMaking.html)
 
 Currently models for the following tasks are implemented: 
 
