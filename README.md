@@ -12,15 +12,15 @@ Huys (2017): Bayesian approaches to Learning and Decision Making.
 In: Computational Psychiatry: Mathematical Modelling of Mental Disorders. Editors: Alan Anticevic and John Murray
 Preprint: https://quentinhuys.com/abstr_Huys17-BayesianModellingDecisionMaking.html
 
-Currently the following models are implemented: 
+Currently models for the following tasks are implemented: 
 
-* 'mBasicRescorlaWagner';  % basic Rescorla-Wagner example 
-* 'mAffectiveGoNogo';      % Guitart et al. 2012, Neuroimage 62(1):154-66 
-* 'mProbabilisticReward';  % Huys et al., 2013 Biology of Mood & Anxiety Disorders 3:12 
-* 'mTwostep';              % Daw et al., 2011 Neuron 69:1204
-* 'mEffortCollins';        % Gold et al., 2013 Biological Psychiatry 74:130
-* 'mPruning';              % Lally et al., 2017 J. Neurosci 37(42):10215
-* 'mEffortDDM';            % Berwian et al., 2020 JAMA Psychiatry doi:10.1001/jamapsychiatry.2019.4971
+* 'mBasicRescorlaWagner' - a basic Rescorla-Wagner example 
+* 'mAffectiveGoNogo' - [Guitart et al. 2012, Neuroimage 62(1):154-66](http://dx.doi.org/10.1016/j.neuroimage.2012.04.024)
+* 'mProbabilisticReward' - [Huys et al., 2013 Biology of Mood & Anxiety Disorders 3:12](https://quentinhuys.com/abstr_HuysEa13-MDDMetaAnalysis.html)
+* 'mTwostep' - [Daw et al., 2011 Neuron 69:1204](https://doi.org/10.1016/j.neuron.2011.02.027)
+* 'mEffortCollins' - [Gold et al., 2013 Biological Psychiatry 74:130](https://doi.org/10.1016/j.biopsych.2012.12.022)
+* 'mPruning' - [Lally et al., 2017 J. Neurosci 37(42):10215](https://quentinhuys.com/abstr_LallyEa17-PruningfMRI.html)
+* 'mEffortDDM' - [Berwian et al., 2020 JAMA Psychiatry](https://dx.doi.org/10.1001/jamapsychiatry.2019.4971)
 
 # try it out 
 
