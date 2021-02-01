@@ -48,8 +48,8 @@ end
 mas = sum(as,3)./ns;
 mbs = sum(bs,4)./nns;
 
-Ti = {'Go to win','Go to avoid','Nogo to win','Nogo to avoid'};
-ssi = [1 3 2 4];
+Ti = {'Go to win','Nogo to win','Go to avoid','Nogo to avoid'};
+ssi = [1 2 3 4];
 
 subplot(1,5,1)
 	mybar(sum(pc(ssi,:)')/Nsj,.7);
