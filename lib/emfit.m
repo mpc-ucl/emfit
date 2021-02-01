@@ -193,12 +193,12 @@ while 1;emit=emit+1; t0=tic;
 			nfc=nfc+1; 
 			init = e; 
 			if rs>1 | nfc>1; init = init+ nfc*.1*real(sqrtm(nu))*randn(Np,1); end % add noise for next attempt
-			try
+			%try
 				[est(:,nfc),fval(nfc),ex(nfc),foo,foo,hess(:,:,nfc)] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior,llopt),init,fminopt);
-			catch
-				e=real(sqrtm(nu))*randn(Np,1);
-				ex(nfc)=0;
-			end
+			%catch
+			%	e=real(sqrtm(nu))*randn(Np,1);
+			%	ex(nfc)=0;
+			%end
 			if any(ex(nfc)==[1:3]); break;end
 			if ~mod(nfc,50); fprintf('\nsj %i not converging (it %i).',sk,nfc); end
 		end
