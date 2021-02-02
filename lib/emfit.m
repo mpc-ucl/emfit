@@ -193,22 +193,16 @@ while 1;emit=emit+1; t0=tic;
 			nfc=nfc+1; 
 			init = e; 
 			if rs>1 | nfc>1; init = init+ nfc*.1*real(sqrtm(nu))*randn(Np,1); end % add noise for next attempt
-			%try
-				[est(:,nfc),fval(nfc),ex(nfc),foo,foo,hess(:,:,nfc)] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior,llopt),init,fminopt);
-			%catch
-			%	e=real(sqrtm(nu))*randn(Np,1);
-			%	ex(nfc)=0;
-			%end
-			if any(ex(nfc)==[1:3]); break;end
+			[est,fval,ex,foo,foo,hess] = fminunc(@(x)fstr(x,D(sk),musj(:,sk),nui,doprior,llopt),init,fminopt);
+			if any(ex==[1:3]); break;end
 			if ~mod(nfc,50); fprintf('\nsj %i not converging (it %i).',sk,nfc); end
 		end
-		[foo,best] = min(fval);							% take fit that led to best function value among those that converged
-		tE(:,sj)		= est(:,best);						% parameter estimates 
-		tW(:,:,sj) 	= pinv(full(hess(:,:,best)));	% covariance matrix around parameter estimate
-		tV(:,sj)		= diag(tW(:,:,sj));				% diagonal undertainty around parameter estimate
-		tPL(sj) 		= fval(best);						% posterior likelihood 
-		ttt(sj) 		= toc(tt0); 						% time info 
-		tEx(sj) 		= ex(best); 						% exit codes - for debugging
+		tE(:,sj)		= est;						% parameter estimates 
+		tW(:,:,sj) 	= pinv(full(hess));		% covariance matrix around parameter estimate
+		tV(:,sj)		= diag(tW(:,:,sj));		% diagonal undertainty around parameter estimate
+		tPL(sj) 		= fval;						% posterior likelihood 
+		ttt(sj) 		= toc(tt0); 				% time info 
+		tEx(sj) 		= ex; 						% exit codes - for debugging
 	end
 	% choose best of restarts 
 	if emit==1; best = ones(1,Nsj); 					% for first (ML) iteration 
