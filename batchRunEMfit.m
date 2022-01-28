@@ -64,6 +64,7 @@ modelClass{4} = 'mTwostep';                     % Daw et al., 2011
 modelClass{5} = 'mEffortCollins';               % Gold et al., 2013 
 modelClass{6} = 'mPruning';                     % Lally et al., 2017 
 modelClass{7} = 'mEffortDDM';                   % Berwian et al., 2020 
+modelClass{8} = 'mEffortReward';
 
 modelClassToFit = find(cellfun(@(x)strcmp(x,modelClassToFit),modelClass)); 
 if isempty(modelClassToFit); error('Model class not found');end
@@ -117,7 +118,14 @@ batchGenerateSurrogateData(Data,models,options);
 
 %------------------------------------------------------------------------------
 % plot surrogate data, compare with real data (specific to model)
-load([resultsDir '/SurrogateData']); 
-surrogateDataPlots(Data,models,SurrogateData,bestmodel,resultsDir)
+% load([resultsDir '/SurrogateData']); 
+% surrogateDataPlots(Data,models,SurrogateData,bestmodel,resultsDir)
+
+
+%-----------------------------------------------------------------------------
+% try to make split-half reliability plots if data is saved
+computeSplitHalfReliability;
+
+
 
 fprintf('\n\nAll done!\n\n')
