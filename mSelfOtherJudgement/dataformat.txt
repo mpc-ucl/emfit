@@ -1,0 +1,20 @@
+Affective Go/Nogo task 
+
+The data for subject sj should be contained in D(sj) in the following format:
+this needs to contain the following fields:
+
+ T is the length of the experiment 
+
+ Data(sj).a 		Tx1 vector of choices, 1 is yes, 2 no 
+ Data(sj).r 		Tx1 vector of positive (1) and negative (-1) feedback 
+ Data(sj).avatval Tx1 vector of true value of avatar on that trial (1 or -1) 
+ Data(sj).wordval Tx1 vector of value of word on that trial (1 or -1) 
+ Data(sj).avatid  Tx1 vector of IDs for avatar (usually 1 to 12, each 8 trials)
+
+ Data(sj).ID 		subject ID 
+ Data(sj).Nch 	= length(Data(sj).a);
+
+An example file is can be generated with generateExampleDataset.m in the folder
+mTwostep. 
+
+Quentin Huys, 2021 qhuys@cantab.net
