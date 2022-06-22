@@ -9,7 +9,7 @@ Nsj = length(Data);
 
 for k=1:nModls
 	try 
-		loadstr = sprintf('%s/%s',resultsDir,models(k).name);
+		loadstr = sprintf('%s/%s.mat',resultsDir,models(k).name);
 		fprintf('loading model %i %s',k,loadstr);
 		R.(models(k).name) = load(loadstr);
 		PL(k,:) = R.(models(k).name).stats.PL;
