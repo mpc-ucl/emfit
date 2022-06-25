@@ -28,14 +28,14 @@ function model = modelList;
 % Quentin Huys 2018 qhuys@cantab.net
 
 i=0; 
-% 
-% i=i+1;
-% model(i).descr = 'Trade off of reward and effort';
-% model(i).name = 'llreweffch';				
-% model(i).npar = 2;
-% model(i).parnames = {'reward sensitivity', 'effort sensitivity'};
-% model(i).parnames_untr = {'log reward', 'log effort'};
-% model(i).partransform = {'@(x)exp(x)','@(x)exp(x)'};
+
+i=i+1;
+model(i).descr = 'Trade off of reward and effort';
+model(i).name = 'llreweffch';				
+model(i).npar = 2;
+model(i).parnames = {'reward sensitivity', 'effort sensitivity'};
+model(i).parnames_untr = {'log reward', 'log effort'};
+model(i).partransform = {'@(x)exp(x)','@(x)exp(x)'};
 
 % i=i+1;
 % model(i).descr = 'Trade off of reward and effort and increase in effort with number of trials';
@@ -44,7 +44,7 @@ i=0;
 % model(i).parnames = {'reward sensitivity', 'effort sensitivity'};
 % model(i).parnames_untr = {'log reward', 'log effort'};
 % model(i).partransform = {'@(x)exp(x)','@(x)exp(x)'};
-% 
+
 % i=i+1;
 % model(i).descr = 'Trade off of reward and effort and rate';
 % model(i).name = 'llreweffratech';				
@@ -61,25 +61,33 @@ i=0;
 % model(i).parnames = {'reward sensitivity', 'effort sensitivity', 'rate sensitivity', 'max reward'};
 % model(i).parnames_untr = {'log reward', 'log effort', 'log rate', 'log max reward'};
 % model(i).partransform = {'@(x)exp(x)','@(x)exp(x)', '@(x)exp(x)', '@(x)exp(x)'};
-% % 
 % 
 
+% % 
+% % i=i+1;
+% % model(i).descr = 'Trade off of reward and effort and rate with decrease in rate with number of trials';
+% % model(i).name = 'llreweffratefatch';				
+% % model(i).npar = 3;
+% % model(i).parnames = {'reward sensitivity', 'effort sensitivity', 'rate sensitivity'};
+% % model(i).parnames_untr = {'log reward', 'log effort', 'sig rate'};
+% % model(i).partransform = {'@(x)exp(x)','@(x)exp(x)', '@(x)1./(1+exp(-x)'};
+% 
 % i=i+1;
-% model(i).descr = 'Trade off of reward and effort and rate with decrease in rate with number of trials';
-% model(i).name = 'llreweffratefatch';				
-% model(i).npar = 3;
-% model(i).parnames = {'reward sensitivity', 'effort sensitivity', 'rate sensitivity'};
-% model(i).parnames_untr = {'log reward', 'log effort', 'log rate'};
-% model(i).partransform = {'@(x)exp(x)','@(x)exp(x)', '@(x)exp(x)'};
+% model(i).descr = 'Trade off of reward and effort for two groups';
+% model(i).name = 'llreweffchRel';				
+% model(i).npar = 4;
+% model(i).parnames = {'reward sensitivity 1', 'effort sensitivity 1', 'reward sensitivity 2', 'effort sensitivity 2'};
+% model(i).parnames_untr = {'log reward 1', 'log effort 1', 'log reward 2', 'log effort 2'};
+% model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)exp(x)','@(x)exp(x)'};
 
-i=i+1;
-model(i).descr = 'Trade off of reward and effort for two groups';
-model(i).name = 'llreweffchRel';				
-model(i).npar = 4;
-model(i).parnames = {'reward sensitivity 1', 'effort sensitivity 1', 'reward sensitivity 2', 'effort sensitivity 2'};
-model(i).parnames_untr = {'log reward 1', 'log effort 1', 'log reward 2', 'log effort 2'};
-model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)exp(x)','@(x)exp(x)'};
-
+% i=i+1;
+% model(i).descr = 'Trade off of reward and effort for two groups';
+% model(i).name = 'llreweffchRelMB';				
+% model(i).npar = 4;
+% model(i).parnames = {'reward sensitivity subj', 'reward sensitivity time', 'effort sensitivity subj', 'effort sensitivity time'};
+% model(i).parnames_untr = {'log reward 1', 'log effort 1', 'log reward 2', 'log effort 2'};
+% model(i).partransform = {'@(x)x','@(x)x','@(x)x','@(x)x'};
+% 
 
 nModls = i; 
 fprintf('%i models in model list\n',i);
