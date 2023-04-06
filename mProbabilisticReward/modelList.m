@@ -68,7 +68,7 @@ model(i).descr = 'Belief model. As subjects are unsure about the presented stimu
 model(i).name = 'llbgelq0';			
 model(i).npar = 5;
 model(i).parnames = {'\beta','\gamma','\alpha','bl','q_0'};
-model(i).parnames_untr = {'log \beta','log \gamma','siginv bl','siginv \alpha','q_0'};
+model(i).parnames_untr = {'log \beta','log \gamma','siginv \alpha','siginv bl','q_0'};
 model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)x'};
 
 i=i+1; 
@@ -76,7 +76,7 @@ model(i).descr = 'Belief model with counterfactual updates. As subjects are unsu
 model(i).name = 'lldbgelq0';			
 model(i).npar = 5;
 model(i).parnames = {'\beta','\gamma','\alpha','bl','q_0'};
-model(i).parnames_untr = {'log \beta','log \gamma','siginv bl','siginv \alpha','q_0'};
+model(i).parnames_untr = {'log \beta','log \gamma','siginv \alpha','siginv bl','q_0'};
 model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)1./(1+exp(-x))','@(x)x'};
 
 
