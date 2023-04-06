@@ -30,7 +30,7 @@ for sj=1:Nsj;
 	if Data(sj).bias==2; Data(sj).prc = 1-Data(sj).prc;end
 
 	% realistic random parameters 
-	Data(sj).trueParam = [1.3 0.3 -2 0.1 -0.1 ]'+.5*randn(5,1);
+	Data(sj).trueParam = [1.3 0.3 -1 0.1 -0.1 ]'+diag([.5 .5 .5 1 .5])*randn(5,1);
 
 	% generate choices A, state transitions S and rewards R 
 	[foo,foo,dsurr] = llbgelq0(Data(sj).trueParam,Data(sj),0,0,0,options); 
