@@ -178,5 +178,13 @@ model(i).parnames = {'\beta_{rew}','\beta_{loss}','\alpha','\pi_{rew}','\pi_{los
 model(i).parnames_untr = {'log \beta_{rew}','log \beta_{loss}','siginv \alpha','log \pi_{rew}','log \pi_{loss}','siginv \gamma','bias'};
 model(i).partransform = {'@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)exp(x)','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)x'};
 
+i=i+1; 
+model(i).descr = 'RW model with constant bias towards one action, irreducible noise and positive Pavlovian bias parameter, and linear change over sessions in pavlvian paramæter';
+model(i).name = 'llbaepxb_eplinchange';			
+model(i).npar = 6;
+model(i).parnames = {'\beta','\alpha','\pi','\gamma','b','\Delta\pi'};
+model(i).parnames_untr = {'log \beta','siginv \alpha','log \pi','siginv \gamma','b','log \Delta\pi'};
+model(i).partransform = {'@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)exp(x)','@(x)1./(1+exp(-x))','@(x)x','@(x)exp(x)'};
+
 nModls = i; 
 fprintf('%i models in model list\n',i);
